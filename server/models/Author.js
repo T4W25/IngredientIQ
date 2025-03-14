@@ -8,7 +8,7 @@ const authorSchema = new Schema({
   passwordHash: { type: String, required: true },
   bio: { type: String, default: '' },
   profilePicture: { type: String, default: '' }, // URL or file path
-  role: { type: String, enum: ['Contributor', 'Chef'], required: true },
+  role: { type: String, enum: ['Contributor', 'Chef'], default: 'Contributor'},
   isVerified: { type: Boolean, default: false },
   verificationDocuments: [{ type: String }], // URLs or file paths
 }, {

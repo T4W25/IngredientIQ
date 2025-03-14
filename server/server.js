@@ -1,5 +1,9 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+const authRoutes = require('./routes/authRoutes');
+
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -18,6 +22,9 @@ mongoose.connect(mongoURI, {
 .then(() => console.log('Connected to MongoDB successfully'))
 .catch(err => console.error('Failed to connect to MongoDB:', err));
 
+
+app.use('/api/auth', authRoutes);
+
 // Example route
 app.get('/', (req, res) => {
   res.send('Hello from the server!');
@@ -27,3 +34,4 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
+
