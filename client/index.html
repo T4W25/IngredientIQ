@@ -9,5 +9,35 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <div class="container">
+      <div class="toggle-buttons">
+          <span onclick="showLogin()">Login</span>
+          <span onclick="showRegister()">Register</span>
+      </div>
+      
+      <form id="login-form">
+          <input type="email" placeholder="Email" required><br><br>
+          <input type="password" placeholder="Password" required><br><br>
+          <button type="submit">Login</button>
+      </form>
+      
+      <form id="register-form" class="hidden">
+          <input type="text" placeholder="User Name" required><br><br> 
+          <input type="email" placeholder="Email" required><br><br>
+          <input type="password" placeholder="Password" required><br><br>
+          <button type="submit">Register</button>
+      </form>
+  </div>
+  <script>
+      function showLogin() {
+          document.getElementById("login-form").classList.remove("hidden");
+          document.getElementById("register-form").classList.add("hidden");
+      }
+      
+      function showRegister() {
+          document.getElementById("login-form").classList.add("hidden");
+          document.getElementById("register-form").classList.remove("hidden");
+      }
+  </script>
   </body>
 </html>
