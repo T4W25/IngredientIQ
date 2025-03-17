@@ -9,7 +9,7 @@ function auth(req, res, next) {
     req.user = decoded;
     next();
   } catch (err) {
-    res.status(401).json({ message: '' });
+    res.status(401).json({ message: 'Token is not valid' });
   }
 }
 
