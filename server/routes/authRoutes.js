@@ -4,7 +4,7 @@ const authorController = require('../controllers/authorController');
 const userController = require('../controllers/userController');
 const authorProfileController = require('../controllers/authorProfileController');
 const userProfileController = require('../controllers/userProfileController');
-const auth = require('../middleware/auth');
+const auth = require('../middleware/authMiddleware');
 
 
 router.post('/register/user', userController.registerUser);
