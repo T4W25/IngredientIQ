@@ -1,0 +1,122 @@
+/* Auth.css */
+
+/* Full-page background styling */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  /* Card styling */
+  .auth-card {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    width: 400px;
+    text-align: center;
+  }
+  
+  /* Title styling */
+  .auth-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+  
+  /* Toggle tabs for Login/Register */
+  .auth-toggle {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+    cursor: pointer;
+
+  }
+  
+  .auth-toggle button {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    padding-bottom: 0.3rem;
+  }
+  
+  .auth-toggle .active-tab {
+    font-weight: bold;
+    border-bottom: 2px solid black;
+  }
+  
+  .auth-toggle .inactive-tab {
+    color: gray;
+  }
+  
+  /* Form input styling */
+  .auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .auth-form label {
+    text-align: left;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  
+  .auth-form input {
+    width: 100%;
+    padding: 0.6rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    background-color: #ffffff; 
+    color: black;
+  }
+  
+  
+  /* Name fields side by side */
+  .name-fields {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .name-fields div {
+    flex: 1;
+  }
+  
+  /* Forgot Password text */
+  .forgot-password {
+    font-size: 12px;
+    color: gray;
+    text-align: right;
+    cursor: pointer;
+  }
+  
+  /* Login/Register button */
+  .auth-button {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #4f7942; /* Green button */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .auth-button:hover {
+    background-color: #3e6235;
+  }
+  
+  /* Error message */
+  .error-message {
+    color: red;
+    font-size: 14px;
+    margin-bottom: 1rem;
+  }
+  

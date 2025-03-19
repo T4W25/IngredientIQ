@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(bodyParser.json());
 
 // MongoDB connection string
-const mongoURI = 'mongodb+srv://yalbayat:p8XXnX22Y8CSKBPr@cluster0.ggpsj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+const mongoURI = 'mongodb+srv://anshlimbachiya88:Limbachiya%40Ansh@ingredientiq.xngyb.mongodb.net/?retryWrites=true&w=majority&appName=IngredientIQ';
 
 // Connect to MongoDB using Mongoose
 mongoose.connect(mongoURI, {
