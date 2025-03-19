@@ -5,8 +5,7 @@ import axios from "axios";
 const Auth = () => {
   const [isRegistering, setIsRegistering] = useState(false);
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+    username: "",
     email: "",
     password: "",
   });
@@ -22,7 +21,7 @@ const Auth = () => {
     try {
       const endpoint = isRegistering ? "/api/register/user" : "/api/signin/user";
       const response = await axios.post(endpoint, {
-        username: isRegistering ? formData.userName + " " + formData.lastName : undefined,
+        username: isRegistering ? formData.username : undefined,
         email: formData.email,
         password: formData.password,
       });
@@ -61,27 +60,15 @@ const Auth = () => {
 
         <form className="auth-form" onSubmit={handleSubmit}>
           {isRegistering && (
-            <div className="name-fields">
-              <div>
-                <label>First Name:</label>
-                <input
-                  type="text"
-                  name="userName"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div>
-                <label>Last Name:</label>
-                <input
-                  type="text"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
+            <div>
+              <label>Username:</label>
+              <input
+                type="text"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                required
+              />
             </div>
           )}
           <label>Email:</label>
