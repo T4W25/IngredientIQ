@@ -10,6 +10,7 @@ const Profile = () => {
   const [editMode, setEditMode] = useState(false); // To toggle between view and edit modes
   const [error, setError] = useState('');
   const history = useHistory();
+
   // Fetch user profile data on page load
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -33,5 +34,28 @@ const Profile = () => {
 
     fetchUserProfile();
   }, []);
+
+  // Handle profile update
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch('/api/profile/update', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`, // Include token
+        },
+        body: JSON.stringify(userData),
+      });
+      const data = await response.json();
+      if (data.success) {
+        setEditMode(false); // Disable edit mode after a successful update
+      } else {
+        setError('Error updating profile');
+      }
+    } catch (err) {
+      setError('Error updating profile');
+    }
+  };
 
   
