@@ -3,9 +3,12 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
 const authRoutes = require('./routes/authRoutes');
-const recipeRoutes = require('./routes/searchbarRoutes');
+const searchbarRoutes = require('./routes/searchbarRoutes');
 const mealPlanRoutes = require('./routes/mealPlanRoutes');
+const bookmarkRoutes = require('./routes/bookmarkRoutes');
+const recipeRoutes = require('./routes/recipeRoutes');
 
+// Load environment variables from .env file
 dotenv.config();
 
 const app = express();
@@ -28,8 +31,10 @@ mongoose.connect(mongoURI, {
 
 
 app.use('/api/auth', authRoutes);
-app.use('/api',recipeRoutes);
+app.use('/api',searchbarRoutes);
 app.use('/api/mealplans', mealPlanRoutes);
+app.use('/api/bookmarks', bookmarkRoutes);
+app.use('/api/recipes', recipeRoutes);
 
 // Example route
 app.get('/', (req, res) => {
