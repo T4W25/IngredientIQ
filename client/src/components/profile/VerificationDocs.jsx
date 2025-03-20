@@ -23,6 +23,6 @@ const VerificationDocs = ({ user, onUpdateVerificationDocs }) => {
     if (validFiles.length > 0) {
       setError(''); // Reset error if valid files are selected
     }
-  };
+  }};
 
   
