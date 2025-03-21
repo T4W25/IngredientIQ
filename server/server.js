@@ -7,7 +7,10 @@ const searchbarRoutes = require('./routes/searchbarRoutes');
 const mealPlanRoutes = require('./routes/mealPlanRoutes');
 const bookmarkRoutes = require('./routes/bookmarkRoutes');
 const recipeRoutes = require('./routes/recipeRoutes');
+
 const reviewRoutes = require('./routes/reviewRoutes');
+
+const cors = require("cors");
 
 
 // Load environment variables from .env file
@@ -15,6 +18,12 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 5000;
+
+app.use(cors({
+  origin: "http://localhost:5173",  // ✅ Allow frontend URL
+  methods: "GET,POST,PATCH,DELETE",
+  allowedHeaders: "Content-Type,Authorization"
+}));
 
 // Middleware to parse JSON
 app.use(express.json());
