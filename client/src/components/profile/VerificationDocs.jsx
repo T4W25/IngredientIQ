@@ -37,7 +37,7 @@ const VerificationDocs = ({ user, onUpdateVerificationDocs }) => {
     } else {
       setFileNames([]); // Clear file names if invalid files are selected
     }
-  };
+  }};
 
   // Handle file upload
   const handleUpload = async () => {
