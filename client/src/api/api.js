@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "http://localhost:5000/api/auth";
 
 //AUTHENTICATION
 export const registerUser = async (userData) => {
@@ -124,3 +124,5 @@ export const deleteMealPlan = async (token, mealPlanId) => {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
+
+export default API_BASE_URL;
