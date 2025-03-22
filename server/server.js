@@ -7,7 +7,11 @@ const searchbarRoutes = require('./routes/searchbarRoutes');
 const mealPlanRoutes = require('./routes/mealPlanRoutes');
 const bookmarkRoutes = require('./routes/bookmarkRoutes');
 const recipeRoutes = require('./routes/recipeRoutes');
+
+const reviewRoutes = require('./routes/reviewRoutes');
+
 const cors = require("cors");
+
 
 // Load environment variables from .env file
 dotenv.config();
@@ -42,6 +46,7 @@ app.use('/api',searchbarRoutes);
 app.use('/api/mealplans', mealPlanRoutes);
 app.use('/api/bookmarks', bookmarkRoutes);
 app.use('/api/recipes', recipeRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 // Example route
 app.get('/', (req, res) => {
