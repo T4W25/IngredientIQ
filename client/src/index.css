@@ -6,12 +6,21 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.9);
-  background-color: #242424;
+  background-color: #ffffff;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Reset Body & Root App Layout */
+body, #root {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  width: 100%;
+  background-color: #ffffff;
 }
 
 /* Links */
@@ -24,16 +33,6 @@ a {
 
 a:hover {
   color: #388E3C;
-}
-
-/* Body Styling */
-body {
-  margin: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background-color: #4f7942;
 }
 
 /* Headings */
@@ -77,28 +76,24 @@ button:focus-visible {
   }
 
   a:hover {
-    color: #747bff;
+    color: #388E3C;
   }
 
   button {
-    background-color: #f9f9f9;
-    color: #333;
-    border: 1px solid #ccc;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
   }
 
   button:hover {
-    background-color: #ddd;
+    background-color: #388E3C;
   }
 }
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
-  body {
-    padding: 1rem;
-  }
-
   h1 {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
   }
 
   button {

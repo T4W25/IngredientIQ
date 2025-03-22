@@ -1,100 +1,110 @@
-/* Overall page layout */
+/* Layout Wrapper */
 .home {
-    background-color: #f4f7f5;
-    color: #222;
-    font-family: 'Segoe UI', sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9f8;
+    color: #1e1e1e;
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
   }
   
-  /* Header section */
+  /* Header */
   .header {
     background-color: #4f7942;
     color: white;
     padding: 1rem 2rem;
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
     flex-wrap: wrap;
   }
   
-  /* Left logo + search */
   .header .left {
     display: flex;
     align-items: center;
     gap: 1rem;
   }
   
-  .search-input {
-    padding: 0.5rem 1rem;
-    border-radius: 5px;
-    border: none;
-    font-size: 14px;
+  .header h2 {
+    margin: 0;
+    font-size: 1.6rem;
   }
   
-  /* Navigation links */
+  .search-input {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+  }
+  
+  /* Nav Links */
   .nav-links {
     display: flex;
     gap: 1.2rem;
     align-items: center;
+    flex-wrap: wrap;
   }
   
   .nav-links a,
   .nav-links button {
     color: white;
     text-decoration: none;
+    font-weight: 500;
     background: none;
     border: none;
-    font-weight: bold;
     cursor: pointer;
+    transition: opacity 0.2s ease;
   }
   
-  .nav-links button:hover,
-  .nav-links a:hover {
-    text-decoration: underline;
+  .nav-links a:hover,
+  .nav-links button:hover {
+    opacity: 0.85;
   }
   
-  /* Hero section */
+  /* Hero Section */
   .hero {
-    padding: 4rem 2rem;
+    background-color: #eff3f0;
+    padding: 3rem 1rem;
     text-align: center;
-    background-color: #eef3f0;
   }
   
   .hero h2 {
     font-size: 2rem;
-    font-weight: bold;
-    color: #222;
+    margin-bottom: 0.5rem;
   }
   
   .hero p {
-    font-size: 1.1rem;
-    margin: 1rem 0;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
     color: #444;
   }
   
   .explore-btn {
+    padding: 0.7rem 1.5rem;
     background-color: #4f7942;
     color: white;
-    padding: 0.7rem 1.5rem;
     border: none;
     border-radius: 6px;
-    font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
-    font-weight: bold;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
   }
   
   .explore-btn:hover {
-    background-color: #3e6235;
+    background-color: #406837;
   }
   
-  /* Recipe grid */
+  /* Featured Recipes Section */
   .recipe-section {
     padding: 2rem;
   }
   
   .recipe-section h3 {
+    font-size: 1.4rem;
     margin-bottom: 1rem;
+    color: #2e2e2e;
   }
   
   .recipe-grid {
@@ -105,11 +115,10 @@
   
   /* Footer */
   .home-footer {
-    background-color: #eee;
     text-align: center;
-    padding: 1rem;
-    font-size: 14px;
-    color: #555;
-    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: #eeeeee;
+    color: #333;
+    margin-top: auto;
   }
   
