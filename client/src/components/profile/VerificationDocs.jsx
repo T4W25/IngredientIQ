@@ -117,6 +117,6 @@ const VerificationDocs = ({ user, onUpdateVerificationDocs }) => {
       <button onClick={handleUpload}>Upload Documents</button>
     </div>
   );
-};
+;
 
 export default VerificationDocs;

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from "react-router-dom"; 
+
 
 const Profile = () => {
   const [userData, setUserData] = useState({
@@ -9,7 +10,7 @@ const Profile = () => {
   });
   const [editMode, setEditMode] = useState(false); // To toggle between view and edit modes
   const [error, setError] = useState('');
-  const history = useHistory();
+  const navigate = useNavigate();
 
   // Fetch user profile data on page load
   useEffect(() => {

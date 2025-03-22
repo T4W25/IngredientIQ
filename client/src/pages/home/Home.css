@@ -1,37 +1,115 @@
-.home-container {
-    height: 100vh;
+/* Overall page layout */
+.home {
+    background-color: #f4f7f5;
+    color: #222;
+    font-family: 'Segoe UI', sans-serif;
+    min-height: 100vh;
+  }
+  
+  /* Header section */
+  .header {
+    background-color: #4f7942;
+    color: white;
+    padding: 1rem 2rem;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
     align-items: center;
-    background: linear-gradient(to bottom right, #ffffff, #f0f8f5);
-    color: #2c3e50;
-    font-family: "Segoe UI", sans-serif;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  
+  /* Left logo + search */
+  .header .left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .search-input {
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    border: none;
+    font-size: 14px;
+  }
+  
+  /* Navigation links */
+  .nav-links {
+    display: flex;
+    gap: 1.2rem;
+    align-items: center;
+  }
+  
+  .nav-links a,
+  .nav-links button {
+    color: white;
+    text-decoration: none;
+    background: none;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .nav-links button:hover,
+  .nav-links a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Hero section */
+  .hero {
+    padding: 4rem 2rem;
+    text-align: center;
+    background-color: #eef3f0;
+  }
+  
+  .hero h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #222;
+  }
+  
+  .hero p {
+    font-size: 1.1rem;
+    margin: 1rem 0;
+    color: #444;
+  }
+  
+  .explore-btn {
+    background-color: #4f7942;
+    color: white;
+    padding: 0.7rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  }
+  
+  .explore-btn:hover {
+    background-color: #3e6235;
+  }
+  
+  /* Recipe grid */
+  .recipe-section {
     padding: 2rem;
   }
   
-  .home-container h1 {
-    font-size: 2.8rem;
-    margin-bottom: 0.5rem;
+  .recipe-section h3 {
+    margin-bottom: 1rem;
   }
   
-  .home-container p {
-    font-size: 1.2rem;
-    margin-bottom: 2rem;
+  .recipe-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
   }
   
-  .home-container button {
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
-    background-color: #4f7942;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-  
-  .home-container button:hover {
-    background-color: #3b5d33;
+  /* Footer */
+  .home-footer {
+    background-color: #eee;
+    text-align: center;
+    padding: 1rem;
+    font-size: 14px;
+    color: #555;
+    margin-top: 2rem;
   }
   
