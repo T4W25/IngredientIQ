@@ -40,7 +40,7 @@ const Auth = () => {
   
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);
-        alert("✅ Registration successful!");
+        alert(isRegistering ? "✅ Registration successful!" : "✅ Login successful!");
         navigate("/home"); //
       } else if (response.data.message) {
         alert(response.data.message); // Show success message if no token
