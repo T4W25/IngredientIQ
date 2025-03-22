@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./Auth.css";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import API_BASE_URL from "../../api/api"; // ✅ Import API base URL
 import { registerUser, loginUser } from "../../api/api"; // ✅ Correct import
@@ -19,6 +20,7 @@ const Auth = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -39,6 +41,7 @@ const Auth = () => {
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);
         alert("✅ Registration successful!");
+        navigate("/home"); //
       } else if (response.data.message) {
         alert(response.data.message); // Show success message if no token
       } else {
