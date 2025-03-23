@@ -1,53 +1,53 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:5000/api/auth";
+const API_BASE_URL = "http://localhost:5000/api";
 
 //AUTHENTICATION
 export const registerUser = async (userData) => {
-  return axios.post(`${API_BASE_URL}/register/user`, userData);
+  return axios.post(`${API_BASE_URL}/auth/register/user`, userData);
 };
 
 export const registerAuthor = async (authorData) => {
-  return axios.post(`${API_BASE_URL}/register/author`, authorData);
+  return axios.post(`${API_BASE_URL}/auth/register/author`, authorData);
 };
 
 export const loginUser = async (credentials) => {
-  return axios.post(`${API_BASE_URL}/signin/user`, credentials);
+  return axios.post(`${API_BASE_URL}/auth/signin/user`, credentials);
 };
 
 export const loginAuthor = async (credentials) => {
-  return axios.post(`${API_BASE_URL}/signin/author`, credentials);
+  return axios.post(`${API_BASE_URL}/auth/signin/author`, credentials);
 };
 
 export const logoutUser = async () => {
-  return axios.post(`${API_BASE_URL}/signout/user`);
+  return axios.post(`${API_BASE_URL}/auth/signout/user`);
 };
 
 export const logoutAuthor = async () => {
-  return axios.post(`${API_BASE_URL}/signout/author`);
+  return axios.post(`${API_BASE_URL}/auth/signout/author`);
 };
 
 //PROFILE MANAGEMENT
 export const getUserProfile = async (token) => {
-  return axios.get(`${API_BASE_URL}/profile/user`, {
+  return axios.get(`${API_BASE_URL}/auth/profile/user`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
 
 export const getAuthorProfile = async (token) => {
-  return axios.get(`${API_BASE_URL}/profile/author`, {
+  return axios.get(`${API_BASE_URL}/auth/profile/author`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
 
 export const updateUserProfile = async (token, profileData) => {
-  return axios.patch(`${API_BASE_URL}/profile/user`, profileData, {
+  return axios.patch(`${API_BASE_URL}/auth/profile/user`, profileData, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
 
 export const updateAuthorProfile = async (token, profileData) => {
-  return axios.patch(`${API_BASE_URL}/profile/author`, profileData, {
+  return axios.patch(`${API_BASE_URL}/auth/profile/author`, profileData, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
