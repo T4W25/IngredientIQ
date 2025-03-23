@@ -7,6 +7,7 @@ import MealPlanDashboard from "../pages/mealplan/MealPlanDashboard";
 import SearchResults from "../pages/searchresults/SearchResults";
 import Recipe from "../components/recipe/Recipe";
 import Profile from "../components/profile/Profile";
+import ChefDashboard from "../pages/chef/ChefDashboard";
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("token");
@@ -25,6 +26,15 @@ const AppRoutes = () => (
         </ProtectedRoute>
       }
     />
+    <Route
+      path="/chef-dashboard"
+      element={
+        <ProtectedRoute>
+          <ChefDashboard />
+        </ProtectedRoute>
+      }
+    />
+
     <Route
       path="/recipes"
       element={
