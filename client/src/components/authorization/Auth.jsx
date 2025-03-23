@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import "./Auth.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import API_BASE_URL from "../../api/api"; // ✅ Import API base URL
-import { registerUser, loginUser } from "../../api/api"; // ✅ Correct import
+import API_BASE_URL from "../../api/api";
+import { registerUser, loginUser } from "../../api/api"; 
 
 
 
@@ -26,7 +26,10 @@ const Auth = () => {
     setError("");
   
     try {
-      const endpoint = isRegistering ? `${API_BASE_URL}/register/user` : `${API_BASE_URL}/signin/user`;
+      const endpoint = isRegistering
+      ? `${API_BASE_URL}/auth/register/user`
+      : `${API_BASE_URL}/auth/signin/user`;
+
       console.log("📩 Sending request to:", endpoint);
       console.log("📝 Payload:", formData);
   
@@ -108,7 +111,7 @@ const Auth = () => {
             required
           />
 
-          {/* Show "Forgot Password" only on Login */}
+          {}
           {!isRegistering && (
             <p className="forgot-password">Forgot Password?</p>
           )}
