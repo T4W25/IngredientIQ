@@ -1,0 +1,180 @@
+/* MealPlanDashboard.css - Styling for Meal Plan Dashboard and its components */
+
+.meal-plan {
+    padding: 1rem 2rem;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .meal-plan h3 {
+    margin-bottom: 1rem;
+    color: #333;
+  }
+  
+  .recipe-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .recipe-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    width: 200px;
+    text-align: center;
+    padding: 1rem;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .recipe-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  .recipe-card img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Calendar Layout */
+  .meal-plan-calendar {
+    padding: 2rem;
+    background-color: #eef5eb;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+  }
+  
+  .calendar-grid {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .day-column {
+    flex: 1;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 1rem;
+    min-width: 200px;
+  }
+  
+  .day-column h4 {
+    text-align: center;
+    color: #4caf50;
+    margin-bottom: 1rem;
+  }
+  
+  .meal-slot {
+    border: 1px dashed #aaa;
+    padding: 0.5rem;
+    border-radius: 6px;
+    margin-bottom: 0.75rem;
+    background-color: #fefefe;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .meal-slot:hover {
+    background-color: #e9f7e9;
+  }
+  
+  .placeholder {
+    color: #999;
+    font-size: 0.9rem;
+  }
+  
+  /* Grocery List */
+  .grocery-list {
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .grocery-list h3 {
+    margin-bottom: 1rem;
+    color: #333;
+  }
+  
+  .ingredient-group {
+    margin-bottom: 1.5rem;
+  }
+  
+  .ingredient-group h4 {
+    margin-bottom: 0.5rem;
+    color: #388e3c;
+    font-size: 1.1rem;
+  }
+  
+  .ingredient-group ul {
+    list-style-type: disc;
+    margin-left: 1.5rem;
+    color: #555;
+  }
+  
+  /* === RESPONSIVE LAYOUT FIXES === */
+  @media screen and (max-width: 1024px) {
+    .calendar-grid {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+    }
+  
+    .day-column {
+      min-width: 220px;
+      flex-shrink: 0;
+    }
+  }
+  
+  @media screen and (max-width: 768px) {
+    .recipe-list {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .recipe-card {
+      width: 90%;
+    }
+  
+    .meal-plan,
+    .meal-plan-calendar,
+    .grocery-list {
+      padding: 1rem;
+    }
+  
+    .meal-slot {
+      font-size: 0.9rem;
+    }
+  
+    .meal-slot span {
+      display: block;
+    }
+  }
+  
+  @media screen and (max-width: 480px) {
+    .day-column h4 {
+      font-size: 1rem;
+    }
+  
+    .meal-slot {
+      padding: 0.4rem;
+    }
+  
+    .grocery-category h4 {
+      font-size: 1rem;
+    }
+  
+    .grocery-category li {
+      font-size: 0.9rem;
+    }
+  }

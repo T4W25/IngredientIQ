@@ -1,52 +1,61 @@
+// src/pages/mealplan/MealPlanDashboard.jsx
 import React, { useEffect, useState } from "react";
-import { getMealPlans } from "../../api/api";
+import MealPlan from "../../components/meal-plan/MealPlan";
+import GroceryList from "../../components/meal-plan/GroceryList";
+import MealPlanCalendar from "../../components/meal-plan/MealPlanCalendar";
+import { getBookmarks } from "../../api/api";
+import './MealPlanDashboard.css';
+
+
+const defaultPlan = {
+  Monday: { breakfast: null, lunch: null, dinner: null },
+  Tuesday: { breakfast: null, lunch: null, dinner: null },
+  Wednesday: { breakfast: null, lunch: null, dinner: null },
+  Thursday: { breakfast: null, lunch: null, dinner: null },
+  Friday: { breakfast: null, lunch: null, dinner: null },
+  Saturday: { breakfast: null, lunch: null, dinner: null },
+  Sunday: { breakfast: null, lunch: null, dinner: null },
+};
 
 const MealPlanDashboard = () => {
-  const [mealPlans, setMealPlans] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [recipes, setRecipes] = useState([]);
+  const [selectedSlot, setSelectedSlot] = useState(null);
+  const [plan, setPlan] = useState(defaultPlan);
 
   useEffect(() => {
-    const fetchMealPlans = async () => {
+    const fetchBookmarks = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await getMealPlans(token);
-        setMealPlans(response.data);
-      } catch (error) {
-        console.error("Error fetching meal plans:", error);
-      } finally {
-        setLoading(false);
+        const res = await getBookmarks(token);
+        setRecipes(res.data);
+      } catch (err) {
+        console.error("Failed to load bookmarks", err);
       }
     };
-
-    fetchMealPlans();
+    fetchBookmarks();
   }, []);
 
-  return (
-    <div style={{ padding: "2rem" }}>
-      <h2>🍽️ Your Meal Plan Dashboard</h2>
+  const handleSelectSlot = (day, meal) => {
+    setSelectedSlot({ day, meal });
+  };
 
-      {loading ? (
-        <p>Loading meal plans...</p>
-      ) : mealPlans.length === 0 ? (
-        <p>No meal plans created yet. Start planning your meals!</p>
-      ) : (
-        <ul>
-          {mealPlans.map((plan) => (
-            <li key={plan._id} style={{ marginBottom: "1rem" }}>
-              <strong>{plan.planType}</strong> | From:{" "}
-              {new Date(plan.startDate).toLocaleDateString()} to{" "}
-              {new Date(plan.endDate).toLocaleDateString()}
-              <ul>
-                {plan.recipes.map((r, index) => (
-                  <li key={index}>
-                    🍲 {r.recipeId} - {r.servings} servings
-                  </li>
-                ))}
-              </ul>
-            </li>
-          ))}
-        </ul>
-      )}
+  const handleAssignRecipe = (recipe) => {
+    if (!selectedSlot) return;
+    const updated = { ...plan };
+    updated[selectedSlot.day][selectedSlot.meal] = recipe;
+    setPlan(updated);
+    setSelectedSlot(null);
+  };
+
+  return (
+    <div className="meal-plan-dashboard">
+      <h1>🍽 Meal Planning Dashboard</h1>
+
+      <MealPlan recipes={recipes} onSelect={handleAssignRecipe} />
+
+      <MealPlanCalendar plan={plan} onSelectSlot={handleSelectSlot} />
+
+      <GroceryList plan={plan} />
     </div>
   );
 };

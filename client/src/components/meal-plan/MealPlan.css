@@ -1,0 +1,48 @@
+/* MealPlan.css */
+
+.meal-plan-calendar {
+    margin-bottom: 2rem;
+  }
+  
+  .calendar-grid {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+  }
+  
+  .day-column {
+    background: #f8f8f8;
+    border-radius: 8px;
+    padding: 1rem;
+    min-width: 180px;
+  }
+  
+  .meal-slot {
+    background-color: #fff;
+    border: 1px dashed #ccc;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+  }
+  
+  .meal-slot:hover {
+    background-color: #e3f2e1;
+  }
+  
+  .placeholder {
+    color: #888;
+    font-size: 0.9rem;
+  }
+  
+  .recipe-card {
+    width: 160px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    background: #fff;
+  }
