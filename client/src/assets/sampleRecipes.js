@@ -2,7 +2,7 @@ const sampleRecipes = [
     {
       id: 1,
       title: "Spaghetti Bolognese",
-      image: "https://source.unsplash.com/400x300/?spaghetti",
+      image: "https://veganwithgusto.com/wp-content/uploads/2021/05/spicy-spaghetti-arrabbiata.jpg",
     },
     {
       id: 2,
