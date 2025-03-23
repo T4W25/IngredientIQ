@@ -14,6 +14,7 @@ router.post('/signin/author', authorController.signInAuthor);
 router.post('/signout/user', userController.signOutUser);
 router.post('/signout/author', authorController.signOutAuthor);
 router.patch('/profile/user', auth, userProfileController.updateUserProfile);
+//router.get('/profile/user', userProfileController.getUserProfile);
 router.patch('/profile/author', auth, authorProfileController.updateAuthorProfile);
 
 module.exports = router;
