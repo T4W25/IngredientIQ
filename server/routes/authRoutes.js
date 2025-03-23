@@ -18,3 +18,4 @@ router.patch('/profile/user', auth, userProfileController.updateUserProfile);
 router.patch('/profile/author', auth, authorProfileController.updateAuthorProfile);
 
 module.exports = router;
+
