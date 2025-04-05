@@ -3,9 +3,6 @@ import "./Auth.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import API_BASE_URL from "../../api/api";
-import { registerUser, loginUser } from "../../api/api"; 
-
-
 
 const Auth = () => {
   const [isRegistering, setIsRegistering] = useState(false);
@@ -13,54 +10,58 @@ const Auth = () => {
     username: "",
     email: "",
     password: "",
+    role: "user", // Default role
   });
   const [error, setError] = useState("");
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const navigate = useNavigate();
+  const handleRoleToggle = () => {
+    setFormData({
+      ...formData,
+      role: formData.role === "user" ? "chef" : "user",
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-  
+
     try {
       const endpoint = isRegistering
-      ? `${API_BASE_URL}/auth/register/user`
-      : `${API_BASE_URL}/auth/signin/user`;
+        ? `${API_BASE_URL}/auth/register/${formData.role}`
+        : `${API_BASE_URL}/auth/signin/${formData.role}`;
 
-      console.log("📩 Sending request to:", endpoint);
-      console.log("📝 Payload:", formData);
-  
-      const response = await axios.post(endpoint, {
-        username: isRegistering ? formData.username : undefined,
+      const payload = {
         email: formData.email,
         password: formData.password,
-      });
-  
-      console.log("✅ Server Response:", response.data);
-  
+      };
+
+      if (isRegistering) payload.username = formData.username;
+
+      const response = await axios.post(endpoint, payload);
+
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);
-        navigate("/home"); //
-      } else if (response.data.message) {
-        alert(response.data.message); // Show success message if no token
+        localStorage.setItem("role", formData.role);
+        navigate("/home");
       } else {
         setError("Unexpected response from the server");
-      }      
+      }
     } catch (err) {
-      console.error("❌ Request Error:", err.response ? err.response.data : err);
-      setError(err.response?.data?.message || "Server error. Check console.");
+      setError(err.response?.data?.message || "Server error");
     }
   };
-  
+
   return (
     <div className="auth-container">
       <div className="auth-card">
         <h1 className="auth-title">Welcome to Ingredient IQ</h1>
 
-        {/* Login / Register Toggle */}
         <div className="auth-toggle">
           <span
             className={!isRegistering ? "active-tab" : "inactive-tab"}
@@ -78,7 +79,6 @@ const Auth = () => {
 
         {error && <p className="error-message">{error}</p>}
 
-        {/* Form */}
         <form className="auth-form" onSubmit={handleSubmit}>
           {isRegistering && (
             <>
@@ -111,9 +111,15 @@ const Auth = () => {
             required
           />
 
-          {}
-          {!isRegistering && (
-            <p className="forgot-password">Forgot Password?</p>
+          {isRegistering && (
+            <label className="role-selector">
+              <input
+                type="checkbox"
+                checked={formData.role === "chef"}
+                onChange={handleRoleToggle}
+              />
+              Register as Chef
+            </label>
           )}
 
           <button className="auth-button" type="submit">

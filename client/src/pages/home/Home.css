@@ -36,6 +36,7 @@
     border: none;
     outline: none;
     font-size: 1rem;
+    background-color: white;
   }
   
   /* Nav Links */
@@ -54,12 +55,20 @@
     background: none;
     border: none;
     cursor: pointer;
-    transition: opacity 0.2s ease;
+    transition: color 0.2s ease;
   }
   
-  .nav-links a:hover,
-  .nav-links button:hover {
-    opacity: 0.85;
+  .nav-links button {
+    background-color: #5c8b51;
+    border: 1px solid rgba(52, 52, 52, 0.2);
+    transition: background-color 0.2s ease;;
+  }
+
+  .nav-links a:hover{
+    color: rgb(43, 43, 43);
+  }
+  .nav-links button:hover{
+    background-color: #2a4424;
   }
   
   /* Hero Section */
