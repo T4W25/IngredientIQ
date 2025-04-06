@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Button from '../ui/Button';
+import Button from './ui/button';
 
 const Landing = () => {
   return (
@@ -15,7 +15,7 @@ const Landing = () => {
           <h1 className="text-5xl font-bold mb-6">Turn Your Ingredients into Delicious Meals!</h1>
           <p className="text-xl mb-8">Smart recipe suggestions based on what’s in your kitchen.</p>
           <div className="space-x-4">
-            <Link to="/cook-home">
+            <Link to="/auth">
               <Button variant="primary" className="text-lg px-8 py-3">Get Started</Button>
             </Link>
             <Link to="/about">

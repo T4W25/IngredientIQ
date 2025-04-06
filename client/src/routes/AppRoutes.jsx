@@ -4,11 +4,11 @@ import Auth from "../Components/authorization/Auth";
 import Home from "../pages/home/Home";
 import Bookmarks from "../pages/bookmarks/Bookmarks";
 import MealPlanDashboard from "../pages/mealplan/MealPlanDashboard";
-import SearchResults from "../pages/searchresults/SearchResults";
+import SearchResults from "../pages/SearchResults";
 import Recipe from "../components/recipe/Recipe";
 import Profile from "../components/profile/Profile";
 import ChefDashboard from "../pages/chef/ChefDashboard";
-import Landing from "../Components/landing/landingpage";
+import Landing from "../Components/landingpage";
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("token");
@@ -17,9 +17,9 @@ const ProtectedRoute = ({ children }) => {
 
 const AppRoutes = () => (
   <Routes>
-    <Route path="/landing" index element={<Landing />} />
+    <Route path="/" index element={<Navigate to="/landing" />} />
     <Route path="/auth" element={<Auth />} />
-    <Route path="/" element={<Navigate to="/home" />} />
+    <Route path="/landing" element={<Landing />} />
     <Route
       path="/home"
       element={

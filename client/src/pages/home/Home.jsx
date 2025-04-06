@@ -16,10 +16,10 @@ const Home = () => {
       <div className="header">
   <div className="left">
     <h2>Ingredient IQ</h2>
-    <input type="text" placeholder="Search recipes..." className="search-input" />
   </div>
   <nav className="nav-links">
   <Link to="/">Home</Link>
+    <a href="/search">Search</a>
     <a href="/recipes">Recipes</a>
     <a href="/bookmarks">Bookmarks</a>
     <a href="/mealplans">Meal Plans</a>
