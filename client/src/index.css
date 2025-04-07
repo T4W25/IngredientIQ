@@ -1,178 +1,30 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-/* 
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
-    --radius: 0.5rem;
+
+@layer components {
+  .input-primary {
+    @apply w-full px-4 py-3 rounded-lg border-2 border-gray-200 
+    focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent
+    transition-all duration-200;
   }
 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
-  }
-}
-
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}  */
-
-Global Styles
-:root {
-  font-family: 'Inter', Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.6;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.9);
-  background-color: #ffffff;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* Reset Body & Root App Layout */
-body, #root {
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-  width: 100%;
-  background-color: #ffffff;
-}
-
-/* Links */
-a {
-  font-weight: 600;
-  color: #4CAF50;
-  text-decoration: none;
-  transition: color 0.3s ease-in-out;
-}
-
-a:hover {
-  color: #388E3C;
-}
-
-/* Headings */
-h1 {
-  font-size: 3rem;
-  line-height: 1.2;
-  font-weight: 700;
-  text-align: center;
-}
-
-/* Buttons */
-button {
-  border-radius: 8px;
-  border: none;
-  padding: 0.7em 1.4em;
-  font-size: 1rem;
-  font-weight: 600;
-  font-family: inherit;
-  background-color: #4CAF50;
-  color: white;
-  cursor: pointer;
-  transition: all 0.3s ease-in-out;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.15);
-}
-
-button:hover {
-  background-color: #388E3C;
-  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
-}
-
-button:focus,
-button:focus-visible {
-  outline: 3px solid #4CAF50;
-}
-
-/* Light Mode Styles */
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+  .btn-primary {
+    @apply px-6 py-3 bg-primary-600 text-white rounded-lg font-semibold
+    hover:bg-primary-700 transition-colors duration-200
+    focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
   }
 
-  a:hover {
-    color: #388E3C;
+  .filter-chip {
+    @apply px-4 py-2 rounded-full text-sm font-medium border-2
+    transition-all duration-200 hover:shadow-md flex items-center gap-2;
   }
 
-  button {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
+  .filter-chip-active {
+    @apply bg-primary-100 text-primary-800 border-primary-200;
   }
 
-  button:hover {
-    background-color: #388E3C;
-  }
-}
-
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-  h1 {
-    font-size: 2.2rem;
-  }
-
-  button {
-    font-size: 0.9rem;
-    padding: 0.6em 1.2em;
+  .filter-chip-inactive {
+    @apply bg-gray-50 text-gray-700 border-gray-200;
   }
 }
