@@ -1,14 +1,19 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
-import AppRoutes from "./routes/AppRoutes"; // ✅ Make sure this is correct
-
+import AppRoutes from "./routes/AppRoutes"; 
 import "./index.css"; // Or your global styles
+
+import { ToastProvider } from './components/ui/use-toast'; // ✅ double check this path!
+
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <AppRoutes />
-    </BrowserRouter>
+    <ToastProvider>
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
+    </ToastProvider>
   </React.StrictMode>
+
 );

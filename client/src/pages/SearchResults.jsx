@@ -53,7 +53,13 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Button from '../Components/ui/button';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/card';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent
+} from '../components/ui/card';
 import { useToast } from '../components/ui/use-toast';
 
 const SearchResults = () => {
@@ -71,13 +77,7 @@ const SearchResults = () => {
   useEffect(() => {
     const fetchSearchResults = async () => {
       try {
-        const query = searchParams.get('q') || '';
-        // TODO: Implement API call to fetch search results
-        // const response = await fetch(`/api/recipes/search?q=${query}`);
-        // const data = await response.json();
-        // setRecipes(data);
-
-        // Temporary mock data
+        // Mock data (with 2 added dishes)
         setRecipes([
           {
             id: 1,
@@ -86,26 +86,65 @@ const SearchResults = () => {
             prepTime: '15 minutes',
             difficulty: 'Easy',
             calories: 350,
-            image: 'https://example.com/pasta.jpg',
-            chef: {
-              name: 'Chef John',
-              avatar: 'https://example.com/avatar.jpg'
-            }
+            image: 'https://source.unsplash.com/400x300/?pasta',
+            chef: { name: 'Chef John', avatar: 'https://i.pravatar.cc/150?img=1' },
+            dietaryRestrictions: { isVegetarian: true, isVegan: true, isGlutenFree: true }
           },
           {
             id: 2,
-            title: 'Quinoa Buddha Bowl',
-            description: 'A protein-rich bowl packed with vegetables and healthy grains.',
+            title: 'Grilled Chicken Salad',
+            description: 'Lean grilled chicken served on a fresh bed of greens.',
+            prepTime: '15 minutes',
+            difficulty: 'Easy',
+            calories: 300,
+            image: 'https://source.unsplash.com/400x300/?salad',
+            chef: { name: 'Chef Lisa', avatar: 'https://i.pravatar.cc/150?img=4' },
+            dietaryRestrictions: { isVegetarian: false, isVegan: false, isGlutenFree: true }
+          },
+          {
+            id: 3,
+            title: 'Keto Avocado Wrap',
+            description: 'A low-carb wrap with creamy avocado and crispy bacon.',
+            prepTime: '10 minutes',
+            difficulty: 'Medium',
+            calories: 250,
+            image: 'https://source.unsplash.com/400x300/?avocado',
+            chef: { name: 'Chef Rob', avatar: 'https://i.pravatar.cc/150?img=5' },
+            dietaryRestrictions: { isVegetarian: true, isVegan: false, isGlutenFree: true }
+          },
+          {
+            id: 4,
+            title: 'Kids Mac & Cheese',
+            description: 'A creamy mac & cheese recipe made kid-friendly and fun.',
+            prepTime: '20 minutes',
+            difficulty: 'Easy',
+            calories: 400,
+            image: 'https://source.unsplash.com/400x300/?mac-n-cheese',
+            chef: { name: 'Chef Becky', avatar: 'https://i.pravatar.cc/150?img=6' },
+            dietaryRestrictions: { isVegetarian: true, isVegan: false, isGlutenFree: false }
+          },
+          {
+            id: 5,
+            title: 'Spicy Vegan Tacos',
+            description: 'Tacos with spicy black beans and fresh veggies, perfect for vegans.',
             prepTime: '20 minutes',
             difficulty: 'Medium',
-            calories: 450,
-            image: 'https://example.com/bowl.jpg',
-            chef: {
-              name: 'Chef Sarah',
-              avatar: 'https://example.com/avatar2.jpg'
-            }
+            calories: 320,
+            image: 'https://source.unsplash.com/400x300/?tacos',
+            chef: { name: 'Chef Miguel', avatar: 'https://i.pravatar.cc/150?img=7' },
+            dietaryRestrictions: { isVegetarian: true, isVegan: true, isGlutenFree: false }
           },
-          // Add more mock recipes as needed
+          {
+            id: 6,
+            title: 'Classic Beef Stroganoff',
+            description: 'Tender beef strips in a creamy mushroom sauce over noodles.',
+            prepTime: '30 minutes',
+            difficulty: 'Hard',
+            calories: 600,
+            image: 'https://source.unsplash.com/400x300/?beef',
+            chef: { name: 'Chef Elena', avatar: 'https://i.pravatar.cc/150?img=8' },
+            dietaryRestrictions: { isVegetarian: false, isVegan: false, isGlutenFree: false }
+          }
         ]);
       } catch (error) {
         toast({
@@ -128,7 +167,13 @@ const SearchResults = () => {
     }));
   };
 
+  // 🌐 Pull query and filter from searchParams
+  const query = (searchParams.get('q') || '').toLowerCase();
+  const urlFilters = searchParams.getAll("filter");
+
+  // 🔍 Apply all filters including query
   const filteredRecipes = recipes.filter(recipe => {
+    if (query && !recipe.title.toLowerCase().includes(query)) return false;
     if (filters.difficulty !== 'all' && recipe.difficulty !== filters.difficulty) return false;
     if (filters.prepTime !== 'all' && recipe.prepTime !== filters.prepTime) return false;
     if (filters.calories !== 'all') {
@@ -136,6 +181,11 @@ const SearchResults = () => {
       if (filters.calories === 'low' && calories > 300) return false;
       if (filters.calories === 'medium' && (calories <= 300 || calories > 500)) return false;
       if (filters.calories === 'high' && calories <= 500) return false;
+    }
+    if (urlFilters.length > 0) {
+      for (let filter of urlFilters) {
+        if (!recipe.dietaryRestrictions?.[filter]) return false;
+      }
     }
     return true;
   });
@@ -167,7 +217,7 @@ const SearchResults = () => {
         <h1 className="text-3xl font-bold mb-4">
           Search Results for "{searchParams.get('q') || 'all recipes'}"
         </h1>
-        
+
         <div className="flex flex-wrap gap-4 mb-6">
           <select
             value={filters.difficulty}
@@ -186,9 +236,10 @@ const SearchResults = () => {
             className="border rounded-md px-3 py-2"
           >
             <option value="all">All Prep Times</option>
-            <option value="15 minutes">Quick (15 mins)</option>
-            <option value="20 minutes">Medium (20 mins)</option>
-            <option value="30 minutes">Long (30+ mins)</option>
+            <option value="10 minutes">10 minutes</option>
+            <option value="15 minutes">15 minutes</option>
+            <option value="20 minutes">20 minutes</option>
+            <option value="30 minutes">30 minutes</option>
           </select>
 
           <select
@@ -198,7 +249,7 @@ const SearchResults = () => {
           >
             <option value="all">All Calories</option>
             <option value="low">Low (≤300)</option>
-            <option value="medium">Medium (301-500)</option>
+            <option value="medium">Medium (301–500)</option>
             <option value="high">High (&gt;500)</option>
           </select>
 
@@ -261,4 +312,4 @@ const SearchResults = () => {
   );
 };
 
-export default SearchResults; 
+export default SearchResults;

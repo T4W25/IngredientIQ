@@ -5,6 +5,7 @@ import Home from "../pages/home/Home";
 import Bookmarks from "../pages/bookmarks/Bookmarks";
 import MealPlanDashboard from "../pages/mealplan/MealPlanDashboard";
 import SearchResults from "../pages/SearchResults";
+import Search from "../pages/SearchBar"; // ✅ CORRECT!
 import Recipe from "../components/recipe/Recipe";
 import Profile from "../components/profile/Profile";
 import ChefDashboard from "../pages/chef/ChefDashboard";
@@ -63,6 +64,14 @@ const AppRoutes = () => (
     />
     <Route
       path="/search"
+      element={
+        <ProtectedRoute>
+          <Search/>
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/searchresults"
       element={
         <ProtectedRoute>
           <SearchResults />
