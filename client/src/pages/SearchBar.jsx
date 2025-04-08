@@ -3,6 +3,7 @@ import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import Navbar from "../Components/navbar";
 
 const DIETARY_OPTIONS = [
   { label: "Vegetarian", value: "isVegetarian", icon: "🥗" },
@@ -46,6 +47,8 @@ const Search = () => {
   };
 
   return (
+    <>
+    <Navbar/>
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-white p-4 sm:p-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -143,6 +146,7 @@ const Search = () => {
         </form>
       </motion.div>
     </div>
+    </>
   );
 };
 
