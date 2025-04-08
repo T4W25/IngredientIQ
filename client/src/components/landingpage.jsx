@@ -143,7 +143,7 @@ const Landing = () => {
         >
           <h2 className="text-3xl text-white font-bold mb-4">Start Cooking Smarter Today!</h2>
           <p className="mb-6 text-white">Join thousands of users discovering smarter ways to cook.</p>
-          <Link to="/auth">
+          <Link to="/moderator/dashboard">
             <Button variant="primary" className="text-lg px-8 py-3 bg-white text-primary-600 hover:bg-gray-100">
               Sign Up for Free
             </Button>

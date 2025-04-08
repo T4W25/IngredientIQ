@@ -11,6 +11,9 @@ import Profile from "../components/profile/Profile";
 import ChefDashboard from "../pages/chef/ChefDashboard";
 import Landing from "../Components/landingpage";
 import AddRecipe from "../pages/chef/AddRecipe";
+import ModeratorDashboard from "../pages/moderator/moderatorDashboard";
+import ChefVerification from "../pages/moderator/chefVerification";
+import Reports from "../pages/moderator/reports";
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("token");
@@ -22,6 +25,9 @@ const AppRoutes = () => (
     <Route path="/" index element={<Navigate to="/landing" />} />
     <Route path="/auth" element={<Auth />} />
     <Route path="/landing" element={<Landing />} />
+    <Route path="/moderator/dashboard" element={<ModeratorDashboard/>} />
+    <Route path="/moderator/chef-verification" element={<ChefVerification/>} />
+    <Route path="/moderator/reports" element={<Reports/>} />
     <Route
       path="/home"
       element={

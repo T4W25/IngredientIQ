@@ -1,4 +1,14 @@
 // IngredientsSection Component
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { 
+  PlusIcon, 
+  XMarkIcon, 
+  PhotoIcon,
+  VideoCameraIcon
+} from '@heroicons/react/24/outline';
+
 const IngredientsSection = ({ formData, setFormData, errors }) => {
     const addIngredient = () => {
       setFormData(prev => ({

@@ -1,4 +1,14 @@
  // InstructionsSection Component
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { 
+  PlusIcon, 
+  XMarkIcon, 
+  PhotoIcon,
+} from '@heroicons/react/24/outline';
+ 
+ 
  const InstructionsSection = ({ formData, setFormData, errors }) => {
     const addInstruction = () => {
       setFormData(prev => ({

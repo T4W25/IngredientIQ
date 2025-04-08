@@ -1,4 +1,13 @@
   // MediaSection Component
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { 
+  XMarkIcon, 
+  PhotoIcon,
+  VideoCameraIcon
+} from '@heroicons/react/24/outline';
+  
   const MediaSection = ({ formData, setFormData, errors }) => {
     const handleImageUpload = (e) => {
       const file = e.target.files[0];

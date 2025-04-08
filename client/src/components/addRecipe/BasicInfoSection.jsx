@@ -1,4 +1,9 @@
 // BasicInfoSection Component
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+
+
 const BasicInfoSection = ({ formData, setFormData, errors }) => {
     return (
       <div className="bg-white rounded-2xl shadow-2xl p-6 space-y-6">
