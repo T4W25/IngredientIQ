@@ -23,7 +23,7 @@ const Auth = () => {
   const handleRoleToggle = () => {
     setFormData({
       ...formData,
-      role: formData.role === "user" ? "chef" : "user",
+      role: formData.role === "user" ? "author" : "user",
     });
   };
 
@@ -48,7 +48,13 @@ const Auth = () => {
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("role", formData.role);
-        navigate("/home");
+
+        if (formData.role === "author") {
+          navigate("/chef-dashboard");
+        } else{
+          navigate("/home");
+        }
+        
       } else {
         setError("Unexpected response from the server");
       }
@@ -115,7 +121,7 @@ const Auth = () => {
             <label className="role-selector">
               <input
                 type="checkbox"
-                checked={formData.role === "chef"}
+                checked={formData.role === "author"}
                 onChange={handleRoleToggle}
               />
               Register as Chef
