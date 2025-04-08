@@ -14,8 +14,8 @@ import IngredientsSection from "../../Components/addRecipe/IngredientSection";
 import InstructionsSection from "../../Components/addRecipe/InstructionSection";
 
 // Import your existing components
-// import DietaryRestrictionsForm from "./DietaryRestrictionsForm";
-// import NutritionalInfoForm from "./NutritionalInfoForm";
+import DietaryRestrictionsForm from "../../Components/addRecipe/DietaryRestrictionsForm";
+import NutritionalInfoForm from "../../Components/addRecipe/NutritionalInfoForm";
 
 const INITIAL_FORM_STATE = {
   title: "",
@@ -147,7 +147,7 @@ const AddRecipe = () => {
                 errors={errors}
               />
 
-              {/* Nutritional Information
+              {/* Nutritional Information */}
               <NutritionalInfoForm 
                 nutritionalInfo={formData.nutritionalInfo}
                 onChange={(nutritionalInfo) => 
@@ -155,13 +155,13 @@ const AddRecipe = () => {
                 }
               />
 
-              {/* Dietary Restrictions *
+              {/* Dietary Restrictions */}
               <DietaryRestrictionsForm 
                 dietaryRestrictions={formData.dietaryRestrictions}
                 onChange={(dietaryRestrictions) => 
                   setFormData(prev => ({ ...prev, dietaryRestrictions }))
                 }
-              /> */}
+              /> 
 
               {/* Submit Button */}
               <div className="flex justify-end gap-4">
