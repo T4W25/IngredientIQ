@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import API_BASE_URL from "../../api/api";
-// Import icons from react-icons
+import { AuthContext } from "../../context/AuthContext";
 import { FaUser, FaLock, FaEnvelope, FaUtensils } from "react-icons/fa";
-import { motion } from "framer-motion"; // Add framer-motion for animations
+import { motion } from "framer-motion";
 
 const Auth = () => {
   const [isRegistering, setIsRegistering] = useState(false);
@@ -17,8 +17,8 @@ const Auth = () => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext); // ✅ Context login
 
-  // ... your existing handle functions ...
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -30,9 +30,10 @@ const Auth = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setIsLoading(true);
 
     try {
-      // Special handling for admin login
+      // Handle admin login
       if (!isRegistering && formData.email === "admin@gmail.com") {
         if (formData.password === "admin@123") {
           localStorage.setItem("token", "admin-token");
@@ -58,25 +59,45 @@ const Auth = () => {
 
       const response = await axios.post(endpoint, payload);
 
-      if (response.data.token) {
-        localStorage.setItem("token", response.data.token);
-        localStorage.setItem("role", formData.role);
-
-        switch (formData.role) {
-          case "author":
-            navigate("/chef-dashboard");
-            break;
-          case "user":
-            navigate("/home");
-            break;
-          default:
-            navigate("/home");
-        }
-      } else {
+    if (response.data.token) {
+          const token = response.data.token;
+          localStorage.setItem("token", token);
+          localStorage.setItem("role", formData.role);
+        
+          try {
+            const profileRes = await getUserProfile(token); // ⬅️ Fetch full user info
+            const userPayload = {
+              ...profileRes.data,     // includes name, email, profileImage, etc.
+              token,                  // include the token
+              role: formData.role     // in case backend doesn't return it
+            };
+        
+            login(userPayload); // ⬅️ Now pass complete user
+             // ✅ Delay navigation slightly to ensure context updates
+        setTimeout(() => {
+          switch (formData.role) {
+            case "author":
+              navigate("/chef-dashboard");
+              break;
+            case "user":
+              navigate("/home");
+              break;
+            default:
+              navigate("/home");
+          }
+        }, 100); // 100ms delay        
+          } catch (profileErr) {
+            console.error("Failed to fetch user profile:", profileErr);
+            setError("Login succeeded, but failed to load user profile.");
+          }
+        }      
+       else {
         setError("Unexpected response from the server");
       }
     } catch (err) {
       setError(err.response?.data?.message || "Server error");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -88,7 +109,6 @@ const Auth = () => {
         transition={{ duration: 0.5 }}
         className="w-full max-w-md"
       >
-        {/* Logo or Brand Icon */}
         <div className="text-center mb-8">
           <motion.div
             animate={{ rotate: 360 }}
@@ -279,7 +299,6 @@ const Auth = () => {
             </button>
           </form>
 
-          {/* Additional Info */}
           <p className="mt-6 text-center text-sm text-gray-600">
             {isRegistering ? "Already have an account? " : "Don't have an account? "}
             <button
