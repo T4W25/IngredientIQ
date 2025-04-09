@@ -78,6 +78,11 @@ const ChefDashboard = () => {
     setShowDeleteModal(true);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    window.location.href = "/auth";
+  };
+
   const handleDelete = async () => {
     try {
       await deleteRecipe(token, recipeToDelete._id);
@@ -91,23 +96,34 @@ const ChefDashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex justify-between items-center mb-8">
+      <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-3xl font-bold text-primary-800">Chef Dashboard</h1>
             {profile && (
               <p className="text-gray-600 mt-2">Welcome back, {profile.username}!</p>
             )}
           </div>
-          <Link
-            to="/add-recipe"
-            className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg
-              hover:bg-primary-700 transition-colors shadow-md hover:shadow-lg"
-          >
-            <PlusIcon className="w-5 h-5 mr-2" />
-            New Recipe
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link
+              to="/add-recipe"
+              className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg
+                hover:bg-primary-700 transition-colors shadow-md hover:shadow-lg"
+            >
+              <PlusIcon className="w-5 h-5 mr-2" />
+              New Recipe
+            </Link>
+            
+            <button onClick={handleLogout}>
+              <Link
+                to="/auth"
+                className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg
+                  hover:bg-primary-700 transition-colors shadow-md hover:shadow-lg"
+              >
+                Logout
+              </Link>
+            </button>
+          </div>
         </div>
-
         <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
           <div className="p-6 border-b border-gray-200">
             <h2 className="text-xl font-semibold text-gray-800">My Recipes</h2>

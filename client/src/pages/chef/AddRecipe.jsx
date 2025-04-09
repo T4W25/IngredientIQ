@@ -1,9 +1,10 @@
 // src/components/recipe/AddRecipe.jsx
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { 
   PlusIcon, 
+  ArrowLeftIcon,
   XMarkIcon, 
   PhotoIcon,
   VideoCameraIcon
@@ -101,6 +102,7 @@ const AddRecipe = () => {
   return (
     <>
       <div className="min-h-screen bg-gradient-to-br from-primary-50 to-white">
+          
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -108,6 +110,15 @@ const AddRecipe = () => {
             className="space-y-8"
           >
             {/* Form Header */}
+            <div className="flex items-center gap-4">
+              <Link
+                to="/chef-dashboard"
+                className="p-2 text-gray-600 hover:text-primary-600 
+                  transition-colors rounded-lg hover:bg-primary-50"
+              >
+                <ArrowLeftIcon className="w-5 h-5" />
+              </Link>
+            </div>
             <div className="bg-white rounded-2xl shadow-2xl p-6">
               <h1 className="text-3xl font-bold text-primary-800">
                 Create New Recipe
