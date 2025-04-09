@@ -1,11 +1,12 @@
-// server/controllers/RecipeController.js
+// server/controllers/recipeController.js
 const Recipe = require('../models/Recipe');
 
-// Retrieve a recipe by ID
 exports.getRecipeById = async (req, res) => {
   try {
-    const { recipeId } = req.params;
-    const recipe = await Recipe.findById(recipeId).populate('authorId', 'username email');
+    const recipe = await Recipe.findById(req.params.recipeId)
+      .populate('authorId', 'username email')
+      .populate('ratings.userId', 'username');
+    
     if (!recipe) {
       return res.status(404).json({ error: 'Recipe not found' });
     }
@@ -15,45 +16,84 @@ exports.getRecipeById = async (req, res) => {
   }
 };
 
-// Retrieve all recipes
 exports.getAllRecipes = async (req, res) => {
   try {
-    const recipes = await Recipe.find().populate('authorId', 'username email');
+    const recipes = await Recipe.find({ status: 'published' })
+      .populate('authorId', 'username email')
+      .sort('-createdAt');
+    
     res.status(200).json(recipes);
   } catch (error) {
     res.status(500).json({ error: 'Failed to retrieve recipes' });
   }
 };
 
-
-
-// Add a new recipe
 exports.addRecipe = async (req, res) => {
   try {
-    const recipeData = { ...req.body, authorId: req.user._id };
+    const recipeData = {
+      ...req.body,
+      authorId: req.user._id,
+      status: req.body.status || 'draft'
+    };
+
     const newRecipe = new Recipe(recipeData);
     await newRecipe.save();
+    
     res.status(201).json(newRecipe);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to add recipe' });
+    res.status(500).json({ 
+      error: 'Failed to add recipe',
+      details: error.message 
+    });
   }
 };
 
-// Retrieve all recipes by the author
 exports.getAuthorRecipes = async (req, res) => {
   try {
-    const recipes = await Recipe.find({ authorId: req.user._id });
+    const { status } = req.query;
+    let query = { authorId: req.user._id };
+    
+    if (status) {
+      query.status = status;
+    }
+
+    const recipes = await Recipe.find(query)
+      .sort('-createdAt')
+      .populate('ratings.userId', 'username');
+      
     res.status(200).json(recipes);
   } catch (error) {
     res.status(500).json({ error: 'Failed to retrieve recipes' });
   }
 };
 
-// Delete a recipe by ID
+exports.updateRecipe = async (req, res) => {
+  try {
+    const recipe = await Recipe.findOneAndUpdate(
+      { _id: req.params.recipeId, authorId: req.user._id },
+      { $set: req.body },
+      { new: true, runValidators: true }
+    ).populate('authorId', 'username email');
+
+    if (!recipe) {
+      return res.status(404).json({ error: 'Recipe not found or not authorized' });
+    }
+
+    res.status(200).json(recipe);
+  } catch (error) {
+    res.status(500).json({ 
+      error: 'Failed to update recipe',
+      details: error.message 
+    });
+  }
+};
+
 exports.deleteRecipe = async (req, res) => {
   try {
-    const { recipeId } = req.params;
-    const recipe = await Recipe.findOneAndDelete({ _id: recipeId, authorId: req.user._id });
+    const recipe = await Recipe.findOneAndDelete({
+      _id: req.params.recipeId,
+      authorId: req.user._id
+    });
 
     if (!recipe) {
       return res.status(404).json({ error: 'Recipe not found or not authorized' });

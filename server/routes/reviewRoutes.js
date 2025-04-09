@@ -4,13 +4,13 @@ const router = express.Router();
 const ReviewController = require('../controllers/reviewController');
 const auth = require('../middleware/authMiddleware');
 
-// Route to add a review to a recipe
-router.post('/:recipeId', auth, ReviewController.addReview);
+// Review management
+router.post('/recipe/:recipeId', auth,ReviewController.addReview);
+router.put('/recipe/:recipeId', auth, ReviewController.updateReview);
+router.delete('/recipe/:recipeId', auth, ReviewController.deleteReview);
 
-// Route to get all reviews for a specific recipe
-router.get('/:recipeId', ReviewController.getRecipeReviews);
-
-// Route to get all reviews for recipes uploaded by the author
-router.get('/author/my-reviews', auth, ReviewController.getAuthorRecipeReviews);
+// Get reviews
+router.get('/recipe/:recipeId', ReviewController.getRecipeReviews);
+router.get('/author/reviews', auth, ReviewController.getAuthorRecipeReviews);
 
 module.exports = router;

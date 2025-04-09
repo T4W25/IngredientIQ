@@ -29,7 +29,6 @@ const INITIAL_FORM_STATE = {
   category: "",
   mainImage: "",
   gallery: [],
-  video: "",
   ingredients: [{ name: "", quantity: "", unit: "" }],
   instructions: [{ step: 1, text: "", image: "" }],
   nutritionalInfo: {

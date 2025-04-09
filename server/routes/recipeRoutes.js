@@ -4,17 +4,16 @@ const router = express.Router();
 const RecipeController = require('../controllers/recipeController');
 const auth = require('../middleware/authMiddleware');
 
-// Route to get a recipe by ID and all recipes
+// Recipe retrieval
 router.get('/:recipeId', RecipeController.getRecipeById);
 router.get('/', RecipeController.getAllRecipes);
 
-// Route to add a new recipe
+// Recipe management
 router.post('/add', auth, RecipeController.addRecipe);
-
-// Route to get all recipes by the author
-router.get('/my-recipes', auth, RecipeController.getAuthorRecipes);
-
-// Route to delete a recipe by ID
+router.put('/:recipeId', auth, RecipeController.updateRecipe);
 router.delete('/:recipeId', auth, RecipeController.deleteRecipe);
+
+// Author-specific routes
+router.get('/author/my-recipes', auth,  RecipeController.getAuthorRecipes);
 
 module.exports = router;
