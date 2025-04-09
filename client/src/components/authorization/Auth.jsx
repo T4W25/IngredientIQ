@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import API_BASE_URL from "../../api/api";
-import { AuthContext } from "../../context/AuthContext";
+
 import { FaUser, FaLock, FaEnvelope, FaUtensils } from "react-icons/fa";
 import { motion } from "framer-motion";
 
@@ -17,7 +17,6 @@ const Auth = () => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext); // ✅ Context login
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -63,17 +62,9 @@ const Auth = () => {
           const token = response.data.token;
           localStorage.setItem("token", token);
           localStorage.setItem("role", formData.role);
+          localStorage.setItem("userId", response.data.userId || response.data._id);
+          localStorage.setItem("email", formData.email || response.data.email);
         
-          try {
-            const profileRes = await getUserProfile(token); // ⬅️ Fetch full user info
-            const userPayload = {
-              ...profileRes.data,     // includes name, email, profileImage, etc.
-              token,                  // include the token
-              role: formData.role     // in case backend doesn't return it
-            };
-        
-            login(userPayload); // ⬅️ Now pass complete user
-             // ✅ Delay navigation slightly to ensure context updates
         setTimeout(() => {
           switch (formData.role) {
             case "author":
@@ -86,11 +77,7 @@ const Auth = () => {
               navigate("/home");
           }
         }, 100); // 100ms delay        
-          } catch (profileErr) {
-            console.error("Failed to fetch user profile:", profileErr);
-            setError("Login succeeded, but failed to load user profile.");
-          }
-        }      
+      }    
        else {
         setError("Unexpected response from the server");
       }

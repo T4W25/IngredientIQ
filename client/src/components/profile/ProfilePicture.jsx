@@ -1,7 +1,7 @@
 import React from "react";
 
 const ProfilePicture = ({ imageUrl, altText = "Profile Picture" }) => {
-  const defaultImage = "https://via.placeholder.com/150";
+  const defaultImage = "./default-avatar.png"; // Path to your default image
 
   return (
     <div className="flex justify-center mb-6">

@@ -30,7 +30,7 @@ export const logoutAuthor = async () => {
 //PROFILE MANAGEMENT
 export const getUserProfile = async (token) => {
   return axios.get(`${API_BASE_URL}/auth/profile/user`, {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: { Authorization: `Bearer ${token}` }
   });
 };
 

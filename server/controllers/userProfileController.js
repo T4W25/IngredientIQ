@@ -2,21 +2,23 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 //Get User Profile
 const getUserProfile = async (req, res) => {
-  const userId = req.user.id; 
-
   try {
-    const user = await User.findById(userId).select("-passwordHash"); 
-    if (!user) return res.status(404).json({ message: "User not found" });
+    const user = await User.findById(req.user._id).select("-passwordHash");
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
 
     res.json({
       id: user._id,
-      name: user.name,
+      username: user.username, // Changed from name to username to match model
       email: user.email,
       bio: user.bio || "",
       profilePicture: user.profilePicture || "",
+      createdAt: user.createdAt
     });
   } catch (err) {
-    res.status(500).json({ message: "Server error" });
+    console.error('Error in getUserProfile:', err);
+    res.status(500).json({ error: "Server error" });
   }
 };
 
