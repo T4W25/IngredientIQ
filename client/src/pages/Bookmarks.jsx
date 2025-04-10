@@ -1,10 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { getBookmarks } from "../api/api";
-import { motion } from "framer-motion";
-import { FaClock, FaUtensils, FaUserFriends, FaTrash, FaBookmark } from "react-icons/fa";
-import { removeBookmark } from "../api/api";
-import { toast } from "react-toastify";
+import React, { useEffect, useState } from "react";
+
 
 const Bookmarks = () => {
   const [bookmarks, setBookmarks] = useState([]);
