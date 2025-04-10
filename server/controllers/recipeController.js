@@ -48,7 +48,7 @@ exports.getRecipes = async (req, res) => {
 
 exports.getRecipeById = async (req, res) => {
   try {
-    const recipe = await Recipe.findById(req.params.id)
+    const recipe = await Recipe.findById(req.params.recipeId)
       .populate('authorId', 'name profileImage');
     
     if (!recipe) {
@@ -74,9 +74,13 @@ exports.addRecipe = async (req, res) => {
     };
 
     // Validate base64 images
-    if (!recipeData.mainImage.startsWith('data:image/')) {
+    if (
+      recipeData.mainImage &&
+      !recipeData.mainImage.startsWith('data:image/')
+    ) {
       return res.status(400).json({ error: 'Invalid main image format' });
     }
+    
 
     if (recipeData.gallery) {
       for (let image of recipeData.gallery) {

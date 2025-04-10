@@ -72,26 +72,15 @@ const recipeSchema = new Schema({
     default: 'lunch',
     trim: true
   },
-  mainImage: { 
+  mainImage: {
     type: String,
-    required: [true, 'Main image is required'],
-    validate: {
-      validator: function(v) {
-        // Basic URL validation
-        return /^(http|https):\/\/[^ "]+$/.test(v);
-      },
-      message: props => `${props.value} is not a valid image URL!`
-    }
+    default: ""  // ✅ no validation at all
   },
-  gallery: [{ 
-    type: String,
-    validate: {
-      validator: function(v) {
-        return !v || /^(http|https):\/\/[^ "]+$/.test(v);
-      },
-      message: props => `${props.value} is not a valid image URL!`
-    }
+  
+  gallery: [{
+    type: String  // ✅ accepts any string or leave empty
   }],
+  
 
   ingredients: [{
     name: { 
@@ -136,7 +125,7 @@ const recipeSchema = new Schema({
   },
   authorId: { 
     type: Schema.Types.ObjectId, 
-    ref: 'user', 
+    ref: 'User', 
     required: [true, 'Author ID is required']
   },
   status: {
@@ -179,4 +168,5 @@ recipeSchema.pre('save', function (next) {
   next();
 });
 
+mongoose.models = {};
 module.exports = mongoose.model('Recipe', recipeSchema);

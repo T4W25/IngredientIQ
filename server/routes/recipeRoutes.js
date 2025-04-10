@@ -5,6 +5,7 @@ const RecipeController = require('../controllers/recipeController');
 const auth = require('../middleware/authMiddleware');
 
 // Recipe retrieval
+router.get('/moderation-queue', RecipeController.getDraftRecipes);
 router.get('/:recipeId', RecipeController.getRecipeById);
 //router.get('/', RecipeController.getAllRecipes);
 
@@ -12,7 +13,6 @@ router.get('/:recipeId', RecipeController.getRecipeById);
 router.post('/add', auth, RecipeController.addRecipe);
 router.put('/:recipeId', auth, RecipeController.updateRecipe);
 router.delete('/:recipeId', auth, RecipeController.deleteRecipe);
-router.get('/moderation-queue', RecipeController.getDraftRecipes); // optional: add adminAuth
 router.patch('/:id/publish', RecipeController.publishRecipe);
 
 // Author-specific routes
