@@ -20,6 +20,7 @@ const ProfileForm = ({ user, setUser, setIsEditing, refreshProfile }) => {
   const [loading, setLoading] = useState(false);
   const [showPasswordFields, setShowPasswordFields] = useState(false);
 
+  const navigate = useNavigate();
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -83,6 +84,7 @@ const ProfileForm = ({ user, setUser, setIsEditing, refreshProfile }) => {
 
     setLoading(true);
     try {
+      
       const token = localStorage.getItem('token');
       const updateData = {
         username: formData.username,
@@ -106,7 +108,7 @@ const ProfileForm = ({ user, setUser, setIsEditing, refreshProfile }) => {
       toast.error(errorMessage);
     } finally {
       setLoading(false);
-      nevigate('/profile'); // Redirect to profile page after update
+      navigate('/profile'); // Redirect to profile page after update
     }
   };
 

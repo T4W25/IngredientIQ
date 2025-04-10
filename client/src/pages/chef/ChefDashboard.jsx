@@ -103,7 +103,15 @@ const ChefDashboard = () => {
               <p className="text-gray-600 mt-2">Welcome back, {profile.username}!</p>
             )}
           </div>
+          
           <div className="flex items-center gap-4">
+            <Link
+              to="/chef-profile"
+              className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg
+                hover:bg-primary-700 transition-colors shadow-md hover:shadow-lg"
+            >
+              Profile
+            </Link>
             <Link
               to="/add-recipe"
               className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg
@@ -112,7 +120,6 @@ const ChefDashboard = () => {
               <PlusIcon className="w-5 h-5 mr-2" />
               New Recipe
             </Link>
-            
             <button onClick={handleLogout}>
               <Link
                 to="/auth"
