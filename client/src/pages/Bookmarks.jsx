@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import API_BASE_URL from "../../api/api";
 
 const Bookmarks = () => {
   const [bookmarks, setBookmarks] = useState([]);
