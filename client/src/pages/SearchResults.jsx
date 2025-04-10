@@ -1,7 +1,7 @@
 
   import React, { useState, useEffect } from 'react';
   import { useSearchParams } from 'react-router-dom';
-  import Button from '../Components/ui/button';
+  import Button from '../components/ui/button';
   import {
     Card,
     CardHeader,
@@ -10,7 +10,6 @@
     CardContent
   } from '../components/ui/card';
   import { useToast } from '../components/ui/use-toast';
-import Navbar from '../Components/navbar';
 
   const SearchResults = () => {
     const [searchParams] = useSearchParams();

@@ -4,7 +4,6 @@ import MealPlan from "../../components/meal-plan/MealPlan";
 import GroceryList from "../../components/meal-plan/GroceryList";
 import MealPlanCalendar from "../../components/meal-plan/MealPlanCalendar";
 import { getBookmarks } from "../../api/api";
-import './MealPlanDashboard.css';
 
 
 const defaultPlan = {

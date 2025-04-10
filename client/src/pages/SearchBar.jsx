@@ -3,7 +3,6 @@ import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import Navbar from "../Components/navbar";
 
 const DIETARY_OPTIONS = [
   { label: "Vegetarian", value: "isVegetarian", icon: "🥗" },

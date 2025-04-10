@@ -11,14 +11,15 @@ import {
   PhotoIcon,
   VideoCameraIcon
 } from '@heroicons/react/24/outline';
-import BasicInfoSection from "../../Components/addRecipe/BasicInfoSection";
-import MediaSection from "../../Components/addRecipe/mediaSection";  
-import IngredientsSection from "../../Components/addRecipe/IngredientSection";
-import InstructionsSection from "../../Components/addRecipe/InstructionSection";
+import BasicInfoSection from "../../Components/recipe/BasicInfoSection"
+import MediaSection from "../../Components/recipe/mediaSection";  
+import IngredientsSection from "../../Components/recipe/IngredientSection";
+import InstructionsSection from "../../Components/recipe/InstructionSection";
 
 // Import your existing components
-import DietaryRestrictionsForm from "../../Components/addRecipe/DietaryRestrictionsForm";
-import NutritionalInfoForm from "../../Components/addRecipe/NutritionalInfoForm";
+import DietaryRestrictionsForm from "../../Components/recipe/DietaryRestrictionsForm";
+import NutritionalInfoForm from "../../Components/recipe/NutritionalInfoForm";
+import { Component } from "react";
 
 const INITIAL_FORM_STATE = {
   title: "",

@@ -1,6 +1,6 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import Auth from "../Components/authorization/Auth";  
+import Auth from "../components/authorization/Auth";
 import Home from "../pages/Home";
 import Bookmarks from "../pages/Bookmarks";
 import MealPlanDashboard from "../pages/mealplan/MealPlanDashboard";
@@ -9,7 +9,7 @@ import Search from "../pages/SearchBar"; // ✅ CORRECT!
 import Recipe from "../pages/AllRecipe";
 import Profile from "../components/profile/Profile";
 import ChefDashboard from "../pages/chef/ChefDashboard";
-import Landing from "../Components/landingpage";
+import Landing from "../pages/landingpage";
 import AddRecipe from "../pages/chef/AddRecipe";
 import ModeratorDashboard from "../pages/moderator/moderatorDashboard";
 import ChefVerification from "../pages/moderator/chefVerification";

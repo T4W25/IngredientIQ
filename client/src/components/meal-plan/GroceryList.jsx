@@ -1,6 +1,5 @@
 // src/components/meal plan/GroceryList.jsx
 import React from "react";
-import "./MealPlan.css";
 
 
 

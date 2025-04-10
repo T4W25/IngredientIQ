@@ -9,7 +9,6 @@ import {
   EyeIcon,
   ChartBarIcon
 } from '@heroicons/react/24/outline';
-import Navbar from "../../Components/navbar";
 import { getAuthorProfile, getRecipes, deleteRecipe } from "../../api/api";
 
 const DeleteModal = ({ recipe, onConfirm, onCancel }) => (
