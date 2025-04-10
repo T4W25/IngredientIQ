@@ -6,7 +6,7 @@ import Bookmarks from "../pages/Bookmarks";
 import MealPlanDashboard from "../pages/mealplan/MealPlanDashboard";
 import SearchResults from "../pages/SearchResults";
 import Search from "../pages/SearchBar"; // ✅ CORRECT!
-import Recipe from "../components/recipe/Recipe";
+import Recipe from "../pages/AllRecipe";
 import Profile from "../components/profile/Profile";
 import ChefDashboard from "../pages/chef/ChefDashboard";
 import Landing from "../Components/landingpage";

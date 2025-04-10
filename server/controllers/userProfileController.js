@@ -24,13 +24,14 @@ const getUserProfile = async (req, res) => {
 
 // Update user profile
 const updateUserProfile = async (req, res) => {
-  const { email, password, bio, profilePicture } = req.body;
+  const { username, email, password, bio, profilePicture } = req.body;
   const userId = req.user.id;
 
   try {
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
+    if (username) user.username = username;
     if (email) user.email = email;
     if (password) {
       const salt = await bcrypt.genSalt(10);

@@ -73,12 +73,26 @@ const recipeSchema = new Schema({
     trim: true
   },
   mainImage: { 
-    type: String,  // URL or file path
-    required: [true, 'Main image is required']
+    type: String,
+    required: [true, 'Main image is required'],
+    validate: {
+      validator: function(v) {
+        // Basic URL validation
+        return /^(http|https):\/\/[^ "]+$/.test(v);
+      },
+      message: props => `${props.value} is not a valid image URL!`
+    }
   },
   gallery: [{ 
-    type: String  // URLs or file paths
+    type: String,
+    validate: {
+      validator: function(v) {
+        return !v || /^(http|https):\/\/[^ "]+$/.test(v);
+      },
+      message: props => `${props.value} is not a valid image URL!`
+    }
   }],
+
   ingredients: [{
     name: { 
       type: String, 

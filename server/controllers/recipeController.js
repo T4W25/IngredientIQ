@@ -1,33 +1,72 @@
 // server/controllers/recipeController.js
 const Recipe = require('../models/Recipe');
 
+// server/controllers/recipeController.js
+const Recipe = require('../models/Recipe');
+
+exports.getRecipes = async (req, res) => {
+  try {
+    const {
+      search,
+      category,
+      cuisine,
+      difficulty,
+      dietary,
+      status = 'published'
+    } = req.query;
+
+    // Build query
+    const query = { status };
+
+    if (search) {
+      query.$text = { $search: search };
+    }
+    if (category) {
+      query.category = category;
+    }
+    if (cuisine) {
+      query.cuisine = cuisine;
+    }
+    if (difficulty) {
+      query.difficulty = difficulty;
+    }
+    if (dietary) {
+      query[`dietaryRestrictions.${dietary}`] = true;
+    }
+
+    const recipes = await Recipe.find(query)
+      .populate('authorId', 'name profileImage')
+      .sort({ createdAt: -1 });
+
+    res.json(recipes);
+
+  } catch (error) {
+    console.error('Error fetching recipes:', error);
+    res.status(500).json({ 
+      message: 'Error fetching recipes',
+      error: error.message 
+    });
+  }
+};
+
 exports.getRecipeById = async (req, res) => {
   try {
-    const recipe = await Recipe.findById(req.params.recipeId)
-      .populate('authorId', 'username email')
-      .populate('ratings.userId', 'username');
+    const recipe = await Recipe.findById(req.params.id)
+      .populate('authorId', 'name profileImage');
     
     if (!recipe) {
-      return res.status(404).json({ error: 'Recipe not found' });
+      return res.status(404).json({ message: 'Recipe not found' });
     }
-    res.status(200).json(recipe);
+
+    res.json(recipe);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to retrieve recipe' });
+    console.error('Error fetching recipe:', error);
+    res.status(500).json({ 
+      message: 'Error fetching recipe',
+      error: error.message 
+    });
   }
 };
-
-exports.getAllRecipes = async (req, res) => {
-  try {
-    const recipes = await Recipe.find({ status: 'published' })
-      .populate('authorId', 'username email')
-      .sort('-createdAt');
-    
-    res.status(200).json(recipes);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to retrieve recipes' });
-  }
-};
-
 // server/controllers/recipeController.js
 exports.addRecipe = async (req, res) => {
   try {

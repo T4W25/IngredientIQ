@@ -1,7 +1,9 @@
 import React from "react";
+import DefaultAvatar from "../../assets/default-avatar.png"; // Path to your default image
+import Avatar from '../common/Avatar';
 
 const ProfilePicture = ({ imageUrl, altText = "Profile Picture" }) => {
-  const defaultImage = "./default-avatar.png"; // Path to your default image
+  const defaultImage = Avatar; // Path to your default image
 
   return (
     <div className="flex justify-center mb-6">
