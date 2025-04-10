@@ -62,7 +62,7 @@ export const getRecipeById = async (id) => {
 };
 
 export const createRecipe = async (token, recipeData) => {
-  return axios.post(`${API_BASE_URL}/recipes`, recipeData, {
+  return axios.post(`${API_BASE_URL}/recipes/add`, recipeData, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
