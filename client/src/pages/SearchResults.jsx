@@ -1,18 +1,20 @@
 
   import React, { useState, useEffect } from 'react';
-  import { useSearchParams } from 'react-router-dom';
+  import { useSearchParams, useNavigate } from 'react-router-dom';
   import { searchRecipes } from '../api/api';
-  import Button from '../components/ui/button';
+  import Button from '../Components/ui/button';
   import {
     Card,
     CardHeader,
     CardTitle,
     CardDescription,
     CardContent
-  } from '../components/ui/card';
-  import { useToast } from '../components/ui/use-toast';
+  } from '../Components/ui/card';
+  import { useToast } from '../Components/ui/use-toast';
   import Navbar from '../Components/ui/navbar';
 
+  
+  const navigate = useNavigate();
   const SearchResults = () => {
     const [searchParams] = useSearchParams();
     const [recipes, setRecipes] = useState([]);
@@ -25,6 +27,12 @@
     });
     const [sortBy, setSortBy] = useState('relevance');
     const { toast } = useToast();
+
+
+    useNavigate(); // Initialize useNavigate inside the function
+    const handleRecipeClick = (recipeId) => {
+      navigate(`/recipe/${recipeId}`);
+    };
 
     useEffect(() => {
       const fetchSearchResults = async () => {
@@ -103,85 +111,51 @@
       });
     };
   
+  
+    const filteredAndSortedRecipes = getFilteredAndSortedRecipes();
     const handleFilterChange = (filterType, value) => {
       setFilters(prev => ({
         ...prev,
         [filterType]: value
       }));
     };
-  
-    const filteredAndSortedRecipes = getFilteredAndSortedRecipes();
-    // const handleFilterChange = (filterType, value) => {
-    //   setFilters(prev => ({
-    //     ...prev,
-    //     [filterType]: value
-    //   }));
-    // };
 
-    // // 🌐 Pull query and filter from searchParams
-    // const query = (searchParams.get('q') || '').toLowerCase();
-    // const urlFilters = searchParams.getAll("filter");
+    // 🌐 Pull query and filter from searchParams
+    const query = (searchParams.get('q') || '').toLowerCase();
+    const urlFilters = searchParams.getAll("filter");
 
-    // // 🔍 Apply all filters including query
-    // const filteredRecipes = recipes.filter(recipe => {
-    //   if (query && !recipe.title.toLowerCase().includes(query)) return false;
-    //   if (filters.difficulty !== 'all' && recipe.difficulty !== filters.difficulty) return false;
-    //   if (filters.prepTime !== 'all' && recipe.prepTime !== filters.prepTime) return false;
-    //   if (filters.calories !== 'all') {
-    //     const calories = parseInt(recipe.calories);
-    //     if (filters.calories === 'low' && calories > 300) return false;
-    //     if (filters.calories === 'medium' && (calories <= 300 || calories > 500)) return false;
-    //     if (filters.calories === 'high' && calories <= 500) return false;
-    //   }
-    //   if (urlFilters.length > 0) {
-    //     for (let filter of urlFilters) {
-    //       if (!recipe.dietaryRestrictions?.[filter]) return false;
-    //     }
-    //   }
-    //   return true;
-    // });
+    // 🔍 Apply all filters including query
+    const filteredRecipes = recipes.filter(recipe => {
+      if (query && !recipe.title.toLowerCase().includes(query)) return false;
+      if (filters.difficulty !== 'all' && recipe.difficulty !== filters.difficulty) return false;
+      if (filters.prepTime !== 'all' && recipe.prepTime !== filters.prepTime) return false;
+      if (filters.calories !== 'all') {
+        const calories = parseInt(recipe.calories);
+        if (filters.calories === 'low' && calories > 300) return false;
+        if (filters.calories === 'medium' && (calories <= 300 || calories > 500)) return false;
+        if (filters.calories === 'high' && calories <= 500) return false;
+      }
+      if (urlFilters.length > 0) {
+        for (let filter of urlFilters) {
+          if (!recipe.dietaryRestrictions?.[filter]) return false;
+        }
+      }
+      return true;
+    });
 
-    // const sortedRecipes = [...filteredRecipes].sort((a, b) => {
-    //   switch (sortBy) {
-    //     case 'prepTime':
-    //       return a.prepTime.localeCompare(b.prepTime);
-    //     case 'calories':
-    //       return a.calories - b.calories;
-    //     case 'difficulty':
-    //       return a.difficulty.localeCompare(b.difficulty);
-    //     default:
-    //       return 0;
-    //   }
-    // });
+    const sortedRecipes = [...filteredRecipes].sort((a, b) => {
+      switch (sortBy) {
+        case 'prepTime':
+          return a.prepTime.localeCompare(b.prepTime);
+        case 'calories':
+          return a.calories - b.calories;
+        case 'difficulty':
+          return a.difficulty.localeCompare(b.difficulty);
+        default:
+          return 0;
+      }
+    });
 
-
-    const renderRecipeCard = (recipe) => (
-      <Card key={recipe._id} className="hover:shadow-lg transition-shadow">
-        <CardHeader>
-          <img
-            src={recipe.mainImage || 'https://via.placeholder.com/400x300'}
-            alt={recipe.title}
-            className="w-full h-48 object-cover rounded-t-lg"
-          />
-          <CardTitle className="mt-4">{recipe.title}</CardTitle>
-          <CardDescription>{recipe.description}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center space-x-2">
-              <span className="text-sm">{recipe.authorId?.username || 'Anonymous'}</span>
-            </div>
-            <span className="text-sm text-muted-foreground">{recipe.prepTime} mins</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">{recipe.difficulty}</span>
-            <span className="text-sm text-muted-foreground">
-              {recipe.nutritionalInfo?.calories || 0} calories
-            </span>
-          </div>
-        </CardContent>
-      </Card>
-    );
 
     if (loading) {
       return (
@@ -259,52 +233,74 @@
             <>
               {/* Results Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredAndSortedRecipes.map((recipe) => (
-                  <Card key={recipe._id} className="hover:shadow-lg transition-shadow">
-                    <CardHeader>
-                      <img
-                        src={recipe.mainImage || 'https://via.placeholder.com/400x300'}
-                        alt={recipe.title}
-                        className="w-full h-48 object-cover rounded-t-lg"
-                      />
-                      <CardTitle className="mt-4">{recipe.title}</CardTitle>
-                      <CardDescription>{recipe.description}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center space-x-2">
-                          <span className="text-sm">{recipe.authorId?.username || 'Anonymous'}</span>
+                {sortedRecipes.length === 0 ? (
+                  <div className="col-span-full text-center text-gray-500 py-8">
+                    No recipes found.
+                  </div>
+                ) : (
+                  sortedRecipes.map((recipe) => (
+                    <Card 
+                      key={recipe._id} 
+                      className="hover:shadow-lg transition-shadow cursor-pointer"
+                      onClick={() => handleRecipeClick(recipe._id)} // Add onClick handler
+                    >
+                      <CardHeader>
+                        <img
+                          src={recipe.mainImage || 'https://via.placeholder.com/400x300'}
+                          alt={recipe.title}
+                          className="w-full h-48 object-cover rounded-t-lg"
+                        />
+                        <CardTitle className="mt-4">{recipe.title}</CardTitle>
+                        <CardDescription>{recipe.description}</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center space-x-2">
+                            <span className="text-sm">{recipe.authorId?.username || 'Anonymous'}</span>
+                          </div>
+                          <span className="text-sm text-muted-foreground">
+                            Prep: {recipe.prepTime}m | Cook: {recipe.cookTime}m
+                          </span>
                         </div>
-                        <span className="text-sm text-muted-foreground">
-                          Prep: {recipe.prepTime}m | Cook: {recipe.cookTime}m
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium capitalize">{recipe.difficulty}</span>
-                        <span className="text-sm text-muted-foreground">
-                          {recipe.nutritionalInfo?.calories || 0} calories
-                        </span>
-                      </div>
-                      {recipe.averageRating > 0 && (
-                        <div className="mt-2 text-sm text-yellow-500">
-                          Rating: {recipe.averageRating.toFixed(1)} ⭐
+                        
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium capitalize">{recipe.difficulty}</span>
+                          <span className="text-sm text-muted-foreground">
+                            {recipe.nutritionalInfo?.calories || 0} calories
+                          </span>
                         </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                ))}
+
+                        {/* Dietary Restrictions Tags */}
+                        {recipe.dietaryRestrictions && (
+                          <div className="mt-3 flex flex-wrap gap-2">
+                            {Object.entries(recipe.dietaryRestrictions)
+                              .filter(([_, value]) => value === true)
+                              .map(([key]) => (
+                                <span
+                                  key={key}
+                                  className="px-2 py-1 bg-primary-50 text-primary-700 rounded-full text-xs"
+                                >
+                                  {key.replace('is', '').replace(/([A-Z])/g, ' $1').trim()}
+                                </span>
+                              ))}
+                          </div>
+                        )}
+
+                        {/* Rating */}
+                        {recipe.averageRating > 0 && (
+                          <div className="mt-2 flex items-center gap-1">
+                            <span className="text-sm text-yellow-500">★</span>
+                            <span className="text-sm">{recipe.averageRating.toFixed(1)}</span>
+                            <span className="text-sm text-gray-500">
+                              ({recipe.totalRatings} {recipe.totalRatings === 1 ? 'review' : 'reviews'})
+                            </span>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
               </div>
-  
-              {/* No Results State */}
-              {filteredAndSortedRecipes.length === 0 && (
-                <div className="text-center py-12">
-                  <h2 className="text-2xl font-bold mb-4">No recipes found</h2>
-                  <p className="text-muted-foreground mb-4">
-                    Try adjusting your filters or search terms
-                  </p>
-                  <Button onClick={() => window.history.back()}>Go Back</Button>
-                </div>
-              )}
             </>
           )}
         </div>

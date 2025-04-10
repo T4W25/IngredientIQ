@@ -2,7 +2,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import RecipeCard from "../components/recipe/RecipeCard";
+import RecipeCard from "../Components/recipe/RecipeCard";
 import sampleRecipes from "../assets/sampleRecipes";
 import { 
   ChevronRightIcon, 

@@ -2,16 +2,17 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getRecipeById, addBookmark, removeBookmark } from '../../api/api';
+import { getRecipeById, addBookmark, removeBookmark } from '../api/api';
 import { FaClock, FaUtensils, FaUserFriends, FaBookmark, FaRegBookmark, FaCheck, FaTimes, FaUser, FaStar, FaCalendar  } from 'react-icons/fa';
 import axios from 'axios';
-import IngredientsList from './IngredientsList';
-import InstructionSteps from './InstructionSteps';
-import NutritionalInfo from './NutritionalInfo';
-import DietaryRestrictions from './DietaryRestrictions';
-import ChefProfile from './ChefProfile';
-import ReviewSection from './ReviewSection';
+// import IngredientsList from './IngredientsList';
+// import InstructionSteps from './InstructionSteps';
+// import NutritionalInfo from './NutritionalInfo';
+// import DietaryRestrictions from './DietaryRestrictions';
+// import ChefProfile from './ChefProfile';
+// import ReviewSection from './ReviewSection';
 import { toast } from 'react-toastify';
+import Navbar from '../Components/ui/navbar';
 
 const RecipeDetail = () => {
   const { id } = useParams();
@@ -66,6 +67,8 @@ const RecipeDetail = () => {
   }
 
   return (
+    <>
+    <Navbar/>
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -123,6 +126,7 @@ const RecipeDetail = () => {
         </div>
       </div>
     </motion.div>
+    </>
   );
 };
 

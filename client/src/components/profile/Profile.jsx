@@ -5,7 +5,7 @@ import { getUserProfile } from '../../api/api';
 import ProfileForm from './ProfileForm';
 import ProfileView from './ProfileView';
 import { toast } from 'react-toastify';
-import Navbar from '../Components/ui/navbar';
+import Navbar from '../ui/navbar';
 
 const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);

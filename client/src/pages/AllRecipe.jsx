@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom'; // Add this import
 import { getRecipes } from '../api/api';
 import Navbar from '../Components/ui/navbar';
 import {
@@ -7,9 +8,10 @@ import {
   CardTitle,
   CardDescription,
   CardContent
-} from '../components/ui/card';
+} from '../Components/ui/card';
 
 const AllRecipes = () => {
+  const navigate = useNavigate(); // Add this
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -30,6 +32,11 @@ const AllRecipes = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Add this function to handle card click
+  const handleRecipeClick = (recipeId) => {
+    navigate(`/recipe/${recipeId}`);
   };
 
   return (
@@ -56,7 +63,11 @@ const AllRecipes = () => {
               </div>
             ) : (
               recipes.map((recipe) => (
-                <Card key={recipe._id} className="hover:shadow-lg transition-shadow">
+                <Card 
+                  key={recipe._id} 
+                  className="hover:shadow-lg transition-shadow cursor-pointer"
+                  onClick={() => handleRecipeClick(recipe._id)}
+                >
                   <CardHeader>
                     <img
                       src={recipe.mainImage || 'https://via.placeholder.com/400x300'}
@@ -120,4 +131,4 @@ const AllRecipes = () => {
   );
 };
 
-export default AllRecipes;
+export default AllRecipes;  
