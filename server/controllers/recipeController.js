@@ -67,6 +67,10 @@ exports.getRecipeById = async (req, res) => {
 // server/controllers/recipeController.js
 exports.addRecipe = async (req, res) => {
   try {
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ error: 'Unauthorized - author ID missing' });
+    }
+    
     const recipeData = {
       ...req.body,
       authorId: req.user._id,
@@ -190,3 +194,16 @@ exports.publishRecipe = async (req, res) => {
     res.status(500).json({ error: 'Failed to publish recipe' });
   }
 };
+
+exports.getAllRecipes = async (req, res) => {
+  try {
+    const recipes = await Recipe.find({ status: 'published' })
+      .sort({ createdAt: -1 })
+      .populate('authorId', 'username profilePicture');
+
+    res.status(200).json(recipes);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch all recipes' });
+  }
+};
+

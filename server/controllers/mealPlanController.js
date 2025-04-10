@@ -3,6 +3,9 @@ const MealPlan = require('../models/MealPlan');
 const { validationResult } = require('express-validator');
 
 const createMealPlan = async (req, res) => {
+  if (!req.user || !req.user._id) {
+    return res.status(401).json({ error: 'Unauthorized - user ID missing' });
+  }  
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -29,6 +32,9 @@ const createMealPlan = async (req, res) => {
 
 const getGroceryList = async (req, res) => {
   try {
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ error: 'Unauthorized - user ID missing' });
+    }
     const mealPlan = await MealPlan.findOne({ _id: req.params.id, userId: req.user.id }).populate('recipes.recipeId');
     if (!mealPlan) {
       return res.status(404).json({ message: 'Meal plan not found' });

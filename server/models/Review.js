@@ -30,6 +30,7 @@ reviewSchema.statics.calculateAverageRating = async function(recipeId) {
   ]);
 
   try {
+    const Recipe = require('./Recipe');
     await Recipe.findByIdAndUpdate(recipeId, {
       averageRating: result[0]?.averageRating || 0,
       totalRatings: result[0]?.totalRatings || 0

@@ -11,7 +11,7 @@ const recipeRoutes = require('./routes/recipeRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
 const cors = require("cors");
-
+const moderatorRoutes = require('./routes/moderatorRoutes');
 
 // Load environment variables from .env file
 dotenv.config();
@@ -71,3 +71,5 @@ app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: 'Something broke!' });
 });
+
+app.use('/api/moderator', moderatorRoutes);

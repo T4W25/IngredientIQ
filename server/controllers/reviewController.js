@@ -4,6 +4,9 @@ const Recipe = require('../models/Recipe');
 
 exports.addReview = async (req, res) => {
   try {
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ error: 'Unauthorized - user ID missing' });
+    }
     const { recipeId } = req.params;
     const { rating, comment } = req.body;
     const userId = req.user._id;
@@ -78,6 +81,9 @@ exports.getAuthorRecipeReviews = async (req, res) => {
 
 exports.updateReview = async (req, res) => {
   try {
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ error: 'Unauthorized - user ID missing' });
+    }
     const { rating, comment } = req.body;
     const review = await Review.findOneAndUpdate(
       { 
@@ -100,6 +106,9 @@ exports.updateReview = async (req, res) => {
 
 exports.deleteReview = async (req, res) => {
   try {
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ error: 'Unauthorized - user ID missing' });
+    }
     const review = await Review.findOneAndDelete({
       recipeId: req.params.recipeId,
       userId: req.user._id

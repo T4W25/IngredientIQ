@@ -17,7 +17,11 @@ const updateAuthorProfile = async (req, res) => {
     }
     if (bio) author.bio = bio;
     if (profilePicture) author.profilePicture = profilePicture;
-    if (verificationDocuments) author.verificationDocuments = verificationDocuments;
+    if (verificationDocuments && verificationDocuments.length > 0) {
+      author.verificationDocuments = verificationDocuments;
+      author.verificationStatus = 'pending'; // submitted for review
+      author.isVerified = false;
+    }    
 
     await author.save();
     res.json({ message: 'Profile updated successfully' });
@@ -26,6 +30,30 @@ const updateAuthorProfile = async (req, res) => {
   }
 };
 
+const getAuthorProfile = async (req, res) => {
+  try {
+    const author = await Author.findById(req.user._id).select("-passwordHash");
+    if (!author) {
+      return res.status(404).json({ error: "Author not found" });
+    }
+
+    res.json({
+      id: author._id,
+      username: author.username,
+      email: author.email,
+      bio: author.bio || "",
+      profilePicture: author.profilePicture || "",
+      role: author.role,
+      isVerified: author.isVerified,
+      createdAt: author.createdAt
+    });
+  } catch (err) {
+    console.error('Error in getAuthorProfile:', err);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
 module.exports = {
-  updateAuthorProfile
+  updateAuthorProfile,
+  getAuthorProfile
 };

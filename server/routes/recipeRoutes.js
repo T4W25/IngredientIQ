@@ -7,7 +7,7 @@ const auth = require('../middleware/authMiddleware');
 // Recipe retrieval
 router.get('/moderation-queue', RecipeController.getDraftRecipes);
 router.get('/:recipeId', RecipeController.getRecipeById);
-//router.get('/', RecipeController.getAllRecipes);
+router.get('/', RecipeController.getAllRecipes);
 
 // Recipe management
 router.post('/add', auth, RecipeController.addRecipe);
