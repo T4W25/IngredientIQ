@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
-import { createRecipe } from "../../api/api"; // Adjust the import path as necessary
+import { addRecipe } from "../../api/api"; // Adjust the import path as necessary
 import { 
   PlusIcon, 
   ArrowLeftIcon,
@@ -100,7 +100,7 @@ const AddRecipe = () => {
         return;
       }
 
-      await createRecipe(token, formData);
+      await addRecipe(token, formData);
       toast.success('Recipe created successfully!');
       navigate("/chef-dashboard");
     } catch (error) {

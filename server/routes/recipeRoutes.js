@@ -12,7 +12,7 @@ router.get('/', RecipeController.getAllRecipes);
 // Recipe management
 router.post('/add', auth, RecipeController.addRecipe);
 router.put('/:recipeId', auth, RecipeController.updateRecipe);
-router.delete('/:recipeId', auth, RecipeController.deleteRecipe);
+router.delete('/:recipeId', RecipeController.deleteRecipe);
 router.patch('/:id/publish', RecipeController.publishRecipe);
 
 // Author-specific routes

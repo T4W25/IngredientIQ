@@ -1,5 +1,5 @@
 // src/pages/moderator/ModeratorDashboard.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { 
@@ -10,6 +10,9 @@ import {
   UserIcon,
   BellIcon
 } from '@heroicons/react/24/outline';
+import { toast } from 'react-toastify';
+import { getDraftRecipes, publishRecipe, deleteRecipe } from '../../api/api';
+import avatar from "../../assets/default-avatar.png";
 
 // Mock data (replace with your actual data fetching)
 const MOCK_QUEUE = [
@@ -30,18 +33,41 @@ const MOCK_QUEUE = [
 ];
 
 const ModeratorDashboard = () => {
-  const [queue, setQueue] = useState(MOCK_QUEUE);
+  const [queue, setQueue] = useState([]);
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [recipeToReject, setRecipeToReject] = useState(null);
   const [rejectionReason, setRejectionReason] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchDraftRecipes();
+  }, []);
+
+  const fetchDraftRecipes = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await getDraftRecipes();
+      setQueue(response.data);
+    } catch (error) {
+      console.error('Error fetching draft recipes:', error);
+      setError(error.response?.data?.message || 'Failed to fetch draft recipes');
+      toast.error('Failed to fetch draft recipes');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleApprove = async (id) => {
     try {
-      // Add your approve logic here
+      await publishRecipe(id);
       setQueue(prev => prev.filter(item => item._id !== id));
+      toast.success('Recipe approved and published successfully');
+      await fetchDraftRecipes(); // Refresh the queue
     } catch (error) {
       console.error("Error approving recipe:", error);
+      toast.error('Failed to approve recipe');
     }
   };
 
@@ -58,17 +84,43 @@ const ModeratorDashboard = () => {
   const confirmReject = async () => {
     if (recipeToReject && rejectionReason.trim()) {
       try {
-        // Add your reject logic here
+        await deleteRecipe(recipeToReject._id);
         setQueue(prev => prev.filter(item => item._id !== recipeToReject._id));
         setShowRejectModal(false);
         setRecipeToReject(null);
         setRejectionReason("");
+        toast.success('Recipe rejected and deleted successfully');
+        await fetchDraftRecipes(); // Refresh the queue
       } catch (error) {
         console.error("Error rejecting recipe:", error);
+        toast.error('Failed to reject recipe');
       }
     }
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-600"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center text-red-600">
+          <p>{error}</p>
+          <button
+            onClick={fetchDraftRecipes}
+            className="mt-4 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-white">
       
@@ -180,13 +232,13 @@ const ModeratorDashboard = () => {
                   <tbody className="divide-y divide-gray-200">
                     {queue.map((item) => (
                       <tr 
-                        key={item._id} 
-                        className="hover:bg-gray-50 transition-colors"
+                      key={item._id} 
+                      className="hover:bg-gray-50 transition-colors"
                       >
                         <td className="px-6 py-4">
                           <div className="flex items-center">
                             <img
-                              src={item.mainImage}
+                              src={item.mainImage || 'https://via.placeholder.com/150'} // Add fallback image
                               alt={item.title}
                               className="h-12 w-12 rounded-lg object-cover"
                             />
@@ -203,16 +255,15 @@ const ModeratorDashboard = () => {
                         <td className="px-6 py-4">
                           <div className="flex items-center">
                             <img
-                              src={item.user.avatar}
-                              alt={item.user.name}
+                              src={item.authorId?.profilePicture  || avatar} // Use authorId instead of user
+                              alt={item.authorId?.username || 'Author'}
                               className="h-8 w-8 rounded-full"
-                            />
+                            /> 
                             <span className="ml-2 font-medium text-gray-900">
-                              {item.user.name}
-                              {item.user.isVerified && (
+                              {item.authorId?.username} {/* Use authorId instead of user */}
+                              {item.authorId?.isVerified && (
                                 <CheckCircleIcon 
-                                  className="inline-block h-4 w-4 ml-1 
-                                    text-primary-500" 
+                                  className="inline-block h-4 w-4 ml-1 text-primary-500" 
                                 />
                               )}
                             </span>

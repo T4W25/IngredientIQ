@@ -7,7 +7,8 @@ import {
   XMarkIcon, 
   PhotoIcon,
 } from '@heroicons/react/24/outline';
- 
+import { handleFileUpload } from "../../api/api";
+import { toast } from "react-toastify";
  
  const InstructionsSection = ({ formData, setFormData, errors }) => {
     const addInstruction = () => {
@@ -29,18 +30,38 @@ import {
       }
     };
   
-    const handleImageUpload = (index, e) => {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          const newInstructions = [...formData.instructions];
-          newInstructions[index].image = reader.result;
-          setFormData(prev => ({ ...prev, instructions: newInstructions }));
-        };
-        reader.readAsDataURL(file);
-      }
-    };
+    const handleImageUpload = async (event) => {
+        try {
+          const file = event.target.files[0];
+          if (!file) return;
+    
+          // Validate file size
+          if (file.size > 5 * 1024 * 1024) { // 5MB
+            toast.error('Image size should be less than 5MB');
+            return;
+          }
+    
+          // Validate file type
+          const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+          if (!allowedTypes.includes(file.type)) {
+            toast.error('Invalid file type. Only JPEG, PNG and JPG are allowed.');
+            return;
+          }
+    
+          const formData = new FormData();
+          formData.append('image', file);
+    
+          const response = await handleFileUpload(formData);
+          
+          if (response.data.url) {
+            setFormData(prev => ({ ...prev, mainImage: response.data.url }));
+            toast.success('Image uploaded successfully');
+          }
+        } catch (error) {
+          console.error('Upload error:', error);
+          toast.error(error.response?.data?.error || 'Failed to upload image');
+        }
+      };
   
     return (
       <div className="bg-white rounded-2xl shadow-2xl p-6 space-y-6">
@@ -101,51 +122,33 @@ import {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Step Image (optional)
                 </label>
-                {instruction.image ? (
-                  <div className="relative">
-                    <img
-                      src={instruction.image}
-                      alt={`Step ${instruction.step}`}
-                      className="w-full h-48 object-cover rounded-lg"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const newInstructions = [...formData.instructions];
-                        newInstructions[index].image = "";
-                        setFormData(prev => ({ 
-                          ...prev, 
-                          instructions: newInstructions 
-                        }));
-                      }}
-                      className="absolute top-2 right-2 bg-white rounded-full p-1 
-                        shadow-lg hover:bg-red-500 hover:text-white 
-                        transition-colors duration-200"
-                    >
-                      <XMarkIcon className="w-5 h-5" />
-                    </button>
-                  </div>
-                ) : (
-                  <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 
-                    border-gray-200 border-dashed rounded-lg hover:border-primary-500 
-                    transition-colors duration-200">
-                    <div className="space-y-1 text-center">
-                      <PhotoIcon className="mx-auto h-12 w-12 text-gray-400" />
-                      <div className="flex text-sm text-gray-600">
-                        <label className="relative cursor-pointer rounded-md 
-                          font-medium text-primary-600 hover:text-primary-700">
-                          <span>Upload a file</span>
-                          <input
-                            type="file"
-                            className="sr-only"
-                            accept="image/*"
-                            onChange={(e) => handleImageUpload(index, e)}
-                          />
-                        </label>
-                      </div>
+                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-200 
+                  border-dashed rounded-lg hover:border-primary-500 transition-colors duration-200">
+                  <div className="space-y-1 text-center">
+                    <PhotoIcon className="mx-auto h-12 w-12 text-gray-400" />
+                    <div className="flex text-sm text-gray-600">
+                      <label className="relative cursor-pointer rounded-md font-medium 
+                        text-primary-600 hover:text-primary-700 focus-within:outline-none">
+                        <span>Upload a file</span>
+                        <input
+                          type="file"
+                          className="sr-only"
+                          accept="image/jpeg,image/png,image/jpg"
+                          onChange={handleImageUpload}
+                        />
+                      </label>
+                      <p className="pl-1">or drag and drop</p>
                     </div>
+                    <p className="text-xs text-gray-500">
+                      PNG, JPG up to 5MB
+                    </p>
+                    {formData.mainImage && (
+                      <p className="text-sm text-green-600">
+                        Image uploaded successfully ✓
+                      </p>
+                    )}
                   </div>
-                )}
+                </div>
               </div>
             </motion.div>
           ))}

@@ -5,6 +5,7 @@ import { getUserProfile } from '../../api/api';
 import ProfileForm from './ProfileForm';
 import ProfileView from './ProfileView';
 import { toast } from 'react-toastify';
+import Navbar from '../Components/ui/navbar';
 
 const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -71,11 +72,13 @@ const fetchUserProfile = async () => {
   }
 
   return (
+    <>
+    <Navbar/>    
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-primary-50 py-12 px-4 sm:px-6 lg:px-8"
+      className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-primary-50 py-20 px-4 sm:px-6 lg:px-8"
     >
       <div className="max-w-3xl mx-auto">
         <div className="bg-white rounded-2xl shadow-custom overflow-hidden">
@@ -92,6 +95,7 @@ const fetchUserProfile = async () => {
         </div>
       </div>
     </motion.div>
+    </>
   );
 };
 

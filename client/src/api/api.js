@@ -52,7 +52,20 @@ export const updateAuthorProfile = async (token, profileData) => {
   });
 };
 
+
+
+
 //RECIPE MANAGEMENT
+
+export const searchRecipes = async (params) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/recipes/search`, { params });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getRecipes = async (filters = {}) => {
   try {
     const queryParams = new URLSearchParams();
@@ -81,13 +94,39 @@ export const getRecipes = async (filters = {}) => {
   }
 };
 
+export const getDraftRecipes = async () => {
+  return axios.get(`${API_BASE_URL}/recipes/moderation-queue`);
+};
+
+export const publishRecipe = async (id) => {
+  return axios.patch(`${API_BASE_URL}/recipes/${id}/publish`);
+};
+
 export const getRecipeById = async (id) => {
   return axios.get(`${API_BASE_URL}/recipes/${id}`);
 };
 
-export const createRecipe = async (token, recipeData) => {
-  return axios.post(`${API_BASE_URL}/recipes/add`, recipeData, {
-    headers: { Authorization: `Bearer ${token}` },
+// api.js
+export const addRecipe = async (token, recipeData) => {
+  // Clean up the data before sending
+  const cleanedData = {
+    ...recipeData,
+    ingredients: recipeData.ingredients.filter(ing => 
+      ing.name.trim() && ing.quantity.trim() && ing.unit.trim()
+    ),
+    instructions: recipeData.instructions.filter(inst => 
+      inst.text.trim()
+    ).map((inst, index) => ({
+      ...inst,
+      step: index + 1
+    }))
+  };
+
+  return axios.post(`${API_BASE_URL}/recipes/add`, cleanedData, {
+    headers: { 
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    }
   });
 };
 
@@ -103,10 +142,8 @@ export const updateRecipe = async (token, recipeId, updatedData) => {
   });
 };
 
-export const deleteRecipe = async (token, recipeId) => {
-  return axios.delete(`${API_BASE_URL}/recipes/${recipeId}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+export const deleteRecipe = async (recipeId) => {
+  return axios.delete(`${API_BASE_URL}/recipes/${recipeId}`);
 };
 
 //BOOKMARKING RECIPES

@@ -3,7 +3,8 @@ import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline';
-
+import { searchRecipes } from "../api/api";
+import Navbar from "../Components/ui/navbar";
 const DIETARY_OPTIONS = [
   { label: "Vegetarian", value: "isVegetarian", icon: "🥗" },
   { label: "Vegan", value: "isVegan", icon: "🌱" },
@@ -31,15 +32,18 @@ const Search = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    const searchParams = new URLSearchParams();
-    if (query.trim()) searchParams.set("q", query.trim());
-
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value) searchParams.append("filter", key);
-    });
+    const searchParams = {
+      query: query.trim(),
+      dietary: Object.entries(filters)
+        .filter(([_, value]) => value)
+        .map(([key]) => key)
+        .join(',')
+    };
 
     try {
-      await navigate(`/searchresults?${searchParams.toString()}`);
+      await navigate(`/searchresults?${new URLSearchParams(searchParams).toString()}`);
+    } catch (error) {
+      console.error('Search error:', error);
     } finally {
       setIsLoading(false);
     }

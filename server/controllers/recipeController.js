@@ -65,44 +65,94 @@ exports.getRecipeById = async (req, res) => {
   }
 };
 // server/controllers/recipeController.js
+/// RecipeController.js
 exports.addRecipe = async (req, res) => {
   try {
+    // Log the incoming request
+    console.log('Request body:', req.body);
+    console.log('Request user:', req.user);
+
     if (!req.user || !req.user._id) {
       return res.status(401).json({ error: 'Unauthorized - author ID missing' });
     }
-    
+
+    // Log the data being processed
     const recipeData = {
-      ...req.body,
+      title: req.body.title,
+      description: req.body.description,
+      prepTime: Number(req.body.prepTime) || 0,
+      cookTime: Number(req.body.cookTime) || 0,
+      servings: Number(req.body.servings) || 1,
+      difficulty: req.body.difficulty || 'easy',
+      cuisine: req.body.cuisine,
+      category: req.body.category || 'lunch',
+      mainImage: req.body.mainImage || '',
+      gallery: req.body.gallery || [],
+      ingredients: req.body.ingredients,
+      instructions: req.body.instructions,
+      nutritionalInfo: req.body.nutritionalInfo || {},
+      dietaryRestrictions: req.body.dietaryRestrictions || {},
       authorId: req.user._id,
-      status: req.body.status || 'draft'
+      status: 'draft'
     };
 
-    // Validate base64 images
-    if (
-      recipeData.mainImage &&
-      !recipeData.mainImage.startsWith('data:image/')
-    ) {
-      return res.status(400).json({ error: 'Invalid main image format' });
-    }
-    
+    console.log('Processed recipe data:', recipeData);
 
-    if (recipeData.gallery) {
-      for (let image of recipeData.gallery) {
-        if (!image.startsWith('data:image/')) {
-          return res.status(400).json({ error: 'Invalid gallery image format' });
-        }
-      }
+    // Validate the data
+    if (!recipeData.title) {
+      return res.status(400).json({ error: 'Title is required' });
     }
 
+    if (!Array.isArray(recipeData.ingredients) || recipeData.ingredients.length === 0) {
+      return res.status(400).json({ error: 'At least one ingredient is required' });
+    }
+
+    if (!Array.isArray(recipeData.instructions) || recipeData.instructions.length === 0) {
+      return res.status(400).json({ error: 'At least one instruction is required' });
+    }
+
+    // Create new recipe
     const newRecipe = new Recipe(recipeData);
-    await newRecipe.save();
-    
-    res.status(201).json(newRecipe);
+
+    // Log the mongoose document before saving
+    console.log('Mongoose document before save:', newRecipe);
+
+    // Validate the document
+    const validationError = newRecipe.validateSync();
+    if (validationError) {
+      console.error('Validation error:', validationError);
+      return res.status(400).json({ 
+        error: 'Validation Error',
+        details: Object.values(validationError.errors).map(err => err.message)
+      });
+    }
+
+    // Save the recipe
+    const savedRecipe = await newRecipe.save();
+    console.log('Recipe saved successfully:', savedRecipe._id);
+
+    res.status(201).json(savedRecipe);
   } catch (error) {
-    console.error('Error adding recipe:', error);
+    // Detailed error logging
+    console.error('Error details:', {
+      name: error.name,
+      message: error.message,
+      stack: error.stack,
+      errors: error.errors // Mongoose validation errors
+    });
+
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ 
+        error: 'Validation Error',
+        details: Object.values(error.errors).map(err => err.message)
+      });
+    }
+
+    // Send detailed error response
     res.status(500).json({ 
       error: 'Failed to add recipe',
-      details: error.message 
+      details: error.message,
+      type: error.name
     });
   }
 };
@@ -158,18 +208,19 @@ exports.updateRecipe = async (req, res) => {
 
 exports.deleteRecipe = async (req, res) => {
   try {
-    const recipe = await Recipe.findOneAndDelete({
-      _id: req.params.recipeId,
-      authorId: req.user._id
-    });
+    const recipe = await Recipe.findByIdAndDelete(req.params.recipeId);
 
     if (!recipe) {
-      return res.status(404).json({ error: 'Recipe not found or not authorized' });
+      return res.status(404).json({ error: 'Recipe not found' });
     }
 
     res.status(200).json({ message: 'Recipe deleted successfully' });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to delete recipe' });
+    console.error('Delete recipe error:', error);
+    res.status(500).json({ 
+      error: 'Failed to delete recipe',
+      details: error.message 
+    });
   }
 };
 
