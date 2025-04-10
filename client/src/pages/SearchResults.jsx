@@ -1,6 +1,7 @@
 
-  import React, { useState, useEffect } from 'react';
+  import React, { useState, useEffect, useContext } from 'react';
   import { useSearchParams, useNavigate } from 'react-router-dom';
+
   import { searchRecipes } from '../api/api';
   import Button from '../Components/ui/button';
   import {
@@ -13,9 +14,9 @@
   import { useToast } from '../Components/ui/use-toast';
   import Navbar from '../Components/ui/navbar';
 
-  
-  const navigate = useNavigate();
+
   const SearchResults = () => {
+    const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const [recipes, setRecipes] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -27,9 +28,7 @@
     });
     const [sortBy, setSortBy] = useState('relevance');
     const { toast } = useToast();
-
-
-    useNavigate(); // Initialize useNavigate inside the function
+    
     const handleRecipeClick = (recipeId) => {
       navigate(`/recipe/${recipeId}`);
     };

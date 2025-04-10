@@ -49,22 +49,32 @@ const Auth = () => {
         ? `${API_BASE_URL}/auth/register/${formData.role}`
         : `${API_BASE_URL}/auth/signin/${formData.role}`;
 
+        console.log('Making request to:', endpoint); // Debug log
+
+
       const payload = {
         email: formData.email,
         password: formData.password,
       };
 
+      console.log('With payload:', payload); // Debug log
       if (isRegistering) payload.username = formData.username;
 
       const response = await axios.post(endpoint, payload);
+
+      console.log('Response:', response.data); // Debug log
 
     if (response.data.token) {
           const token = response.data.token;
           localStorage.setItem("token", token);
           localStorage.setItem("role", formData.role);
-          localStorage.setItem("userId", response.data.userId || response.data._id);
-          localStorage.setItem("email", formData.email || response.data.email);
-        
+          if (response.data.user?.id) {
+            localStorage.setItem("userId", response.data.user.id);
+          }
+          if (response.data.user?.email) {
+            localStorage.setItem("email", response.data.user.email);
+          }
+
         setTimeout(() => {
           switch (formData.role) {
             case "author":
@@ -82,6 +92,7 @@ const Auth = () => {
         setError("Unexpected response from the server");
       }
     } catch (err) {
+      console.error('Auth Error:', err.response?.data || err); // Detailed error logging
       setError(err.response?.data?.message || "Server error");
     } finally {
       setIsLoading(false);

@@ -4,7 +4,6 @@ import ChefProfileForm from './ChefProfileForm';
 import ChefProfileView from './ChefProfileView';
 import { toast } from 'react-toastify';
 import { getAuthorProfile } from '../../api/api';
-import Navbar from '../../components/ui/navbar';
 
 const ChefProfile = () => {
   const [user, setUser] = useState(null);
@@ -38,7 +37,6 @@ const ChefProfile = () => {
 
   return (
     <>
-      <Navbar />
       <div className="min-h-screen bg-gray-50 py-10">
         {isEditing ? (
           <ChefProfileForm

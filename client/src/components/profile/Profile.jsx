@@ -5,11 +5,8 @@ import { getUserProfile } from '../../api/api';
 import ProfileForm from './ProfileForm';
 import ProfileView from './ProfileView';
 import { toast } from 'react-toastify';
-<<<<<<< HEAD
 import Navbar from '../ui/navbar';
-=======
 
->>>>>>> 3d1bbca99705aead4b11b153fe682212a80e7100
 
 const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);

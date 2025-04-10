@@ -147,18 +147,72 @@ export const deleteRecipe = async (recipeId) => {
 };
 
 //BOOKMARKING RECIPES
+
+// src/api/api.js
+
+export const checkBookmarkStatus = async (token, recipeId) => {
+  try {
+    if (!token || !recipeId) {
+      throw new Error('Token and Recipe ID are required');
+    }
+
+    const response = await axios.get(
+      `${API_BASE_URL}/bookmarks/check/${recipeId}`,
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error checking bookmark status:', error);
+    return { isBookmarked: false, bookmarkId: null };
+  }
+};
+
 export const addBookmark = async (token, recipeId) => {
-  return axios.post(
-    `${API_BASE_URL}/bookmarks`,
-    { recipeId },
-    { headers: { Authorization: `Bearer ${token}` } }
-  );
+  try {
+    const userId = localStorage.getItem('userId'); // Get userId from localStorage
+    
+    const response = await axios.post(
+      `${API_BASE_URL}/bookmarks`,
+      { 
+        recipeId,
+        userId // Include userId in the request body
+      },
+      { 
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        } 
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('API Error:', error.response?.data || error.message);
+    throw new Error(error.response?.data?.error || 'Failed to add bookmark');
+  }
 };
 
 export const removeBookmark = async (token, bookmarkId) => {
-  return axios.delete(`${API_BASE_URL}/bookmarks/${bookmarkId}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  try {
+    console.log('Removing bookmark:', bookmarkId); // Debug log
+    
+    const response = await axios.delete(
+      `${API_BASE_URL}/bookmarks/${bookmarkId}`,
+      { 
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error removing bookmark:', error);
+    throw new Error(error.response?.data?.error || 'Failed to remove bookmark');
+  }
 };
 
 export const getBookmarks = async (token) => {

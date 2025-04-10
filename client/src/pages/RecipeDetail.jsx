@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { getRecipeById, addBookmark, removeBookmark } from '../api/api';
 import { FaClock, FaUtensils, FaUserFriends, FaBookmark, FaRegBookmark, FaCheck, FaTimes, FaUser, FaStar, FaCalendar  } from 'react-icons/fa';
 import axios from 'axios';
+import API_BASE_URL from '../api/api';
 // import IngredientsList from './IngredientsList';
 // import InstructionSteps from './InstructionSteps';
 // import NutritionalInfo from './NutritionalInfo';
@@ -19,10 +20,12 @@ const RecipeDetail = () => {
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [bookmarkId, setBookmarkId] = useState(null);
   const [activeTab, setActiveTab] = useState('recipe');
 
   useEffect(() => {
     fetchRecipe();
+    checkBookmarkStatus();
   }, [id]);
 
   const fetchRecipe = async () => {
@@ -36,27 +39,75 @@ const RecipeDetail = () => {
     }
   };
 
-  const handleBookmark = async () => {
+  const checkBookmarkStatus = async () => {
     try {
       const token = localStorage.getItem('token');
-      if (!token) {
-        toast.error('Please login to bookmark recipes');
-        return;
-      }
+      if (!token) return;
 
-      if (isBookmarked) {
-        await removeBookmark(token, id);
-        setIsBookmarked(false);
-        toast.success('Recipe removed from bookmarks');
-      } else {
-        await addBookmark(token, id);
+      const response = await axios.get(`${API_BASE_URL}/bookmarks/check/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (response.data.isBookmarked) {
         setIsBookmarked(true);
-        toast.success('Recipe added to bookmarks');
+        setBookmarkId(response.data.bookmarkId);
       }
     } catch (error) {
-      toast.error('Failed to update bookmark');
+      console.error('Error checking bookmark status:', error);
     }
   };
+
+  // const handleBookmark = async () => {
+  //   try {
+  //     const token = localStorage.getItem('token');
+  //     if (!token) {
+  //       toast.error('Please login to bookmark recipes');
+  //       return;
+  //     }
+
+  //     if (isBookmarked) {
+  //       await removeBookmark(token, id);
+  //       setIsBookmarked(false);
+  //       toast.success('Recipe removed from bookmarks');
+  //     } else {
+  //       await addBookmark(token, id);
+  //       setIsBookmarked(true);
+  //       toast.success('Recipe added to bookmarks');
+  //     }
+  //   } catch (error) {
+  //     toast.error('Failed to update bookmark');
+  //   }
+  // };
+
+  // src/components/Recipe/RecipeDetail.jsx
+
+const handleBookmark = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
+
+    if (!token || !userId) {
+      toast.error('Please login to bookmark recipes');
+      return;
+    }
+
+    if (isBookmarked && bookmarkId) {
+      console.log('Removing bookmark:', bookmarkId); // Debug log
+      await removeBookmark(token, bookmarkId);
+      setIsBookmarked(false);
+      setBookmarkId(null);
+      toast.success('Recipe removed from bookmarks');
+    } else {
+      const response = await addBookmark(token, id);
+      setIsBookmarked(true);
+      setBookmarkId(response.bookmarkId);
+      toast.success('Recipe added to bookmarks');
+    }
+  } catch (error) {
+    console.error('Bookmark error:', error);
+    toast.error(error.response?.data?.error || 'Failed to update bookmark');
+  }
+};
 
   if (loading) {
     return (

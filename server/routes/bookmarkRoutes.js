@@ -4,14 +4,19 @@ const router = express.Router();
 const BookmarkController = require('../controllers/bookmarkController');
 const auth = require('../middleware/authMiddleware');
 
-// Route to create a new bookmark
-router.post('/', auth, BookmarkController.createBookmark);
+// Apply auth middleware to all routes
+router.use(auth);
 
-// Route to get all bookmarks for the logged-in user
-router.get('/', auth, BookmarkController.getUserBookmarks);
+// Create a new bookmark
+router.post('/', BookmarkController.addBookmark);
 
-// Route to delete a bookmark
-router.delete('/:bookmarkId', auth, BookmarkController.deleteBookmark);
+// Get all bookmarks for the logged-in user
+router.get('/', BookmarkController.getUserBookmarks);
+
+// Check if a recipe is bookmarked
+router.get('/check/:recipeId', BookmarkController.checkBookmarkStatus);
+
+// Delete a bookmark
+router.delete('/:bookmarkId', BookmarkController.deleteBookmark);
 
 module.exports = router;
-
