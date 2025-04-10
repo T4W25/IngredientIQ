@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { toast } from "react-toastify";
+import { createRecipe } from "../../api/api"; // Adjust the import path as necessary
 import { 
   PlusIcon, 
   ArrowLeftIcon,
@@ -83,15 +85,26 @@ const AddRecipe = () => {
   // Form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      toast.error('Please fix the errors before submitting');
+      return;
+    }
 
     setIsLoading(true);
     try {
-      // Add your API call here
-      await submitRecipe(formData);
+      const token = localStorage.getItem('token');
+      if (!token) {
+        toast.error('Please login to create a recipe');
+        navigate('/auth');
+        return;
+      }
+
+      await createRecipe(token, formData);
+      toast.success('Recipe created successfully!');
       navigate("/chef-dashboard");
     } catch (error) {
       console.error("Error submitting recipe:", error);
+      toast.error(error.response?.data?.error || 'Failed to create recipe');
       setErrors({ submit: "Failed to submit recipe. Please try again." });
     } finally {
       setIsLoading(false);

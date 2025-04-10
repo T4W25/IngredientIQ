@@ -28,6 +28,7 @@ exports.getAllRecipes = async (req, res) => {
   }
 };
 
+// server/controllers/recipeController.js
 exports.addRecipe = async (req, res) => {
   try {
     const recipeData = {
@@ -36,15 +37,38 @@ exports.addRecipe = async (req, res) => {
       status: req.body.status || 'draft'
     };
 
+    // Validate base64 images
+    if (!recipeData.mainImage.startsWith('data:image/')) {
+      return res.status(400).json({ error: 'Invalid main image format' });
+    }
+
+    if (recipeData.gallery) {
+      for (let image of recipeData.gallery) {
+        if (!image.startsWith('data:image/')) {
+          return res.status(400).json({ error: 'Invalid gallery image format' });
+        }
+      }
+    }
+
     const newRecipe = new Recipe(recipeData);
     await newRecipe.save();
     
     res.status(201).json(newRecipe);
   } catch (error) {
+    console.error('Error adding recipe:', error);
     res.status(500).json({ 
       error: 'Failed to add recipe',
       details: error.message 
     });
+  }
+};
+
+// Add a helper function to validate Base64 images
+const isValidBase64Image = (base64String) => {
+  try {
+    return base64String.startsWith('data:image/') && base64String.includes(';base64,');
+  } catch {
+    return false;
   }
 };
 
