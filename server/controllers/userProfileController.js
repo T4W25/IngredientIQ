@@ -24,7 +24,7 @@ const getUserProfile = async (req, res) => {
 
 // Update user profile
 const updateUserProfile = async (req, res) => {
-  const { email, password, bio, profilePicture } = req.body;
+  const { username, email, password, bio, profilePicture } = req.body;
   const userId = req.user._id; // ✅ FIXED
 
   try {

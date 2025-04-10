@@ -14,7 +14,7 @@ function auth(req, res, next) {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     console.log('Decoded:', decoded); // DEBUG
-    req.user = { _id: decoded.id }; // ✅ Use correct field name
+    req.user = { _id: decoded.id, id: decoded.id };
     next();
   } catch (err) {
     console.error('JWT Error:', err.message); // DEBUG

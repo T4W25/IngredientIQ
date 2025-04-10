@@ -67,6 +67,10 @@ exports.getRecipeById = async (req, res) => {
 // server/controllers/recipeController.js
 exports.addRecipe = async (req, res) => {
   try {
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ error: 'Unauthorized - author ID missing' });
+    }
+    
     const recipeData = {
       ...req.body,
       authorId: req.user._id,
