@@ -12,7 +12,7 @@ import axios from 'axios';
 // import ChefProfile from './ChefProfile';
 // import ReviewSection from './ReviewSection';
 import { toast } from 'react-toastify';
-import Navbar from '../Components/ui/navbar';
+import Navbar from '../components/ui/navbar';
 
 const RecipeDetail = () => {
   const { id } = useParams();

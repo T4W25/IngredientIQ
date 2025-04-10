@@ -1,7 +1,7 @@
 // routes/mealPlanRoutes.js
 const express = require('express');
 const { body } = require('express-validator');
-const { createMealPlan, getGroceryList } = require('../controllers/mealPlanController');
+const { createMealPlan, getGroceryList, getMealPlans } = require('../controllers/mealPlanController');
 const auth = require('../middleware/authMiddleware');
 
 const router = express.Router();
@@ -16,5 +16,6 @@ router.post('/',auth,[
 );
 
 router.get('/:id/grocery-list', auth, getGroceryList);
+router.get('/', auth, getMealPlans);
 
 module.exports = router;
