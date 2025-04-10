@@ -1,22 +1,22 @@
-// ChefProfileView.jsx
+// pages/chef/ChefProfileView.jsx
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FaUser, FaEnvelope, FaPen, FaCalendar, FaCheckCircle, FaClock } from 'react-icons/fa';
+import { FaPen, FaCheckCircle, FaClock, FaEnvelope, FaCalendar } from 'react-icons/fa';
 
 const ChefProfileView = ({ user, setIsEditing }) => {
   return (
-    <div className="p-8 max-w-2xl mx-auto">
-      <div className="relative">
+    <div className="p-8 max-w-2xl mx-auto bg-white shadow-md rounded-lg">
+      <div className="relative text-center">
         <motion.div
           whileHover={{ scale: 1.05 }}
-          className="relative w-32 h-32 mx-auto mb-6"
+          className="w-32 h-32 mx-auto mb-4"
         >
           <img
             src={user.profilePicture || '/default-avatar.png'}
             alt={user.username}
-            className="rounded-full w-full h-full object-cover border-4 border-primary-100"
+            className="w-full h-full rounded-full border-4 border-primary-100 object-cover"
           />
-          <div className="absolute -bottom-2 right-0">
+          <div className="absolute -bottom-2 right-2">
             {user.isVerified ? (
               <FaCheckCircle className="w-6 h-6 text-green-500" />
             ) : (
@@ -33,80 +33,45 @@ const ChefProfileView = ({ user, setIsEditing }) => {
         </button>
       </div>
 
-      <div className="space-y-6">
-        {/* Basic Info */}
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-800">{user.username}</h1>
-          <div className="mt-2">
-            <span className={`px-3 py-1 rounded-full text-sm ${
-              user.isVerified 
-                ? 'bg-green-100 text-green-800' 
-                : 'bg-yellow-100 text-yellow-800'
-            }`}>
-              {user.isVerified ? 'Verified Chef' : 'Verification Pending'}
-            </span>
-          </div>
-          <p className="text-gray-500 mt-4">{user.bio || 'No bio added yet'}</p>
-        </div>
+      <div className="text-center mb-6">
+        <h1 className="text-2xl font-bold text-gray-800">{user.username}</h1>
+        <p className="text-sm mt-2 text-gray-600">
+          Role: <span className="font-semibold capitalize">{user.role}</span>
+        </p>
+        <p className={`mt-1 px-3 py-1 inline-block rounded-full text-sm ${
+          user.isVerified
+            ? 'bg-green-100 text-green-700'
+            : 'bg-yellow-100 text-yellow-700'
+        }`}>
+          {user.isVerified ? 'Verified Chef' : 'Pending Verification'}
+        </p>
+      </div>
 
-        {/* Contact and Join Date */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="flex items-center p-4 bg-primary-50 rounded-lg">
-            <FaEnvelope className="w-6 h-6 text-primary-600 mr-3" />
-            <div>
-              <p className="text-sm text-gray-500">Email</p>
-              <p className="text-gray-800 font-medium">{user.email}</p>
-            </div>
-          </div>
-
-          <div className="flex items-center p-4 bg-primary-50 rounded-lg">
-            <FaCalendar className="w-6 h-6 text-primary-600 mr-3" />
-            <div>
-              <p className="text-sm text-gray-500">Joined</p>
-              <p className="text-gray-800 font-medium">
-                {new Date(user.createdAt).toLocaleDateString()}
-              </p>
-            </div>
+      <div className="space-y-4">
+        <div className="flex items-center bg-primary-50 rounded-md px-4 py-2">
+          <FaEnvelope className="text-primary-600 mr-3" />
+          <div>
+            <p className="text-sm text-gray-500">Email</p>
+            <p className="font-medium text-gray-800">{user.email}</p>
           </div>
         </div>
 
-        {/* Verification Documents */}
-        {user.verificationDocuments && user.verificationDocuments.length > 0 && (
-          <div className="mt-8">
-            <h2 className="text-lg font-semibold mb-4">Verification Documents</h2>
-            <div className="grid grid-cols-1 gap-2">
-              {user.verificationDocuments.map((doc, index) => (
-                <a
-                  key={index}
-                  href={doc}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                >
-                  <FaUser className="w-4 h-4 text-primary-600 mr-2" />
-                  <span className="text-primary-600">Document {index + 1}</span>
-                </a>
-              ))}
-            </div>
+        <div className="flex items-center bg-primary-50 rounded-md px-4 py-2">
+          <FaCalendar className="text-primary-600 mr-3" />
+          <div>
+            <p className="text-sm text-gray-500">Joined</p>
+            <p className="font-medium text-gray-800">
+              {new Date(user.createdAt).toLocaleDateString()}
+            </p>
           </div>
-        )}
+        </div>
 
-        {/* Additional Chef Information */}
-        {user.specialties && user.specialties.length > 0 && (
-          <div className="mt-8">
-            <h2 className="text-lg font-semibold mb-4">Specialties</h2>
-            <div className="flex flex-wrap gap-2">
-              {user.specialties.map((specialty, index) => (
-                <span
-                  key={index}
-                  className="px-3 py-1 bg-primary-100 text-primary-800 rounded-full text-sm"
-                >
-                  {specialty}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
+        <div>
+          <p className="text-sm text-gray-500 mb-1">Bio</p>
+          <p className="text-gray-700">
+            {user.bio ? user.bio : 'No bio added yet.'}
+          </p>
+        </div>
       </div>
     </div>
   );
