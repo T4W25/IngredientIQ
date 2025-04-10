@@ -24,8 +24,8 @@ const getUserProfile = async (req, res) => {
 
 // Update user profile
 const updateUserProfile = async (req, res) => {
-  const { username, email, password, bio, profilePicture } = req.body;
-  const userId = req.user.id;
+  const { email, password, bio, profilePicture } = req.body;
+  const userId = req.user._id; // ✅ FIXED
 
   try {
     const user = await User.findById(userId);
