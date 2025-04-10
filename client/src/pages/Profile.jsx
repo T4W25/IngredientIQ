@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { getUserProfile } from "../../api/api";
-import ProfileForm from "./ProfileForm";
-import ProfileView from "./ProfileView";
+import { getUserProfile } from "../api/api";
+import ProfileForm from "../components/profile/ProfileForm";
+import ProfileView from "../components/profile/ProfileView";
 import { toast } from "react-toastify";
-import Navbar from "../ui/navbar";
+import Navbar from "../components/ui/navbar";
 
 
 const ProfilePage = () => {
