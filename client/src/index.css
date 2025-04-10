@@ -27,8 +27,5 @@
   .filter-chip-inactive {
     @apply bg-gray-50 text-gray-700 border-gray-200;
   }
-  .nav-offset {
-    @apply pt-24 md:pt-28 lg:pt-32;
-  }
 
 }
