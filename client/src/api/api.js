@@ -55,10 +55,8 @@ export const updateAuthorProfile = async (token, profileData) => {
 //RECIPE MANAGEMENT
 export const getRecipes = async (filters = {}) => {
   try {
-    // Convert filters object to query parameters
     const queryParams = new URLSearchParams();
 
-    // Add filters to query parameters if they have values
     if (filters.searchQuery) {
       queryParams.append('search', filters.searchQuery);
     }
@@ -74,7 +72,6 @@ export const getRecipes = async (filters = {}) => {
     if (filters.dietary) {
       queryParams.append('dietary', filters.dietary);
     }
-    // Always get published recipes
     queryParams.append('status', 'published');
 
     const response = await axios.get(`${API_BASE_URL}/recipes?${queryParams.toString()}`);
@@ -83,6 +80,7 @@ export const getRecipes = async (filters = {}) => {
     throw error;
   }
 };
+
 export const getRecipeById = async (id) => {
   return axios.get(`${API_BASE_URL}/recipes/${id}`);
 };

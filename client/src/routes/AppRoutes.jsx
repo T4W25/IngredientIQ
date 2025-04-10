@@ -14,6 +14,7 @@ import AddRecipe from "../pages/chef/AddRecipe";
 import ModeratorDashboard from "../pages/moderator/moderatorDashboard";
 import ChefVerification from "../pages/moderator/chefVerification";
 import Reports from "../pages/moderator/reports";
+import ChefProfilePage from "../pages/chef/chefProfile";
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("token");
@@ -97,6 +98,14 @@ const AppRoutes = () => (
       element={
         <ProtectedRoute>
           <Profile />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/chef-profile"
+      element={
+        <ProtectedRoute>
+          <ChefProfilePage />
         </ProtectedRoute>
       }
     />
