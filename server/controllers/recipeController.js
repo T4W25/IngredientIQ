@@ -1,9 +1,6 @@
 // server/controllers/recipeController.js
 const Recipe = require('../models/Recipe');
 
-// server/controllers/recipeController.js
-const Recipe = require('../models/Recipe');
-
 exports.getRecipes = async (req, res) => {
   try {
     const {
@@ -165,5 +162,27 @@ exports.deleteRecipe = async (req, res) => {
     res.status(200).json({ message: 'Recipe deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete recipe' });
+  }
+};
+
+exports.getDraftRecipes = async (req, res) => {
+  try {
+    const drafts = await Recipe.find({ status: 'draft' })
+    res.status(200).json(drafts);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch drafts' });
+  }
+};
+
+exports.publishRecipe = async (req, res) => {
+  try {
+    const recipe = await Recipe.findByIdAndUpdate(
+      req.params.id,
+      { status: 'published' },
+      { new: true }
+    );
+    res.json({ message: 'Recipe published', recipe });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to publish recipe' });
   }
 };
