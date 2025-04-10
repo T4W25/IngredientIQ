@@ -31,7 +31,7 @@ const signInAuthor = async (req, res) => {
     if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
     const token = jwt.sign({ id: author._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.json({ token });
+    res.json({ token, author: { id: author._id, email: author.email } });
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
   }
