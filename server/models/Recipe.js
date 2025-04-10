@@ -130,6 +130,14 @@ const recipeSchema = new Schema({
     enum: ['draft', 'published', 'archived'],
     default: 'draft'
   },
+  ratings: [{
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    rating: { type: Number, min: 1, max: 5 },
+    comment: { type: String, default: '' }
+  }],
+  averageRating: { type: Number, default: 0 },
+  totalRatings: { type: Number, default: 0 },
+  
   
 }, {
   timestamps: true,
@@ -148,8 +156,8 @@ recipeSchema.index({ title: 'text', description: 'text', 'ingredients.name': 'te
 recipeSchema.index({ 'ingredients.name': 1 }); // Regular index for non-text searches
 
 // Pre-save middleware to update average rating
-recipeSchema.pre('save', function(next) {
-  if (this.ratings.length > 0) {
+recipeSchema.pre('save', function (next) {
+  if (this.ratings && this.ratings.length > 0) {
     const totalRating = this.ratings.reduce((acc, curr) => acc + curr.rating, 0);
     this.averageRating = totalRating / this.ratings.length;
     this.totalRatings = this.ratings.length;
