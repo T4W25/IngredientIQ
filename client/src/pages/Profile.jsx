@@ -1,15 +1,13 @@
 // src/components/Profile/ProfilePage.jsx
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { getUserProfile } from '../../api/api';
-import ProfileForm from './ProfileForm';
-import ProfileView from './ProfileView';
+import { getUserProfile } from '../api/api';
+import ProfileForm from '../Components/profile/ProfileForm';
+import ProfileView from '../Components/profile/ProfileView';
 import { toast } from 'react-toastify';
-<<<<<<< HEAD
-import Navbar from '../ui/navbar';
 
-=======
->>>>>>> ebe02e2ddefce4e85397afff7fd62ac8ec26df3f
+import Navbar from '../Components/ui/navbar';
+
 
 const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);

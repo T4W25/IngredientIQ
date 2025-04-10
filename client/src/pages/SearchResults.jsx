@@ -12,7 +12,7 @@
     CardContent
   } from '../Components/ui/card';
   import { useToast } from '../Components/ui/use-toast';
-  import Navbar from '../components/ui/navbar';
+  import Navbar from '../Components/ui/navbar';
 
 
   const SearchResults = () => {
