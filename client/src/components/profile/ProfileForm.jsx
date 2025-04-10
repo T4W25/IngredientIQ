@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaUser, FaEnvelope, FaCamera, FaCheck, FaTimes, FaLock } from 'react-icons/fa';
-import { updateUserProfile } from '../../api/api';
+import { updateUserProfile, uploadUserProfileImage } from '../../api/api';
 import { toast } from 'react-toastify';
 import Avatar from '../../assets/Avatar';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 
 const ProfileForm = ({ user, setUser, setIsEditing, refreshProfile }) => {
   const [formData, setFormData] = useState({
@@ -17,6 +16,7 @@ const ProfileForm = ({ user, setUser, setIsEditing, refreshProfile }) => {
     newPassword: '',
     confirmPassword: ''
   });
+
   const [loading, setLoading] = useState(false);
   const [showPasswordFields, setShowPasswordFields] = useState(false);
   const navigate = useNavigate();
@@ -27,41 +27,24 @@ const ProfileForm = ({ user, setUser, setIsEditing, refreshProfile }) => {
 
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      if (file.size > 5000000) {
-        toast.error('Image size should be less than 5MB');
-        return;
-      }
+    if (!file) return;
 
-      try {
-        const formData = new FormData();
-        formData.append('image', file);
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image size should be less than 5MB');
+      return;
+    }
 
-        const token = localStorage.getItem('token');
-        const response = await axios.post(
-          `${API_BASE_URL}/auth/profile/upload-image`,  // Ensure this URL is correct for your API
-          formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        setFormData((prev) => ({
-          ...prev,
-          profilePicture: response.data.url,  // Assuming the backend responds with the image URL
-        }));
-
-        toast.success('Profile picture updated successfully');
-      } catch (error) {
-        toast.error('Failed to upload image');
-      }
+    try {
+      const token = localStorage.getItem('token');
+      const response = await uploadUserProfileImage(token, file);
+      setFormData((prev) => ({ ...prev, profilePicture: response.data.url }));
+      toast.success('Profile picture uploaded successfully');
+    } catch (error) {
+      console.error('Image upload error:', error);
+      toast.error('Failed to upload image');
     }
   };
 
-  // Validate the form before submission
   const validateForm = () => {
     if (showPasswordFields) {
       if (!formData.currentPassword) {
@@ -72,7 +55,7 @@ const ProfileForm = ({ user, setUser, setIsEditing, refreshProfile }) => {
         toast.error('New passwords do not match');
         return false;
       }
-      if (formData.newPassword && formData.newPassword.length < 6) {
+      if (formData.newPassword.length < 6) {
         toast.error('Password must be at least 6 characters long');
         return false;
       }
@@ -87,34 +70,34 @@ const ProfileForm = ({ user, setUser, setIsEditing, refreshProfile }) => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const updateData = {
+      const payload = {
         username: formData.username,
         email: formData.email,
         bio: formData.bio,
-        profilePicture: formData.profilePicture,  // Ensure the profile picture is included
+        profilePicture: formData.profilePicture
       };
 
-      if (showPasswordFields && formData.currentPassword && formData.newPassword) {
-        updateData.currentPassword = formData.currentPassword;
-        updateData.newPassword = formData.newPassword;
+      if (showPasswordFields) {
+        payload.currentPassword = formData.currentPassword;
+        payload.newPassword = formData.newPassword;
       }
 
-      await updateUserProfile(token, updateData);  // Make sure this API call works correctly
+      await updateUserProfile(token, payload);
       await refreshProfile();
       setIsEditing(false);
       toast.success('Profile updated successfully');
     } catch (error) {
-      const errorMessage = error.response?.data?.error || 'Failed to update profile';
-      toast.error(errorMessage);
+      console.error(error);
+      toast.error(error.response?.data?.message || 'Failed to update profile');
     } finally {
       setLoading(false);
-      navigate('/profile');  // Redirect to the profile page after update
+      navigate('/profile');
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="p-8">
-      {/* Profile Picture Section */}
+      {/* Profile Picture */}
       <div className="relative w-32 h-32 mx-auto mb-6">
         <Avatar
           src={formData.profilePicture}
@@ -123,21 +106,15 @@ const ProfileForm = ({ user, setUser, setIsEditing, refreshProfile }) => {
         />
         <label className="absolute bottom-0 right-0 bg-primary-500 text-white p-2 rounded-full hover:bg-primary-600 cursor-pointer transition-colors duration-200">
           <FaCamera className="w-4 h-4" />
-          <input
-            type="file"
-            className="hidden"
-            accept="image/*"
-            onChange={handleImageChange}
-          />
+          <input type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
         </label>
       </div>
 
+      {/* Form Fields */}
       <div className="space-y-6">
-        {/* Username Field */}
+        {/* Username */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Username
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
           <div className="relative">
             <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
@@ -145,17 +122,15 @@ const ProfileForm = ({ user, setUser, setIsEditing, refreshProfile }) => {
               name="username"
               value={formData.username}
               onChange={handleChange}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
               required
             />
           </div>
         </div>
 
-        {/* Email Field */}
+        {/* Email */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Email
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
           <div className="relative">
             <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
@@ -163,28 +138,26 @@ const ProfileForm = ({ user, setUser, setIsEditing, refreshProfile }) => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
               required
             />
           </div>
         </div>
 
-        {/* Bio Field */}
+        {/* Bio */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Bio
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
           <textarea
             name="bio"
             value={formData.bio}
             onChange={handleChange}
             rows="4"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
             placeholder="Tell us about yourself..."
           />
         </div>
 
-        {/* Password Change Toggle */}
+        {/* Toggle Password Change */}
         <div>
           <button
             type="button"
@@ -199,9 +172,7 @@ const ProfileForm = ({ user, setUser, setIsEditing, refreshProfile }) => {
         {showPasswordFields && (
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Current Password
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
               <div className="relative">
                 <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
@@ -209,15 +180,12 @@ const ProfileForm = ({ user, setUser, setIsEditing, refreshProfile }) => {
                   name="currentPassword"
                   value={formData.currentPassword}
                   onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
                 />
               </div>
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                New Password
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
               <div className="relative">
                 <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
@@ -225,15 +193,12 @@ const ProfileForm = ({ user, setUser, setIsEditing, refreshProfile }) => {
                   name="newPassword"
                   value={formData.newPassword}
                   onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
                 />
               </div>
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Confirm New Password
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
               <div className="relative">
                 <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
@@ -241,21 +206,21 @@ const ProfileForm = ({ user, setUser, setIsEditing, refreshProfile }) => {
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
                 />
               </div>
             </div>
           </div>
         )}
 
-        {/* Submit and Cancel Buttons */}
+        {/* Buttons */}
         <div className="flex space-x-4">
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             type="submit"
             disabled={loading}
-            className="flex-1 bg-primary-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-primary-700 transition-colors duration-200 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 bg-primary-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-primary-700 disabled:opacity-50"
           >
             {loading ? (
               <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
@@ -272,7 +237,7 @@ const ProfileForm = ({ user, setUser, setIsEditing, refreshProfile }) => {
             whileTap={{ scale: 0.98 }}
             type="button"
             onClick={() => setIsEditing(false)}
-            className="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-lg font-semibold hover:bg-gray-300 transition-colors duration-200 flex items-center justify-center space-x-2"
+            className="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-lg font-semibold hover:bg-gray-300"
           >
             <FaTimes className="w-4 h-4" />
             <span>Cancel</span>

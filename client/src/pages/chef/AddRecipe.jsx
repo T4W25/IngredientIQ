@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
-import { addRecipe } from "../../api/api"; // Adjust the import path as necessary
+import { createRecipe as addRecipe } from "../../api/api";
 import { 
   PlusIcon, 
   ArrowLeftIcon,

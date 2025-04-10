@@ -24,8 +24,8 @@ const getUserProfile = async (req, res) => {
 
 // Update user profile
 const updateUserProfile = async (req, res) => {
-  const { username, email, password, bio, profilePicture } = req.body;
-  const userId = req.user._id; // ✅ FIXED
+  const { username, email, bio, profilePicture, currentPassword, newPassword } = req.body;
+  const userId = req.user._id;
 
   try {
     const user = await User.findById(userId);
@@ -33,19 +33,27 @@ const updateUserProfile = async (req, res) => {
 
     if (username) user.username = username;
     if (email) user.email = email;
-    if (password) {
-      const salt = await bcrypt.genSalt(10);
-      user.passwordHash = await bcrypt.hash(password, salt);
-    }
     if (bio) user.bio = bio;
     if (profilePicture) user.profilePicture = profilePicture;
 
+    // ✅ Password logic
+    if (currentPassword && newPassword) {
+      const isMatch = await bcrypt.compare(currentPassword, user.passwordHash);
+      if (!isMatch) return res.status(400).json({ message: 'Current password is incorrect' });
+
+      const salt = await bcrypt.genSalt(10);
+      user.passwordHash = await bcrypt.hash(newPassword, salt);
+    }
+
     await user.save();
     res.json({ message: 'Profile updated successfully' });
+
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: 'Server error' });
   }
 };
+
 
 module.exports = {
   getUserProfile,

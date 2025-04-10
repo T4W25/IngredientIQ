@@ -5,7 +5,17 @@ const userController = require('../controllers/userController');
 const authorProfileController = require('../controllers/authorProfileController');
 const userProfileController = require('../controllers/userProfileController');
 const auth = require('../middleware/authMiddleware');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+const upload = multer({ dest: 'uploads/' });
 
+router.post('/profile/user/upload-image', auth, upload.single('image'), async (req, res) => {
+  if (!req.file) return res.status(400).json({ message: 'No image uploaded' });
+
+  const imageUrl = `/uploads/${req.file.filename}`;
+  res.json({ url: imageUrl });
+});
 
 router.post('/register/user', userController.registerUser);
 router.post('/register/author', authorController.registerAuthor);
