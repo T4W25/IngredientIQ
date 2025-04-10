@@ -13,7 +13,7 @@ const createMealPlan = async (req, res) => {
 
   try {
     const { planType, startDate, endDate, recipes } = req.body;
-    const userId = req.user.id;
+    const userId = req.user._id;
 
     const mealPlan = new MealPlan({
       userId,
@@ -65,7 +65,36 @@ const getGroceryList = async (req, res) => {
   }
 };
 
+const getMealPlans = async (req, res) => {
+  try {
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ error: 'Unauthorized - user ID missing' });
+    }
+
+    const plans = await MealPlan.find({ userId: req.user._id })
+      .sort({ createdAt: -1 })
+      .populate('recipes.recipeId'); // ✅ populate recipes
+
+    const enrichedPlans = plans.map(plan => ({
+      ...plan._doc,
+      recipes: plan.recipes.map(r => ({
+        day: r.day,
+        meal: r.meal,
+        servings: r.servings,
+        recipe: r.recipeId // populated full recipe
+      }))
+    }));
+
+    res.status(200).json(enrichedPlans);
+  } catch (err) {
+    console.error("Error fetching meal plans:", err);
+    res.status(500).json({ error: "Failed to fetch meal plans" });
+  }
+};
+
+
 module.exports = {
   createMealPlan,
-  getGroceryList
+  getGroceryList,
+  getMealPlans
 };

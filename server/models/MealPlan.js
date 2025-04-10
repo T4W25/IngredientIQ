@@ -9,8 +9,10 @@ const mealPlanSchema = new Schema({
   endDate: { type: Date, required: true },
   recipes: [{
     recipeId: { type: Schema.Types.ObjectId, ref: 'Recipe', required: true },
-    servings: { type: Number, required: true }
-  }],
+    servings: { type: Number, required: true },
+    day: { type: String, required: true },      // ✅ Add this
+    meal: { type: String, required: true }      // ✅ Add this
+  }],  
   groceryList: [{
     ingredient: { type: String, required: true },
     quantity: { type: Number, required: true },

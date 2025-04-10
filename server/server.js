@@ -58,7 +58,7 @@ app.use('/api/bookmarks', bookmarkRoutes);
 app.use('/api/recipes', recipeRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/upload', uploadRoutes);
-
+app.use('/api/moderator', moderatorRoutes);
 // Example route
 app.get('/', (req, res) => {
   res.send('Hello from the server!');
@@ -74,5 +74,3 @@ app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: 'Something broke!' });
 });
-
-app.use('/api/moderator', moderatorRoutes);

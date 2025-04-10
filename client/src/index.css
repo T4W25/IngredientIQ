@@ -27,4 +27,5 @@
   .filter-chip-inactive {
     @apply bg-gray-50 text-gray-700 border-gray-200;
   }
+
 }
