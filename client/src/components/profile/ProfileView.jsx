@@ -1,23 +1,21 @@
-// src/components/Profile/ProfileView.jsx
-import React from 'react';
-import { motion } from 'framer-motion';
-import { FaUser, FaEnvelope, FaPen, FaCalendar } from 'react-icons/fa';
+import React from "react";
+import { motion } from "framer-motion";
+import { FaUser, FaEnvelope, FaPen, FaCalendar } from "react-icons/fa";
+import ProfilePicture from "./ProfilePicture"; // Import ProfilePicture component
 
 const ProfileView = ({ user, setIsEditing }) => {
   return (
     <div className="p-8">
       <div className="relative">
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          className="relative w-32 h-32 mx-auto mb-6"
-        >
-          <img
-            src={user.profilePicture || '/default-avatar.png'}
-            alt={user.username}
-            className="rounded-full w-full h-full object-cover border-4 border-primary-100"
-          />
-        </motion.div>
-        
+      <motion.div whileHover={{ scale: 1.05 }} className="relative w-32 h-32 mx-auto mb-6">
+  <img
+    src={user.profilePicture || '/default-avatar.png'}
+    alt={user.username}
+    className="rounded-full w-full h-full object-cover border-4 border-primary-100"
+  />
+</motion.div>
+
+
         <button
           onClick={() => setIsEditing(true)}
           className="absolute top-0 right-0 bg-primary-500 text-white p-2 rounded-full hover:bg-primary-600 transition-colors duration-200"
@@ -29,7 +27,7 @@ const ProfileView = ({ user, setIsEditing }) => {
       <div className="space-y-6">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-gray-800">{user.username}</h1>
-          <p className="text-gray-500 mt-2">{user.bio || 'No bio added yet'}</p>
+          <p className="text-gray-500 mt-2">{user.bio || "No bio added yet"}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
