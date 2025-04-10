@@ -7,7 +7,7 @@ import MealPlanDashboard from "../pages/mealplan/MealPlanDashboard";
 import SearchResults from "../pages/SearchResults";
 import Search from "../pages/SearchBar"; // ✅ CORRECT!
 import Recipe from "../pages/AllRecipe";
-import Profile from "../components/profile/Profile";
+import Profile from "../pages/Profile";
 import ChefDashboard from "../pages/chef/ChefDashboard";
 import Landing from "../pages/landingpage";
 import AddRecipe from "../pages/chef/AddRecipe";

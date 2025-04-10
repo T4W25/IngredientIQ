@@ -6,6 +6,7 @@ import ProfileView from "./ProfileView";
 import { toast } from "react-toastify";
 import Navbar from "../ui/navbar";
 
+
 const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [user, setUser] = useState(null);  // Initialize user state
