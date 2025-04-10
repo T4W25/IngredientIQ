@@ -13,7 +13,6 @@ import ChefProfile from './ChefProfile';
 import ReviewSection from './ReviewSection';
 import { toast } from 'react-toastify';
 
-
 const RecipeDetail = () => {
   const { id } = useParams();
   const [recipe, setRecipe] = useState(null);

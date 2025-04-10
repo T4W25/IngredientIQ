@@ -2,28 +2,54 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { toast } from "react-toastify";
 import { 
   XMarkIcon, 
   PhotoIcon,
   VideoCameraIcon
 } from '@heroicons/react/24/outline';
-  
+import axios from "axios";
+import API_BASE_URL from "../../api/api";
+
   const MediaSection = ({ formData, setFormData, errors }) => {
-    const handleImageUpload = (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        // Handle image upload logic here
-        // For now, just create a preview
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setFormData(prev => ({
-            ...prev,
-            mainImage: reader.result
-          }));
-        };
-        reader.readAsDataURL(file);
+    const handleImageUpload = async (file) => {
+      try {
+        if (!file) return null;
+        
+        if (file.size > 5000000) { // 5MB
+          toast.error('Image size should be less than 5MB');
+          return null;
+        }
+        
+        if (!checkTokenValidity()) {
+          toast.error('Your session has expired. Please login again.');
+          navigate('/auth');
+          return;
+        }
+        const token = localStorage.getItem('token');
+        const formData = new FormData();
+        formData.append('image', file);
+    
+        
+        const response = await axios.post(
+          `${API_BASE_URL}/upload/image`,
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              Authorization: `Bearer ${token}`,
+            }
+          }
+        );
+    
+        return response.data.url; // This will be the Base64 string
+      } catch (error) {
+        console.error('Upload error:', error);
+        toast.error('Failed to upload image');
+        return null;
       }
     };
+    
   
     return (
       <div className="bg-white rounded-2xl shadow-2xl p-6 space-y-6">

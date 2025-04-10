@@ -3,6 +3,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
 
+
 // Nutritional fields configuration
 const NUTRITIONAL_FIELDS = [
   { 

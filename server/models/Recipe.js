@@ -74,7 +74,7 @@ const recipeSchema = new Schema({
   },
   mainImage: { 
     type: String,  // URL or file path
-    default: ''
+    required: [true, 'Main image is required']
   },
   gallery: [{ 
     type: String  // URLs or file paths

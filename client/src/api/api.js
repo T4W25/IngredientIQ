@@ -67,6 +67,12 @@ export const createRecipe = async (token, recipeData) => {
   });
 };
 
+export const handleFileUpload = async (file) => {
+  return axios.post(`${API_BASE_URL}/upload/image`, file, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+}
+
 export const updateRecipe = async (token, recipeId, updatedData) => {
   return axios.patch(`${API_BASE_URL}/recipes/${recipeId}`, updatedData, {
     headers: { Authorization: `Bearer ${token}` },
@@ -88,8 +94,8 @@ export const addBookmark = async (token, recipeId) => {
   );
 };
 
-export const removeBookmark = async (token, recipeId) => {
-  return axios.delete(`${API_BASE_URL}/bookmarks/${recipeId}`, {
+export const removeBookmark = async (token, bookmarkId) => {
+  return axios.delete(`${API_BASE_URL}/bookmarks/${bookmarkId}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
