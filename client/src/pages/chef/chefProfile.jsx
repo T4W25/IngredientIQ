@@ -1,9 +1,10 @@
-// ChefProfile.jsx
+// pages/chef/ChefProfile.jsx
 import React, { useState, useEffect } from 'react';
 import ChefProfileForm from './ChefProfileForm';
-import ChefProfileView from './chefProfileView';
+import ChefProfileView from './ChefProfileView';
 import { toast } from 'react-toastify';
-import axios from 'axios';
+import { getAuthorProfile } from '../../api/api';
+import Navbar from '../../components/ui/navbar';
 
 const ChefProfile = () => {
   const [user, setUser] = useState(null);
@@ -13,14 +14,15 @@ const ChefProfile = () => {
   const refreshProfile = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/auth/chef/profile`,
-        {
-          headers: { Authorization: `Bearer ${token}` }
-        }
-      );
+      if (!token) {
+        toast.error('No token found. Please login again.');
+        return;
+      }
+
+      const response = await getAuthorProfile(token);
       setUser(response.data);
     } catch (error) {
+      console.error(error);
       toast.error('Failed to load profile');
     } finally {
       setLoading(false);
@@ -31,21 +33,25 @@ const ChefProfile = () => {
     refreshProfile();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
-  if (!user) return <div>Error loading profile</div>;
+  if (loading) return <div className="text-center py-10">Loading...</div>;
+  if (!user) return <div className="text-center text-red-500 py-10">Error loading profile</div>;
 
-  return isEditing ? (
-    <ChefProfileForm
-      user={user}
-      setUser={setUser}
-      setIsEditing={setIsEditing}
-      refreshProfile={refreshProfile}
-    />
-  ) : (
-    <ChefProfileView
-      user={user}
-      setIsEditing={setIsEditing}
-    />
+  return (
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-gray-50 py-10">
+        {isEditing ? (
+          <ChefProfileForm
+            user={user}
+            setUser={setUser}
+            setIsEditing={setIsEditing}
+            refreshProfile={refreshProfile}
+          />
+        ) : (
+          <ChefProfileView user={user} setIsEditing={setIsEditing} />
+        )}
+      </div>
+    </>
   );
 };
 
