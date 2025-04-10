@@ -1,9 +1,6 @@
 // server/controllers/recipeController.js
 const Recipe = require('../models/Recipe');
 
-// server/controllers/recipeController.js
-const Recipe = require('../models/Recipe');
-
 exports.getRecipes = async (req, res) => {
   try {
     const {
@@ -51,7 +48,7 @@ exports.getRecipes = async (req, res) => {
 
 exports.getRecipeById = async (req, res) => {
   try {
-    const recipe = await Recipe.findById(req.params.id)
+    const recipe = await Recipe.findById(req.params.recipeId)
       .populate('authorId', 'name profileImage');
     
     if (!recipe) {
@@ -77,9 +74,13 @@ exports.addRecipe = async (req, res) => {
     };
 
     // Validate base64 images
-    if (!recipeData.mainImage.startsWith('data:image/')) {
+    if (
+      recipeData.mainImage &&
+      !recipeData.mainImage.startsWith('data:image/')
+    ) {
       return res.status(400).json({ error: 'Invalid main image format' });
     }
+    
 
     if (recipeData.gallery) {
       for (let image of recipeData.gallery) {
@@ -165,5 +166,27 @@ exports.deleteRecipe = async (req, res) => {
     res.status(200).json({ message: 'Recipe deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete recipe' });
+  }
+};
+
+exports.getDraftRecipes = async (req, res) => {
+  try {
+    const drafts = await Recipe.find({ status: 'draft' })
+    res.status(200).json(drafts);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch drafts' });
+  }
+};
+
+exports.publishRecipe = async (req, res) => {
+  try {
+    const recipe = await Recipe.findByIdAndUpdate(
+      req.params.id,
+      { status: 'published' },
+      { new: true }
+    );
+    res.json({ message: 'Recipe published', recipe });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to publish recipe' });
   }
 };
