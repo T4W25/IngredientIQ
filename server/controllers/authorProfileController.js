@@ -17,7 +17,11 @@ const updateAuthorProfile = async (req, res) => {
     }
     if (bio) author.bio = bio;
     if (profilePicture) author.profilePicture = profilePicture;
-    if (verificationDocuments) author.verificationDocuments = verificationDocuments;
+    if (verificationDocuments && verificationDocuments.length > 0) {
+      author.verificationDocuments = verificationDocuments;
+      author.verificationStatus = 'pending'; // submitted for review
+      author.isVerified = false;
+    }    
 
     await author.save();
     res.json({ message: 'Profile updated successfully' });

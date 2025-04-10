@@ -11,6 +11,15 @@ const authorSchema = new Schema({
   role: { type: String, enum: ['Contributor', 'Chef'], default: 'Contributor'},
   isVerified: { type: Boolean, default: false },
   verificationDocuments: [{ type: String }], // URLs or file paths
+  verificationStatus: {
+    type: String,
+    enum: ['none', 'pending', 'approved', 'rejected'],
+    default: 'none'
+  },
+  rejectionReason: {
+    type: String,
+    default: ''
+  }  
 }, {
   timestamps: true
 });
