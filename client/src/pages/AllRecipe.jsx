@@ -7,9 +7,9 @@ import {
   CardHeader,
   CardTitle,
   CardDescription,
-  CardContent
-} from '../Components/ui/card';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '../Components/ui/card';
+  CardContent,
+  CardFooter
+} from '../Components/ui/card'; // Correct import (only once)
 
 const AllRecipes = () => {
   const navigate = useNavigate(); // Add this
@@ -132,4 +132,4 @@ const AllRecipes = () => {
   );
 };
 
-export default AllRecipes;  
+export default AllRecipes;
