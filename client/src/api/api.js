@@ -1,4 +1,5 @@
 import axios from "axios";
+
 const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
 
 // AUTHENTICATION
@@ -26,10 +27,10 @@ export const logoutAuthor = async () => {
   return axios.post(`${API_BASE_URL}/auth/signout/author`);
 };
 
-//PROFILE MANAGEMENT
+// PROFILE MANAGEMENT
 export const getUserProfile = async (token) => {
   return axios.get(`${API_BASE_URL}/auth/profile/user`, {
-    headers: { Authorization: `Bearer ${token}` }
+    headers: { Authorization: `Bearer ${token}` },
   });
 };
 
@@ -51,11 +52,14 @@ export const updateAuthorProfile = async (token, profileData) => {
   });
 };
 
+// UPLOAD PROFILE IMAGE
+export const uploadUserProfileImage = async (file) => {
+  return axios.post(`${API_BASE_URL}/upload/user-profile-image`, file, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+};
 
-
-
-//RECIPE MANAGEMENT
-
+// RECIPE MANAGEMENT
 export const searchRecipes = async (params) => {
   try {
     const response = await axios.get(`${API_BASE_URL}/recipes/search`, { params });
@@ -105,9 +109,11 @@ export const getRecipeById = async (id) => {
   return axios.get(`${API_BASE_URL}/recipes/${id}`);
 };
 
-// api.js
-export const addRecipe = async (token, recipeData) => {
-  // Clean up the data before sending
+// src/api/api.js
+
+// RECIPE MANAGEMENT
+export const createRecipe = async (token, recipeData) => {
+  // Prepare the data before sending it to the backend
   const cleanedData = {
     ...recipeData,
     ingredients: recipeData.ingredients.filter(ing => 
@@ -129,12 +135,39 @@ export const addRecipe = async (token, recipeData) => {
   });
 };
 
+
+// ADD RECIPE
+export const addRecipe = async (token, recipeData) => {
+  // Clean up the data before sending
+  const cleanedData = {
+    ...recipeData,
+    ingredients: recipeData.ingredients.filter(ing =>
+      ing.name.trim() && ing.quantity.trim() && ing.unit.trim()
+    ),
+    instructions: recipeData.instructions.filter(inst =>
+      inst.text.trim()
+    ).map((inst, index) => ({
+      ...inst,
+      step: index + 1
+    }))
+  };
+
+  return axios.post(`${API_BASE_URL}/recipes/add`, cleanedData, {
+    headers: { 
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    }
+  });
+};
+
+// FILE UPLOAD
 export const handleFileUpload = async (file) => {
   return axios.post(`${API_BASE_URL}/upload/image`, file, {
     headers: { "Content-Type": "multipart/form-data" },
   });
-}
+};
 
+// UPDATE RECIPE
 export const updateRecipe = async (token, recipeId, updatedData) => {
   return axios.patch(`${API_BASE_URL}/recipes/${recipeId}`, updatedData, {
     headers: { Authorization: `Bearer ${token}` },
@@ -145,10 +178,7 @@ export const deleteRecipe = async (recipeId) => {
   return axios.delete(`${API_BASE_URL}/recipes/${recipeId}`);
 };
 
-//BOOKMARKING RECIPES
-
-// src/api/api.js
-
+// BOOKMARKING RECIPES
 export const checkBookmarkStatus = async (token, recipeId) => {
   try {
     if (!token || !recipeId) {
@@ -173,7 +203,7 @@ export const checkBookmarkStatus = async (token, recipeId) => {
 export const addBookmark = async (token, recipeId) => {
   try {
     const userId = localStorage.getItem('userId'); // Get userId from localStorage
-    
+
     const response = await axios.post(
       `${API_BASE_URL}/bookmarks`,
       { 
@@ -197,7 +227,7 @@ export const addBookmark = async (token, recipeId) => {
 export const removeBookmark = async (token, bookmarkId) => {
   try {
     console.log('Removing bookmark:', bookmarkId); // Debug log
-    
+
     const response = await axios.delete(
       `${API_BASE_URL}/bookmarks/${bookmarkId}`,
       { 
@@ -220,7 +250,7 @@ export const getBookmarks = async (token) => {
   });
 };
 
-//MEAL PLANNING
+// MEAL PLANNING
 export const getMealPlans = async (token) => {
   return axios.get(`${API_BASE_URL}/mealplans`, {
     headers: { Authorization: `Bearer ${token}` },
@@ -244,8 +274,5 @@ export const deleteMealPlan = async (token, mealPlanId) => {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
-
-
-
 
 export default API_BASE_URL;
