@@ -23,7 +23,7 @@ const port = process.env.PORT || 5000;
 
 // CORS setup for allowing frontend access
 app.use(cors({
-  origin: "http://localhost:5173",  // ✅ Allow frontend URL
+  origin: "https://ingredient-iq.onrender.com",  // ✅ Allow frontend URL
   methods: "GET,POST,PATCH,DELETE",
   allowedHeaders: "Content-Type,Authorization"
 }));
