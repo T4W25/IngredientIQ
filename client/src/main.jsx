@@ -4,16 +4,15 @@ import { BrowserRouter } from "react-router-dom";
 import AppRoutes from "./routes/AppRoutes"; 
 import "./index.css"; // Or your global styles
 
-import { ToastProvider } from "./Components/ui/use-toast"; // ✅ double check this path!
-
+// Corrected import for react-toastify
+import { ToastContainer } from 'react-toastify';  // Use ToastContainer instead of ToastProvider
+import 'react-toastify/dist/ReactToastify.css';  // Don't forget to import the CSS for Toastify
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <ToastProvider>
-      <BrowserRouter>
-        <AppRoutes />
-      </BrowserRouter>
-    </ToastProvider>
+    <BrowserRouter>
+      <AppRoutes />
+      <ToastContainer />  {/* Add this to display toasts */}
+    </BrowserRouter>
   </React.StrictMode>
-
 );
