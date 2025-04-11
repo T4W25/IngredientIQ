@@ -9,6 +9,7 @@ import {
   CardDescription,
   CardContent
 } from '../Components/ui/card';
+import Card from '../Components/ui/card';  // Ensure the path and case are correct
 
 const AllRecipes = () => {
   const navigate = useNavigate(); // Add this
