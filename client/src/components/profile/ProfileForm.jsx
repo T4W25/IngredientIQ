@@ -11,7 +11,7 @@ const ProfileForm = ({ user, setUser, setIsEditing, refreshProfile }) => {
     username: user.username || '',
     email: user.email || '',
     bio: user.bio || '',
-    profilePicture: user.profilePicture || '',
+    profilePicture: user.profilePicture || '',  // Ensure this is set correctly
     currentPassword: '',
     newPassword: '',
     confirmPassword: ''
@@ -36,8 +36,8 @@ const ProfileForm = ({ user, setUser, setIsEditing, refreshProfile }) => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await uploadUserProfileImage(token, file);
-      setFormData((prev) => ({ ...prev, profilePicture: response.data.url }));
+      const response = await uploadUserProfileImage(token, file); // Upload image to backend
+      setFormData((prev) => ({ ...prev, profilePicture: response.data.url })); // Set the image URL returned by backend
       toast.success('Profile picture uploaded successfully');
     } catch (error) {
       console.error('Image upload error:', error);
@@ -74,7 +74,7 @@ const ProfileForm = ({ user, setUser, setIsEditing, refreshProfile }) => {
         username: formData.username,
         email: formData.email,
         bio: formData.bio,
-        profilePicture: formData.profilePicture
+        profilePicture: formData.profilePicture // Ensure profile picture is included in the update payload
       };
 
       if (showPasswordFields) {
@@ -100,7 +100,7 @@ const ProfileForm = ({ user, setUser, setIsEditing, refreshProfile }) => {
       {/* Profile Picture */}
       <div className="relative w-32 h-32 mx-auto mb-6">
         <Avatar
-          src={formData.profilePicture}
+          src={formData.profilePicture}  // Use the updated image URL here
           alt={formData.username}
           className="w-full h-full border-4 border-primary-100"
         />
@@ -157,7 +157,7 @@ const ProfileForm = ({ user, setUser, setIsEditing, refreshProfile }) => {
           />
         </div>
 
-        {/* Toggle Password Change */}
+        {/* Password Fields (Optional) */}
         <div>
           <button
             type="button"
@@ -173,42 +173,33 @@ const ProfileForm = ({ user, setUser, setIsEditing, refreshProfile }) => {
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
-              <div className="relative">
-                <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <input
-                  type="password"
-                  name="currentPassword"
-                  value={formData.currentPassword}
-                  onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
-                />
-              </div>
+              <input
+                type="password"
+                name="currentPassword"
+                value={formData.currentPassword}
+                onChange={handleChange}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+              />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
-              <div className="relative">
-                <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <input
-                  type="password"
-                  name="newPassword"
-                  value={formData.newPassword}
-                  onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
-                />
-              </div>
+              <input
+                type="password"
+                name="newPassword"
+                value={formData.newPassword}
+                onChange={handleChange}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+              />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
-              <div className="relative">
-                <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
-                />
-              </div>
+              <input
+                type="password"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+              />
             </div>
           </div>
         )}
@@ -225,10 +216,7 @@ const ProfileForm = ({ user, setUser, setIsEditing, refreshProfile }) => {
             {loading ? (
               <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
             ) : (
-              <>
-                <FaCheck className="w-4 h-4" />
-                <span>Save Changes</span>
-              </>
+              <><FaCheck className="w-4 h-4" /><span>Save Changes</span></>
             )}
           </motion.button>
 

@@ -1,20 +1,19 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { FaUser, FaEnvelope, FaPen, FaCalendar } from "react-icons/fa";
-import ProfilePicture from "./ProfilePicture"; // Import ProfilePicture component
 
 const ProfileView = ({ user, setIsEditing }) => {
   return (
     <div className="p-8">
       <div className="relative">
-      <motion.div whileHover={{ scale: 1.05 }} className="relative w-32 h-32 mx-auto mb-6">
-  <img
-    src={user.profilePicture || '/default-avatar.png'}
-    alt={user.username}
-    className="rounded-full w-full h-full object-cover border-4 border-primary-100"
-  />
-</motion.div>
-
+        <motion.div whileHover={{ scale: 1.05 }} className="relative w-32 h-32 mx-auto mb-6">
+          {/* Use full image URL if available, else use default avatar */}
+          <img
+            src={user.profilePicture ? `http://localhost:5000${user.profilePicture}` : '/default-avatar.png'}
+            alt={user.username}
+            className="rounded-full w-full h-full object-cover border-4 border-primary-100"
+          />
+        </motion.div>
 
         <button
           onClick={() => setIsEditing(true)}
