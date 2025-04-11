@@ -9,7 +9,7 @@ import {
   CardDescription,
   CardContent,
   CardFooter
-} from '../Components/ui/card'; // Correct import (only once)
+} from '../Components/ui/card'; // Keep this import only once
 
 const AllRecipes = () => {
   const navigate = useNavigate(); // Add this
