@@ -35,7 +35,8 @@ app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 // MongoDB connection string
-const mongoURI = 'mongodb+srv://anshlimbachiya88:Limbachiya%40Ansh@ingredientiq.xngyb.mongodb.net/?retryWrites=true&w=majority&appName=IngredientIQ';
+const mongoURI = process.env.MONGO_URI;  // Use the environment variable
+
 
 // Connect to MongoDB using Mongoose
 mongoose.connect(mongoURI, {
