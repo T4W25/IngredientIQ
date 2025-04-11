@@ -28,6 +28,25 @@ const RecipeDetail = () => {
     checkBookmarkStatus();
   }, [id]);
 
+  useEffect(() => {
+    // Fetch current user details
+    const fetchCurrentUser = async () => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        try {
+          const response = await axios.get('/api/user/profile', {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          setCurrentUser(response.data);
+        } catch (error) {
+          console.error('Failed to fetch user');
+        }
+      }
+    };
+
+    fetchCurrentUser();
+  }, []);
+
   const fetchRecipe = async () => {
     try {
       const response = await getRecipeById(id);
@@ -542,19 +561,53 @@ const ReviewSection = ({ recipeId }) => {
   const [newReview, setNewReview] = useState({ rating: 0, comment: '' });
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchReviews();
   }, [recipeId]);
 
+  const userId = localStorage.getItem('userId');
+
   const fetchReviews = async () => {
     try {
+      setLoading(true);
+      setError(null);
       const response = await axios.get(`/api/reviews/recipe/${recipeId}`);
       setReviews(response.data.reviews);
+      // Optional: Set average rating
+      setAverageRating(response.data.averageRating);
     } catch (error) {
+      setError('Failed to load reviews');
       toast.error('Failed to load reviews');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleEditReview = async (reviewId, updatedReview) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.put(`/api/reviews/recipe/${recipeId}`, updatedReview, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      await fetchReviews();
+      toast.success('Review updated successfully');
+    } catch (error) {
+      toast.error('Failed to update review');
+    }
+  };
+
+  const handleDeleteReview = async (reviewId) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.delete(`/api/reviews/recipe/${recipeId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      await fetchReviews();
+      toast.success('Review deleted successfully');
+    } catch (error) {
+      toast.error('Failed to delete review');
     }
   };
 
@@ -591,20 +644,74 @@ const ReviewSection = ({ recipeId }) => {
     }
   };
 
-  const StarRating = ({ rating, onRatingChange, interactive = false }) => (
-    <div className="flex space-x-1">
+  const renderReviews = () => {
+    return reviews.map(review => (
+      <div key={review._id} className="review-item">
+        <StarRating rating={review.rating} interactive={false} />
+        <p>{review.comment}</p>
+        <p>By: {review.userId.username}</p>
+        {/* Conditionally render edit/delete buttons if current user's review */}
+        {currentUser && currentUser._id === review.userId._id && (
+          <div>
+            <button onClick={() => handleEditReview(review._id, review)}>Edit</button>
+            <button onClick={() => handleDeleteReview(review._id)}>Delete</button>
+          </div>
+        )}
+      </div>
+    ));
+  };
+
+  const renderAverageRating = () => {
+    return (
+      <div className="average-rating">
+        <StarRating rating={Math.round(averageRating)} interactive={false} />
+        <span>({totalRatings} reviews)</span>
+      </div>
+    );
+  };
+
+  // const StarRating = ({ rating, onRatingChange, interactive = false }) => (
+  //   <div className="flex space-x-1">
+  //     {[1, 2, 3, 4, 5].map((star) => (
+  //       <motion.button
+  //         key={star}
+  //         whileHover={interactive ? { scale: 1.2 } : {}}
+  //         whileTap={interactive ? { scale: 0.9 } : {}}
+  //         onClick={() => interactive && onRatingChange(star)}
+  //         className={`${interactive ? 'cursor-pointer' : ''} ${
+  //           star <= rating ? 'text-yellow-400' : 'text-gray-300'
+  //         }`}
+  //       >
+  //         <FaStar className="w-5 h-5" />
+  //       </motion.button>
+  //     ))}
+  //   </div>
+  // );
+  const StarRating = ({ 
+    rating, 
+    onRatingChange, 
+    interactive = false,
+    ariaLabel = 'Rating' 
+  }) => (
+    <div 
+      role="radiogroup" 
+      aria-label={ariaLabel}
+      className="flex space-x-1"
+    >
       {[1, 2, 3, 4, 5].map((star) => (
-        <motion.button
+        <button
           key={star}
-          whileHover={interactive ? { scale: 1.2 } : {}}
-          whileTap={interactive ? { scale: 0.9 } : {}}
+          type="button"
+          role="radio"
+          aria-checked={star <= rating}
+          aria-label={`${star} star rating`}
           onClick={() => interactive && onRatingChange(star)}
           className={`${interactive ? 'cursor-pointer' : ''} ${
             star <= rating ? 'text-yellow-400' : 'text-gray-300'
           }`}
         >
           <FaStar className="w-5 h-5" />
-        </motion.button>
+        </button>
       ))}
     </div>
   );
