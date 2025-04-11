@@ -1,8 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import Button from '../Components/ui/button';
-
+import Button from '../components/ui/button';
 const Landing = () => {
   return (
     <div className="min-h-screen">

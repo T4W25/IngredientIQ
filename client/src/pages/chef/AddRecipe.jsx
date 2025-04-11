@@ -1,25 +1,15 @@
-// src/components/recipe/AddRecipe.jsx
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
-import { createRecipe as addRecipe } from "../../api/api";
-import { 
-  PlusIcon, 
-  ArrowLeftIcon,
-  XMarkIcon, 
-  PhotoIcon,
-  VideoCameraIcon
-} from '@heroicons/react/24/outline';
-import BasicInfoSection from "../../Components/recipe/BasicInfoSection"
+import { PlusIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
+import BasicInfoSection from "../../Components/recipe/BasicInfoSection";
 import MediaSection from "../../Components/recipe/mediaSection";  
 import IngredientsSection from "../../Components/recipe/IngredientSection";
 import InstructionsSection from "../../Components/recipe/InstructionSection";
-
-// Import your existing components
 import DietaryRestrictionsForm from "../../Components/recipe/DietaryRestrictionsForm";
 import NutritionalInfoForm from "../../Components/recipe/NutritionalInfoForm";
-import { Component } from "react";
+import { createRecipe as addRecipe } from "../../api/api";
 
 const INITIAL_FORM_STATE = {
   title: "",
@@ -30,7 +20,7 @@ const INITIAL_FORM_STATE = {
   difficulty: "easy",
   cuisine: "",
   category: "",
-  mainImage: "",
+  mainImage: null, // Image will be stored here
   gallery: [],
   ingredients: [{ name: "", quantity: "", unit: "" }],
   instructions: [{ step: 1, text: "", image: "" }],
@@ -62,28 +52,38 @@ const AddRecipe = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Form validation
+  // Handle input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  // Handle file changes for main image
+  const handleFileChange = (e) => {
+    const { name, files } = e.target;
+    if (files && files[0]) {
+      setFormData({
+        ...formData,
+        [name]: files[0], // Store the file here
+      });
+    }
+  };
+
+  // Validate form
   const validateForm = () => {
     const newErrors = {};
     if (!formData.title.trim()) newErrors.title = "Title is required";
     if (!formData.description.trim()) newErrors.description = "Description is required";
     if (!formData.mainImage) newErrors.mainImage = "Main image is required";
-    
-    // Validate ingredients
-    if (formData.ingredients.some(ing => !ing.name.trim() || !ing.quantity)) {
-      newErrors.ingredients = "All ingredients must have a name and quantity";
-    }
-    
-    // Validate instructions
-    if (formData.instructions.some(inst => !inst.text.trim())) {
-      newErrors.instructions = "All instructions must have text";
-    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  // Form submission
+  // Submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) {
@@ -92,6 +92,17 @@ const AddRecipe = () => {
     }
 
     setIsLoading(true);
+    const recipeFormData = new FormData();
+
+    // Append form data including the image
+    Object.entries(formData).forEach(([key, value]) => {
+      if (key === "mainImage" && value) {
+        recipeFormData.append(key, value); // Append image file
+      } else if (key !== "gallery") {
+        recipeFormData.append(key, value);
+      }
+    });
+
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -100,7 +111,7 @@ const AddRecipe = () => {
         return;
       }
 
-      await addRecipe(token, formData);
+      await addRecipe(token, recipeFormData); // Send form data with image
       toast.success('Recipe created successfully!');
       navigate("/chef-dashboard");
     } catch (error) {
@@ -115,114 +126,79 @@ const AddRecipe = () => {
   return (
     <>
       <div className="min-h-screen bg-gradient-to-br from-primary-50 to-white">
-          
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="space-y-8"
           >
-            {/* Form Header */}
             <div className="flex items-center gap-4">
               <Link
                 to="/chef-dashboard"
-                className="p-2 text-gray-600 hover:text-primary-600 
-                  transition-colors rounded-lg hover:bg-primary-50"
+                className="p-2 text-gray-600 hover:text-primary-600 transition-colors rounded-lg hover:bg-primary-50"
               >
                 <ArrowLeftIcon className="w-5 h-5" />
               </Link>
             </div>
+
             <div className="bg-white rounded-2xl shadow-2xl p-6">
-              <h1 className="text-3xl font-bold text-primary-800">
-                Create New Recipe
-              </h1>
-              <p className="text-gray-600 mt-2">
-                Share your culinary masterpiece with the world
-              </p>
+              <h1 className="text-3xl font-bold text-primary-800">Create New Recipe</h1>
+              <p className="text-gray-600 mt-2">Share your culinary masterpiece with the world</p>
             </div>
 
-            {/* Main Form */}
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Basic Information Section */}
               <BasicInfoSection 
                 formData={formData}
                 setFormData={setFormData}
                 errors={errors}
+                handleInputChange={handleInputChange}
               />
-
-              {/* Media Upload Section */}
               <MediaSection 
                 formData={formData}
                 setFormData={setFormData}
                 errors={errors}
+                handleFileChange={handleFileChange}
               />
-
-              {/* Ingredients Section */}
               <IngredientsSection 
                 formData={formData}
                 setFormData={setFormData}
                 errors={errors}
               />
-
-              {/* Instructions Section */}
               <InstructionsSection 
                 formData={formData}
                 setFormData={setFormData}
                 errors={errors}
               />
-
-              {/* Nutritional Information */}
               <NutritionalInfoForm 
                 nutritionalInfo={formData.nutritionalInfo}
                 onChange={(nutritionalInfo) => 
                   setFormData(prev => ({ ...prev, nutritionalInfo }))
                 }
               />
-
-              {/* Dietary Restrictions */}
               <DietaryRestrictionsForm 
                 dietaryRestrictions={formData.dietaryRestrictions}
                 onChange={(dietaryRestrictions) => 
                   setFormData(prev => ({ ...prev, dietaryRestrictions }))
                 }
-              /> 
-
-              {/* Submit Button */}
+              />
               <div className="flex justify-end gap-4">
                 <button
                   type="button"
                   onClick={() => navigate(-1)}
-                  className="px-6 py-3 text-gray-600 hover:text-gray-800 
-                    transition-colors duration-200"
+                  className="px-6 py-3 text-gray-600 hover:text-gray-800 transition-colors duration-200"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className={`px-6 py-3 bg-primary-600 text-white rounded-lg
-                    hover:bg-primary-700 transition-colors duration-200
-                    flex items-center gap-2 ${isLoading ? 'opacity-70' : ''}`}
+                  className={`px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors duration-200 flex items-center gap-2 ${isLoading ? 'opacity-70' : ''}`}
                 >
                   {isLoading ? (
-                    <>
-                      <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                        <circle 
-                          className="opacity-25" 
-                          cx="12" 
-                          cy="12" 
-                          r="10" 
-                          stroke="currentColor" 
-                          strokeWidth="4"
-                        />
-                        <path 
-                          className="opacity-75" 
-                          fill="currentColor" 
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        />
-                      </svg>
-                      <span>Saving...</span>
-                    </>
+                    <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                    </svg>
                   ) : (
                     <>
                       <PlusIcon className="w-5 h-5" />

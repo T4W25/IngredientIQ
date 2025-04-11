@@ -43,40 +43,45 @@ const ChefProfileForm = ({ user, setUser, setIsEditing, refreshProfile }) => {
   };
 
   // Handle profile picture upload
-  const handleImageChange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+  // Handle profile picture upload
+const handleImageChange = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
 
-    if (file.size > 5000000) {
-      toast.error('Image size should be less than 5MB');
-      return;
-    }
+  if (file.size > 5000000) { // Check if image size is under 5MB
+    toast.error('Image size should be less than 5MB');
+    return;
+  }
 
-    try {
-      const formDataImg = new FormData();
-      formDataImg.append('image', file);
+  try {
+    const formDataImg = new FormData();
+    formDataImg.append('image', file);  // Append file to FormData
 
-      const token = localStorage.getItem('token');
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/auth/chef/upload-image`,
-        formDataImg,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${token}`
-          }
+    const token = localStorage.getItem('token');  // Get the auth token
+    console.log("File being uploaded:", file);  // Debug log
+    const response = await axios.post(
+      `${process.env.REACT_APP_API_URL}/auth/chef/upload-image`,  // Check your backend URL
+      formDataImg,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`
         }
-      );
+      }
+    );
 
-      setFormData(prev => ({
-        ...prev,
-        profilePicture: response.data.url
-      }));
-      toast.success('Profile picture updated successfully');
-    } catch (error) {
-      toast.error('Failed to upload image');
-    }
-  };
+    setFormData(prev => ({
+      ...prev,
+      profilePicture: response.data.url // Handle the returned URL here
+    }));
+
+    toast.success('Profile picture updated successfully');
+  } catch (error) {
+    toast.error('Failed to upload image');
+    console.error("Error uploading image:", error);  // Debug log for errors
+  }
+};
+
 
   // Handle verification document upload
   const handleDocumentUpload = async (e) => {
