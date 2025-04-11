@@ -1,7 +1,6 @@
 import React from "react";
 import { toast } from "react-toastify";
 import { PhotoIcon } from '@heroicons/react/24/outline';
-import { handleFileUpload } from "../../api/api"; // Ensure this is correctly implemented
 
 const MediaSection = ({ formData, setFormData, errors }) => {
   const handleImageUpload = async (event) => {
@@ -25,9 +24,10 @@ const MediaSection = ({ formData, setFormData, errors }) => {
       const fileData = new FormData();
       fileData.append('image', file);
 
-      const response = await handleFileUpload(fileData); // API call to upload the image
+      // Upload the file to the backend
+      const response = await handleFileUpload(fileData); // Ensure this function is implemented
       if (response?.data?.url) {
-        setFormData(prev => ({ ...prev, mainImage: response.data.url })); // Update formData with the image URL
+        setFormData(prev => ({ ...prev, mainImage: response.data.url })); // Update the formData with the image URL
         toast.success('Image uploaded successfully');
       }
     } catch (error) {
@@ -40,7 +40,6 @@ const MediaSection = ({ formData, setFormData, errors }) => {
     <div className="bg-white rounded-2xl shadow-2xl p-6 space-y-6">
       <h2 className="text-2xl font-semibold text-primary-800">Media</h2>
 
-      {/* Main Image Upload */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Main Recipe Image*
