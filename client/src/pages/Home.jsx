@@ -2,14 +2,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import RecipeCard from "../Components/recipe/RecipeCard";
+import RecipeCard from "../components/recipe/RecipeCard";
 import sampleRecipes from "../assets/sampleRecipes";
 import { 
   ChevronRightIcon, 
   SparklesIcon,
   MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline';
-import Navbar from "../Components/ui/navbar";
+import Navbar from "../components/ui/navbar";
 
 const Home = () => {
   return (

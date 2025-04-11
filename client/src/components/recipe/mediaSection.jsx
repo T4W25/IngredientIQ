@@ -1,11 +1,7 @@
-// MediaSection.jsx
 import React from "react";
 import { toast } from "react-toastify";
-import { 
-  XMarkIcon, 
-  PhotoIcon,
-} from '@heroicons/react/24/outline';
-import { handleFileUpload } from "../../api/api";
+import { PhotoIcon } from '@heroicons/react/24/outline';
+import { handleFileUpload } from "../../api/api"; // Ensure this is correctly implemented
 
 const MediaSection = ({ formData, setFormData, errors }) => {
   const handleImageUpload = async (event) => {
@@ -26,18 +22,17 @@ const MediaSection = ({ formData, setFormData, errors }) => {
         return;
       }
 
-      const formData = new FormData();
-      formData.append('image', file);
+      const fileData = new FormData();
+      fileData.append('image', file);
 
-      const response = await handleFileUpload(formData);
-      
-      if (response.data.url) {
-        setFormData(prev => ({ ...prev, mainImage: response.data.url }));
+      const response = await handleFileUpload(fileData); // API call to upload the image
+      if (response?.data?.url) {
+        setFormData(prev => ({ ...prev, mainImage: response.data.url })); // Update formData with the image URL
         toast.success('Image uploaded successfully');
       }
     } catch (error) {
       console.error('Upload error:', error);
-      toast.error(error.response?.data?.error || 'Failed to upload image');
+      toast.error('Failed to upload image');
     }
   };
 

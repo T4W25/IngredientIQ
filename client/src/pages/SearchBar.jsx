@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { searchRecipes } from "../api/api";
-import Navbar from "../Components/ui/navbar";
+import Navbar from "../components/ui/navbar";
 const DIETARY_OPTIONS = [
   { label: "Vegetarian", value: "isVegetarian", icon: "🥗" },
   { label: "Vegan", value: "isVegan", icon: "🌱" },

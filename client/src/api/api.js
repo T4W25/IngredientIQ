@@ -105,10 +105,26 @@ export const createRecipe = async (token, recipeData) => {
 };
 
 export const handleFileUpload = async (file) => {
-  return axios.post(`${API_BASE_URL}/upload/image`, file, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
+  const formData = new FormData();
+  formData.append('image', file);
+
+  const token = localStorage.getItem('token');  // Ensure token exists
+  if (!token) throw new Error("Token is missing. Please log in.");
+
+  try {
+    const response = await axios.post(`${API_BASE_URL}/upload/image`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",  // Ensure correct content type
+        Authorization: `Bearer ${token}`,  // Authentication token
+      },
+    });
+    
+    return response.data;  // This should return the URL of the uploaded image
+  } catch (error) {
+    throw new Error("File upload failed: " + error.message);
+  }
 };
+
 
 export const updateRecipe = async (token, recipeId, updatedData) => {
   return axios.patch(`${API_BASE_URL}/recipes/${recipeId}`, updatedData, {
