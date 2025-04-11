@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom'; // Add this import
 import { getRecipes } from '../api/api';
-import Navbar from '../Components/ui/navbar';
+import Navbar from '../components/ui/navbar';
 import {
   Card,
   CardHeader,

@@ -4,7 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import AppRoutes from "./routes/AppRoutes"; 
 import "./index.css"; // Or your global styles
 
-import { ToastProvider } from './components/ui/use-toast'; // ✅ double check this path!
+import { ToastProvider } from "./Components/ui/use-toast"; // ✅ double check this path!
 
 
 ReactDOM.createRoot(document.getElementById("root")).render(
