@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "https://ingredientiq-vx3j.onrender.com" || "http://localhost:5000/api";
 
 // AUTHENTICATION
 export const registerUser = async (userData) => {
@@ -27,7 +27,7 @@ export const logoutAuthor = async () => {
   return axios.post(`${API_BASE_URL}/auth/signout/author`);
 };
 
-// PROFILE MANAGEMENT
+//PROFILE MANAGEMENT
 export const getUserProfile = async (token) => {
   return axios.get(`${API_BASE_URL}/auth/profile/user`, {
     headers: { Authorization: `Bearer ${token}` }
@@ -52,20 +52,20 @@ export const updateAuthorProfile = async (token, profileData) => {
   });
 };
 
-export const uploadUserProfileImage = async (token, imageFile) => {
-  const formData = new FormData();
-  formData.append("image", imageFile);
 
-  return axios.post(`${API_BASE_URL}/auth/profile/user/upload-image`, formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-      Authorization: `Bearer ${token}`
-    }
-  });
+
+
+//RECIPE MANAGEMENT
+
+export const searchRecipes = async (params) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/recipes/search`, { params });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
-
-// RECIPE MANAGEMENT
 export const getRecipes = async (filters = {}) => {
   try {
     const queryParams = new URLSearchParams();
@@ -94,37 +94,47 @@ export const getRecipes = async (filters = {}) => {
   }
 };
 
+export const getDraftRecipes = async () => {
+  return axios.get(`${API_BASE_URL}/recipes/moderation-queue`);
+};
+
+export const publishRecipe = async (id) => {
+  return axios.patch(`${API_BASE_URL}/recipes/${id}/publish`);
+};
+
 export const getRecipeById = async (id) => {
   return axios.get(`${API_BASE_URL}/recipes/${id}`);
 };
 
-export const createRecipe = async (token, recipeData) => {
-  return axios.post(`${API_BASE_URL}/recipes/add`, recipeData, {
-    headers: { Authorization: `Bearer ${token}` },
+// api.js
+export const addRecipe = async (token, recipeData) => {
+  // Clean up the data before sending
+  const cleanedData = {
+    ...recipeData,
+    ingredients: recipeData.ingredients.filter(ing => 
+      ing.name.trim() && ing.quantity.trim() && ing.unit.trim()
+    ),
+    instructions: recipeData.instructions.filter(inst => 
+      inst.text.trim()
+    ).map((inst, index) => ({
+      ...inst,
+      step: index + 1
+    }))
+  };
+
+  return axios.post(`${API_BASE_URL}/recipes/add`, cleanedData, {
+    headers: { 
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    }
   });
 };
 
 export const handleFileUpload = async (file) => {
-  const formData = new FormData();
-  formData.append('image', file);
-
-  const token = localStorage.getItem('token');  // Ensure token exists
-  if (!token) throw new Error("Token is missing. Please log in.");
-
-  try {
-    const response = await axios.post(`${API_BASE_URL}/upload/image`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",  // Ensure correct content type
-        Authorization: `Bearer ${token}`,  // Authentication token
-      },
-    });
-    
-    return response.data;  // This should return the URL of the uploaded image
-  } catch (error) {
-    throw new Error("File upload failed: " + error.message);
-  }
-};
-
+  return axios.post(`${API_BASE_URL}/upload/image`, file, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+}
 
 export const updateRecipe = async (token, recipeId, updatedData) => {
   return axios.patch(`${API_BASE_URL}/recipes/${recipeId}`, updatedData, {
@@ -132,37 +142,77 @@ export const updateRecipe = async (token, recipeId, updatedData) => {
   });
 };
 
-export const deleteRecipe = async (token, recipeId) => {
-  return axios.delete(`${API_BASE_URL}/recipes/${recipeId}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+export const deleteRecipe = async (recipeId) => {
+  return axios.delete(`${API_BASE_URL}/recipes/${recipeId}`);
 };
 
-export const getDraftRecipes = async (token) => {
-  return axios.get(`${API_BASE_URL}/recipes/moderation-queue`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+//BOOKMARKING RECIPES
+
+// src/api/api.js
+
+export const checkBookmarkStatus = async (token, recipeId) => {
+  try {
+    if (!token || !recipeId) {
+      throw new Error('Token and Recipe ID are required');
+    }
+
+    const response = await axios.get(
+      `${API_BASE_URL}/bookmarks/check/${recipeId}`,
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error checking bookmark status:', error);
+    return { isBookmarked: false, bookmarkId: null };
+  }
 };
 
-export const publishRecipe = async (token, recipeId) => {
-  return axios.patch(`${API_BASE_URL}/recipes/${recipeId}/publish`, {}, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-};
-
-// BOOKMARKING RECIPES
 export const addBookmark = async (token, recipeId) => {
-  return axios.post(
-    `${API_BASE_URL}/bookmarks`,
-    { recipeId },
-    { headers: { Authorization: `Bearer ${token}` } }
-  );
+  try {
+    const userId = localStorage.getItem('userId'); // Get userId from localStorage
+    
+    const response = await axios.post(
+      `${API_BASE_URL}/bookmarks`,
+      { 
+        recipeId,
+        userId // Include userId in the request body
+      },
+      { 
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        } 
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('API Error:', error.response?.data || error.message);
+    throw new Error(error.response?.data?.error || 'Failed to add bookmark');
+  }
 };
 
 export const removeBookmark = async (token, bookmarkId) => {
-  return axios.delete(`${API_BASE_URL}/bookmarks/${bookmarkId}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  try {
+    console.log('Removing bookmark:', bookmarkId); // Debug log
+    
+    const response = await axios.delete(
+      `${API_BASE_URL}/bookmarks/${bookmarkId}`,
+      { 
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error removing bookmark:', error);
+    throw new Error(error.response?.data?.error || 'Failed to remove bookmark');
+  }
 };
 
 export const getBookmarks = async (token) => {
@@ -171,15 +221,15 @@ export const getBookmarks = async (token) => {
   });
 };
 
-// MEAL PLANNING
-export const createMealPlan = async (token, mealPlanData) => {
-  return axios.post(`${API_BASE_URL}/mealplans`, mealPlanData, {
+//MEAL PLANNING
+export const getMealPlans = async (token) => {
+  return axios.get(`${API_BASE_URL}/mealplans`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
 
-export const getMealPlans = async (token) => {
-  return axios.get(`${API_BASE_URL}/mealplans`, {
+export const createMealPlan = async (token, mealPlanData) => {
+  return axios.post(`${API_BASE_URL}/mealplans`, mealPlanData, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
@@ -196,28 +246,7 @@ export const deleteMealPlan = async (token, mealPlanId) => {
   });
 };
 
-// MODERATOR ROUTES
-export const getPendingVerifications = async (token) => {
-  return axios.get(`${API_BASE_URL}/moderator/pending-verifications`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-};
 
-export const approveAuthor = async (token, authorId) => {
-  return axios.patch(`${API_BASE_URL}/moderator/approve/${authorId}`, {}, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-};
 
-export const rejectAuthor = async (token, authorId, rejectionReason) => {
-  return axios.patch(`${API_BASE_URL}/moderator/reject/${authorId}`, { reason: rejectionReason }, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-};
-
-// SEARCH RECIPES
-export const searchRecipes = async (filters) => {
-  return axios.get(`${API_BASE_URL}/recipes/search`, { params: filters });
-};
 
 export default API_BASE_URL;
