@@ -16,14 +16,20 @@ const cors = require("cors");
 const moderatorRoutes = require('./routes/moderatorRoutes');
 
 // Load environment variables from .env file
-dotenv.config();
+dotenv.config({ path: `.env.${process.env.NODE_ENV}.local` });
 
 const app = express();
 const port = process.env.PORT || 10000;
 
 // CORS setup for allowing frontend access
+const allowedOrigins = [
+  "http://localhost:5173",            // local frontend (Vite)
+  "http://localhost:3000",            // optional: React default port
+  "https://ingredient-iq.onrender.com" // deployed frontend
+];
+
 app.use(cors({
-  origin: "https://ingredient-iq.onrender.com",  // ✅ Allow frontend URL
+  origin: allowedOrigins,
   methods: "GET,POST,PATCH,DELETE",
   allowedHeaders: "Content-Type,Authorization"
 }));

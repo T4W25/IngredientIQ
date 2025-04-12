@@ -24,7 +24,7 @@ const ProtectedRoute = ({ children }) => {
 
 const AppRoutes = () => (
   <Routes>
-    <Route path="/" index element={<Navigate to="/landing" />} />
+    <Route path="/" element={<Navigate to="/landing" />} />
     <Route path="/auth" element={<Auth />} />
     <Route path="/landing" element={<Landing />} />
     <Route path="/moderator/dashboard" element={<ModeratorDashboard/>} />
