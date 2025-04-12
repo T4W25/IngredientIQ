@@ -14,7 +14,7 @@ import AddRecipe from "../pages/chef/AddRecipe";
 import ModeratorDashboard from "../pages/moderator/ModeratorDashboard";
 import ChefVerification from "../pages/moderator/ChefVerification";
 import Reports from "../pages/moderator/Reports";
-import ChefProfile from "../pages/chef/chefProfile";
+import ChefProfile from "../pages/chef/ChefProfile";
 import RecipeDetail from "../pages/RecipeDetail";
 
 const ProtectedRoute = ({ children }) => {
