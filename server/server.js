@@ -16,7 +16,7 @@ const cors = require("cors");
 const moderatorRoutes = require('./routes/moderatorRoutes');
 
 // Load environment variables from .env file
-dotenv.config({ path: `.env.${process.env.NODE_ENV}.local` });
+require('dotenv').config({ path: '.env.production.local' });
 
 const app = express();
 const port = process.env.PORT || 10000;
