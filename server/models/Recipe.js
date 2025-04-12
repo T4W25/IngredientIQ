@@ -1,4 +1,3 @@
-// server/models/Recipe.js
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
@@ -74,14 +73,25 @@ const recipeSchema = new Schema({
   },
   mainImage: {
     type: String,
-    default: ""  // ✅ no validation at all
+    default: "",
+    validate: {
+      validator: function(value) {
+        return !value || /^(https?:\/\/)?([\w\d-]+\.){1,}[\w\d]{2,}(\/[\w\d\-_\.~:\/?#[\]@!$&'()*+,;=]*)?$/.test(value);
+      },
+      message: 'Invalid URL format for main image'
+    }
   },
   
   gallery: [{
-    type: String  // ✅ accepts any string or leave empty
+    type: String,
+    validate: {
+      validator: function(value) {
+        return !value || /^(https?:\/\/)?([\w\d-]+\.){1,}[\w\d]{2,}(\/[\w\d\-_\.~:\/?#[\]@!$&'()*+,;=]*)?$/.test(value);
+      },
+      message: 'Invalid URL format for gallery image'
+    }
   }],
   
-
   ingredients: [{
     name: { 
       type: String, 
@@ -89,9 +99,9 @@ const recipeSchema = new Schema({
       trim: true
     },
     quantity: { 
-      type: String,
+      type: Number, // Changed to number for proper validation
       required: [true, 'Quantity is required'],
-      trim: true
+      min: [0, 'Quantity cannot be negative']
     },
     unit: { 
       type: String,
@@ -139,9 +149,7 @@ const recipeSchema = new Schema({
     comment: { type: String, default: '' }
   }],
   averageRating: { type: Number, default: 0 },
-  totalRatings: { type: Number, default: 0 },
-  
-  
+  totalRatings: { type: Number, default: 0 }
 }, {
   timestamps: true,
   toJSON: { virtuals: true },
@@ -154,7 +162,6 @@ recipeSchema.virtual('totalTime').get(function() {
 });
 
 // Index for better search performance
-
 recipeSchema.index({ title: 'text', description: 'text', 'ingredients.name': 'text' });
 recipeSchema.index({ 'ingredients.name': 1 }); // Regular index for non-text searches
 
@@ -170,5 +177,3 @@ recipeSchema.pre('save', function (next) {
 
 mongoose.models = {};
 module.exports = mongoose.model('Recipe', recipeSchema);
-
-

@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
-//Get User Profile
+
+// Get User Profile
 const getUserProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user._id).select("-passwordHash");
@@ -22,7 +23,7 @@ const getUserProfile = async (req, res) => {
   }
 };
 
-// Update user profile
+// Update User Profile
 const updateUserProfile = async (req, res) => {
   const { username, email, bio, profilePicture, currentPassword, newPassword } = req.body;
   const userId = req.user._id;
@@ -31,16 +32,25 @@ const updateUserProfile = async (req, res) => {
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
+    // Check if the new email is already taken
+    if (email && email !== user.email) {
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        return res.status(400).json({ message: 'Email is already in use' });
+      }
+      user.email = email;
+    }
+
     if (username) user.username = username;
-    if (email) user.email = email;
     if (bio) user.bio = bio;
     if (profilePicture) user.profilePicture = profilePicture;
 
-    // ✅ Password logic
+    // ✅ Password update logic
     if (currentPassword && newPassword) {
       const isMatch = await bcrypt.compare(currentPassword, user.passwordHash);
       if (!isMatch) return res.status(400).json({ message: 'Current password is incorrect' });
 
+      // Optional: Add password strength validation here if needed
       const salt = await bcrypt.genSalt(10);
       user.passwordHash = await bcrypt.hash(newPassword, salt);
     }
@@ -49,11 +59,10 @@ const updateUserProfile = async (req, res) => {
     res.json({ message: 'Profile updated successfully' });
 
   } catch (err) {
-    console.error(err);
+    console.error('Error in updateUserProfile:', err);
     res.status(500).json({ message: 'Server error' });
   }
 };
-
 
 module.exports = {
   getUserProfile,

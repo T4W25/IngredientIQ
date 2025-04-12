@@ -1,7 +1,7 @@
-// server/controllers/reviewController.js
 const Review = require('../models/Review');
 const Recipe = require('../models/Recipe');
 
+// Add or update a review
 exports.addReview = async (req, res) => {
   try {
     if (!req.user || !req.user._id) {
@@ -15,6 +15,11 @@ exports.addReview = async (req, res) => {
     const recipe = await Recipe.findById(recipeId);
     if (!recipe) {
       return res.status(404).json({ error: 'Recipe not found' });
+    }
+
+    // Validate rating
+    if (rating < 1 || rating > 5) {
+      return res.status(400).json({ error: 'Rating must be between 1 and 5' });
     }
 
     // Check if user has already reviewed
@@ -34,8 +39,12 @@ exports.addReview = async (req, res) => {
     // Populate user information
     await review.populate('userId', 'username');
 
+    // Recalculate average rating for the recipe
+    await Review.calculateAverageRating(recipeId);
+
     res.status(201).json(review);
   } catch (error) {
+    console.error('Error adding or updating review:', error);
     res.status(500).json({ 
       error: 'Failed to add review',
       details: error.message 
@@ -43,6 +52,7 @@ exports.addReview = async (req, res) => {
   }
 };
 
+// Get all reviews for a recipe
 exports.getRecipeReviews = async (req, res) => {
   try {
     const { recipeId } = req.params;
@@ -59,10 +69,12 @@ exports.getRecipeReviews = async (req, res) => {
       totalReviews: recipe.totalRatings
     });
   } catch (error) {
+    console.error('Error fetching recipe reviews:', error);
     res.status(500).json({ error: 'Failed to retrieve reviews' });
   }
 };
 
+// Get all reviews for recipes by the logged-in author
 exports.getAuthorRecipeReviews = async (req, res) => {
   try {
     const recipes = await Recipe.find({ authorId: req.user._id });
@@ -75,16 +87,24 @@ exports.getAuthorRecipeReviews = async (req, res) => {
 
     res.status(200).json(reviews);
   } catch (error) {
+    console.error('Error fetching author recipe reviews:', error);
     res.status(500).json({ error: 'Failed to retrieve reviews' });
   }
 };
 
+// Update an existing review
 exports.updateReview = async (req, res) => {
   try {
     if (!req.user || !req.user._id) {
       return res.status(401).json({ error: 'Unauthorized - user ID missing' });
     }
     const { rating, comment } = req.body;
+
+    // Validate rating
+    if (rating < 1 || rating > 5) {
+      return res.status(400).json({ error: 'Rating must be between 1 and 5' });
+    }
+
     const review = await Review.findOneAndUpdate(
       { 
         recipeId: req.params.recipeId,
@@ -95,20 +115,26 @@ exports.updateReview = async (req, res) => {
     ).populate('userId', 'username');
 
     if (!review) {
-      return res.status(404).json({ error: 'Review not found' });
+      return res.status(404).json({ error: 'Review not found or not authorized' });
     }
+
+    // Recalculate average rating for the recipe
+    await Review.calculateAverageRating(req.params.recipeId);
 
     res.status(200).json(review);
   } catch (error) {
+    console.error('Error updating review:', error);
     res.status(500).json({ error: 'Failed to update review' });
   }
 };
 
+// Delete a review
 exports.deleteReview = async (req, res) => {
   try {
     if (!req.user || !req.user._id) {
       return res.status(401).json({ error: 'Unauthorized - user ID missing' });
     }
+
     const review = await Review.findOneAndDelete({
       recipeId: req.params.recipeId,
       userId: req.user._id
@@ -123,6 +149,7 @@ exports.deleteReview = async (req, res) => {
 
     res.status(200).json({ message: 'Review deleted successfully' });
   } catch (error) {
+    console.error('Delete review error:', error);
     res.status(500).json({ error: 'Failed to delete review' });
   }
 };

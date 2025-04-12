@@ -1,4 +1,3 @@
-// server/models/Review.js
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
@@ -31,10 +30,19 @@ reviewSchema.statics.calculateAverageRating = async function(recipeId) {
 
   try {
     const Recipe = require('./Recipe');
-    await Recipe.findByIdAndUpdate(recipeId, {
-      averageRating: result[0]?.averageRating || 0,
-      totalRatings: result[0]?.totalRatings || 0
-    });
+    if (result.length === 0) {
+      // No reviews found, reset averageRating and totalRatings to 0
+      await Recipe.findByIdAndUpdate(recipeId, {
+        averageRating: 0,
+        totalRatings: 0
+      });
+    } else {
+      // Update the recipe with the new average rating and total ratings
+      await Recipe.findByIdAndUpdate(recipeId, {
+        averageRating: result[0]?.averageRating || 0,
+        totalRatings: result[0]?.totalRatings || 0
+      });
+    }
   } catch (error) {
     console.error('Error updating recipe rating:', error);
   }

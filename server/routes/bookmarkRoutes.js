@@ -1,4 +1,3 @@
-// server/routes/bookmarkRoutes.js
 const express = require('express');
 const router = express.Router();
 const BookmarkController = require('../controllers/bookmarkController');
@@ -13,10 +12,10 @@ router.post('/', BookmarkController.addBookmark);
 // Get all bookmarks for the logged-in user
 router.get('/', BookmarkController.getUserBookmarks);
 
-// Check if a recipe is bookmarked
-router.get('/check/:recipeId', BookmarkController.checkBookmarkStatus);
+// Check if a recipe is bookmarked by the logged-in user
+router.get('/recipe/:recipeId/bookmarked', BookmarkController.checkBookmarkStatus);
 
-// Delete a bookmark
+// Delete a bookmark for the logged-in user
 router.delete('/:bookmarkId', BookmarkController.deleteBookmark);
 
 module.exports = router;

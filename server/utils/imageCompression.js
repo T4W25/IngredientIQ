@@ -1,7 +1,6 @@
-// server/utils/imageCompression.js
 const sharp = require('sharp');
 
-const compressImage = async (base64String) => {
+const compressImage = async (base64String, quality = 80, maxDimensions = 1200) => {
   try {
     // Extract the actual base64 data
     const base64Data = base64String.split(';base64,').pop();
@@ -9,11 +8,11 @@ const compressImage = async (base64String) => {
 
     // Compress the image
     const compressedBuffer = await sharp(buffer)
-      .resize(1200, 1200, { // Max dimensions
+      .resize(maxDimensions, maxDimensions, { // Max dimensions
         fit: 'inside',
         withoutEnlargement: true
       })
-      .jpeg({ quality: 80 }) // Adjust quality as needed
+      .jpeg({ quality: quality }) // Adjustable quality
       .toBuffer();
 
     // Convert back to base64

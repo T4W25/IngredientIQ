@@ -37,14 +37,22 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 // MongoDB connection string
 const mongoURI = process.env.MONGO_URI;  // Use the environment variable
 
-
 // Connect to MongoDB using Mongoose
-mongoose.connect(mongoURI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log('Connected to MongoDB successfully'))
-.catch(err => console.error('Failed to connect to MongoDB:', err));
+const connectDB = async () => {
+  try {
+    await mongoose.connect(mongoURI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log('Connected to MongoDB successfully');
+  } catch (err) {
+    console.error('Failed to connect to MongoDB:', err);
+    process.exit(1); // Stop the server if DB connection fails
+  }
+};
+
+// Invoke MongoDB connection
+connectDB();
 
 // Setup file upload with multer
 const uploadsDir = path.join(__dirname, 'uploads');
@@ -52,15 +60,24 @@ if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir);
 }
 
-const upload = multer({
-  dest: 'uploads/',  // Directory for storing uploaded files
-  limits: { fileSize: 50 * 1024 * 1024 },  // Max file size: 50MB
-  fileFilter: (req, file, cb) => {
-    if (!file.mimetype.startsWith('image/')) {
-      return cb(new Error('Only image files are allowed'), false);
-    }
-    cb(null, true);
+const allowedTypes = [
+  'image/jpeg', 'image/png', 'image/jpg', 'image/gif',
+  'application/pdf',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+];
+
+const fileFilter = (req, file, cb) => {
+  if (!allowedTypes.includes(file.mimetype)) {
+    return cb(new Error('Only images, PDFs, and Word documents are allowed'), false);
   }
+  cb(null, true);
+};
+
+const upload = multer({
+  dest: 'uploads/',
+  limits: { fileSize: 50 * 1024 * 1024 },
+  fileFilter
 });
 
 // Serve static files (for image uploads)
@@ -99,14 +116,18 @@ app.post('/api/profile/user/upload-image', upload.single('image'), (req, res) =>
   }
 });
 
-
-// Start the server
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+// Error handling middleware for 404 errors
+app.use((req, res, next) => {
+  res.status(404).json({ message: 'Route not found' });
 });
 
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: 'Something broke!' });
+});
+
+// Start the server
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
 });

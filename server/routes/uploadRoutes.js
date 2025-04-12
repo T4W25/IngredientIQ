@@ -1,52 +1,59 @@
 const express = require('express');
 const router = express.Router();
-const multer = require('multer');  // Add multer to handle file upload
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 const auth = require('../middleware/authMiddleware');
-const { compressImage } = require('../utils/imageCompression');
 
-// Multer configuration for file upload
+const getStorageFolder = (type) => {
+  switch (type) {
+    case 'profile': return 'uploads/profiles/';
+    case 'recipe': return 'uploads/recipes/';
+    default: return 'uploads/misc/';
+  }
+};
+
+// Multer storage config
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/');  // Save files to 'uploads' directory
+    const type = req.query.type || 'misc';
+    const folder = getStorageFolder(type);
+
+    fs.mkdirSync(folder, { recursive: true }); // ensure folder exists
+    cb(null, folder);
   },
   filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
     cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
-  },
+  }
 });
 
-const upload = multer({ storage: storage });
-
-// Middleware to handle file upload and compression
-const handleFileUpload = async (req, res, next) => {
-  try {
-    const file = req.file;  // Access the file using `req.file` for single file upload
-
-    if (!file) {
-      return res.status(400).json({ error: 'No file uploaded' });
-    }
-
-    // Check file size (5MB limit)
-    if (file.size > 5 * 1024 * 1024) {
-      return res.status(400).json({ error: 'File size should be less than 5MB' });
-    }
-
-    // Check file type
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
     const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-    if (!allowedTypes.includes(file.mimetype)) {
-      return res.status(400).json({ error: 'Invalid file type. Only JPEG, PNG and JPG are allowed.' });
-    }
+    allowedTypes.includes(file.mimetype) ? cb(null, true) : cb(new Error('Invalid file type'));
+  }
+}).single('image');
 
-    const imageUrl = `/uploads/${file.filename}`;  // Directly use the file path for the image URL
-    res.json({ url: imageUrl });
+// Upload Handler
+const handleFileUpload = async (req, res) => {
+  try {
+    const file = req.file;
+    if (!file) return res.status(400).json({ error: 'No file uploaded' });
 
+    const relativePath = file.path.replace(/\\/g, '/'); // for Windows path support
+    res.status(200).json({ url: `/${relativePath}` });
   } catch (error) {
     console.error('Upload error:', error);
     res.status(500).json({ error: 'Failed to upload image' });
   }
 };
 
-// POST route to handle file upload
-router.post('/image', auth, upload.single('image'), handleFileUpload);
+router.post('/image', auth, upload, handleFileUpload);
+
+// Serve images
+router.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
 module.exports = router;

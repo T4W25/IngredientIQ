@@ -1,9 +1,9 @@
 const Recipe = require('../models/Recipe');
-  
+
 exports.searchRecipes = async (req, res) => {
   try {
     const {
-      query,
+      search, // ✅ renamed from 'query'
       ingredients,
       prepTime,
       cookTime,
@@ -15,36 +15,41 @@ exports.searchRecipes = async (req, res) => {
 
     let searchCriteria = { status: 'published' };
 
-    // Text search in title, description, and ingredients
-    if (query) {
+    // ✅ Text search in title or description
+    if (search) {
       searchCriteria.$or = [
-        { title: { $regex: query, $options: 'i' } },
-        { description: { $regex: query, $options: 'i' } }
+        { title: { $regex: search, $options: 'i' } },
+        { description: { $regex: search, $options: 'i' } }
       ];
     }
 
-    // Ingredient search
+    // ✅ Ingredient filter
     if (ingredients) {
       const ingredientArray = ingredients.split(',').map(i => i.trim());
-      searchCriteria['ingredients.name'] = {
-        $all: ingredientArray.map(ing => new RegExp(ing, 'i'))
-      };
+      if (ingredientArray.length > 0) {
+        searchCriteria['ingredients.name'] = {
+          $all: ingredientArray.map(ing => new RegExp(ing, 'i'))
+        };
+      }
     }
 
-    // Time filters
-    if (prepTime) searchCriteria.prepTime = { $lte: parseInt(prepTime) };
-    if (cookTime) searchCriteria.cookTime = { $lte: parseInt(cookTime) };
+    // ✅ Time filters
+    if (prepTime && !isNaN(prepTime)) {
+      searchCriteria.prepTime = { $lte: parseInt(prepTime) };
+    }
+    if (cookTime && !isNaN(cookTime)) {
+      searchCriteria.cookTime = { $lte: parseInt(cookTime) };
+    }
 
-    // Other filters
     if (difficulty) searchCriteria.difficulty = difficulty;
     if (cuisine) searchCriteria.cuisine = cuisine;
     if (category) searchCriteria.category = category;
 
-    // Dietary restrictions
+    // ✅ Dietary restrictions
     if (dietary) {
       const dietaryArray = dietary.split(',');
       dietaryArray.forEach(restriction => {
-        searchCriteria[`dietaryRestrictions.${restriction}`] = true;
+        searchCriteria[`dietaryRestrictions.${restriction.trim()}`] = true;
       });
     }
 
@@ -54,6 +59,7 @@ exports.searchRecipes = async (req, res) => {
 
     res.status(200).json(recipes);
   } catch (error) {
+    console.error('Error in searchRecipes:', error);
     res.status(500).json({ error: error.message });
   }
 };
