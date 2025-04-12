@@ -12,7 +12,7 @@ import ChefDashboard from "../pages/chef/ChefDashboard";
 import Landing from "../pages/landingpage";
 import AddRecipe from "../pages/chef/AddRecipe";
 import ModeratorDashboard from "../pages/moderator/ModeratorDashboard";
-import ChefVerification from "../pages/moderator/chefVerification";
+import ChefVerification from "../pages/moderator/ChefVerification";
 import Reports from "../pages/moderator/ReportsTEMP";
 import ChefProfile from "../pages/chef/ChefProfile";
 import RecipeDetail from "../pages/RecipeDetail";
