@@ -11,9 +11,9 @@ import Profile from "../pages/Profile";
 import ChefDashboard from "../pages/chef/ChefDashboard";
 import Landing from "../pages/landingpage";
 import AddRecipe from "../pages/chef/AddRecipe";
-import ModeratorDashboard from "../pages/moderator/moderatorDashboard";
-import ChefVerification from "../pages/moderator/chefVerification";
-import Reports from "../pages/moderator/reports";
+import ModeratorDashboard from "../pages/moderator/ModeratorDashboard";
+import ChefVerification from "../pages/moderator/ChefVerification";
+import Reports from "../pages/moderator/Reports";
 import ChefProfile from "../pages/chef/chefProfile";
 import RecipeDetail from "../pages/RecipeDetail";
 

@@ -10,9 +10,9 @@
     CardTitle,
     CardDescription,
     CardContent
-  } from '../Components/ui/card';
+  } from '../components/ui/Card';
   import { useToast } from '../Components/ui/use-toast';
-  import Navbar from '../components/ui/navbar';
+  import Navbar from '../components/ui/Navbar';
 
   const SearchResults = () => {
     const navigate = useNavigate();

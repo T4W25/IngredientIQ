@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import { getBookmarks, removeBookmark } from '../api/api';
 import { FaBookmark, FaTrash, FaClock, FaUtensils, FaUserFriends } from 'react-icons/fa';
 import { motion } from 'framer-motion';
-import Navbar from '../components/ui/navbar';
+import Navbar from '../components/ui/Navbar';
 
 const Bookmarks = () => {
   const navigate = useNavigate();
