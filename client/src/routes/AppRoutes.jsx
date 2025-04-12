@@ -9,7 +9,7 @@ import Search from "../pages/SearchBar"; // ✅ CORRECT!
 import Recipe from "../pages/AllRecipe";
 import Profile from "../pages/Profile";
 import ChefDashboard from "../pages/chef/ChefDashboard";
-import Landing from "../pages/landingpage";
+import Landing from "../pages/LandingPage"; // ✅ Correct casing
 import AddRecipe from "../pages/chef/AddRecipe";
 import ModeratorDashboard from "../pages/moderator/ModeratorDashboard";
 import ChefVerification from "../pages/moderator/ChefVerification";
