@@ -41,6 +41,8 @@ app.use(cors({
   credentials: true // ✅ IMPORTANT for cookies/auth headers
 }));
 
+app.options("*", cors());
+
 // Middleware to parse JSON
 app.use(express.json());
 app.use(bodyParser.json());
