@@ -155,8 +155,12 @@ const addRecipe = async (req, res) => {
 };
 
 // Update recipe
+// Update recipe
 const updateRecipe = async (req, res) => {
   try {
+    // Ensure authorId is set to the logged-in user (from JWT)
+    req.body.authorId = req.user._id;
+
     const recipe = await Recipe.findOneAndUpdate(
       { _id: req.params.recipeId, authorId: req.user._id },
       { $set: req.body },
@@ -169,6 +173,7 @@ const updateRecipe = async (req, res) => {
 
     res.status(200).json(recipe);
   } catch (error) {
+    console.error('Update recipe error:', error); // Log full error for debugging
     res.status(500).json({ error: 'Failed to update recipe', details: error.message });
   }
 };
