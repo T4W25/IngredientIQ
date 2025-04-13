@@ -1,75 +1,75 @@
 // src/pages/moderator/ChefVerification.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { 
   ArrowLeftIcon,
   UserIcon,
   CheckCircleIcon,
-  XCircleIcon,
-  EyeIcon
+  XCircleIcon
 } from '@heroicons/react/24/outline';
-
-
-// Mock data (replace with your actual data)
-const MOCK_REQUESTS = [
-  {
-    _id: 1,
-    user: {
-      _id: 'u1',
-      name: "John Smith",
-      email: "john@example.com",
-      avatar: "https://i.pravatar.cc/150?img=1"
-    },
-    credentials: {
-      title: "Professional Chef",
-      description: "10 years experience in Italian cuisine..."
-    },
-    recipeCount: 15,
-    createdAt: new Date()
-  },
-  // Add more mock data as needed
-];
+import { getVerificationRequests, approveVerification, rejectVerification } from '../../api/api';
+import { toast } from 'react-toastify';
 
 const ChefVerification = () => {
-  const [requests, setRequests] = useState(MOCK_REQUESTS);
+  const [requests, setRequests] = useState([]);
   const [showRejectModal, setShowRejectModal] = useState(false);
-  const [chefToReject, setChefToReject] = useState(null);
+  const [authorToReject, setAuthorToReject] = useState(null);
   const [rejectionReason, setRejectionReason] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const handleVerify = async (id) => {
+  useEffect(() => {
+    fetchVerificationRequests();
+  }, []);
+
+  const fetchVerificationRequests = async () => {
     try {
-      // Add your verification logic here
-      setRequests(prev => prev.filter(req => req.user._id !== id));
+      setLoading(true);
+      
+      const data = await getVerificationRequests();
+      setRequests(data);
     } catch (error) {
-      console.error("Error verifying chef:", error);
+      toast.error(error.message || 'Failed to fetch verification requests');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleRejectClick = (chef) => {
-    setChefToReject(chef);
+  const handleApprove = async (authorId) => {
+    try {
+      
+      await approveVerification(authorId);
+      setRequests(prev => prev.filter(req => req._id !== authorId));
+      toast.success('Author verified successfully');
+    } catch (error) {
+      toast.error(error.message || 'Failed to verify author');
+    }
+  };
+
+  const handleRejectClick = (author) => {
+    setAuthorToReject(author);
     setRejectionReason("");
     setShowRejectModal(true);
   };
 
   const confirmReject = async () => {
-    if (chefToReject && rejectionReason.trim()) {
+    if (authorToReject && rejectionReason.trim()) {
       try {
-        // Add your rejection logic here
-        setRequests(prev => prev.filter(req => req.user._id !== chefToReject._id));
+        
+        await rejectVerification(authorToReject._id, rejectionReason);
+        setRequests(prev => prev.filter(req => req._id !== authorToReject._id));
         setShowRejectModal(false);
-        setChefToReject(null);
+        setAuthorToReject(null);
         setRejectionReason("");
+        toast.success('Verification request rejected');
       } catch (error) {
-        console.error("Error rejecting verification:", error);
+        toast.error(error.message || 'Failed to reject verification request');
       }
     }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-white">
-      
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -87,10 +87,10 @@ const ChefVerification = () => {
             </Link>
             <div>
               <h1 className="text-3xl font-bold text-primary-800">
-                Chef Verification
+                Author Verification
               </h1>
               <p className="text-gray-600 mt-1">
-                Review and verify chef credentials
+                Review and verify author credentials
               </p>
             </div>
           </div>
@@ -111,7 +111,6 @@ const ChefVerification = () => {
                 <UserIcon className="w-8 h-8 text-primary-500" />
               </div>
             </motion.div>
-            {/* Add more stat cards as needed */}
           </div>
 
           {/* Requests Table */}
@@ -138,15 +137,15 @@ const ChefVerification = () => {
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium 
                         text-gray-500 uppercase tracking-wider">
-                        Chef
+                        Author
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium 
                         text-gray-500 uppercase tracking-wider">
-                        Credentials
+                        Role
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium 
                         text-gray-500 uppercase tracking-wider">
-                        Recipes
+                        Documents
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium 
                         text-gray-500 uppercase tracking-wider">
@@ -166,52 +165,51 @@ const ChefVerification = () => {
                       >
                         <td className="px-6 py-4">
                           <div className="flex items-center">
-                            <img
-                              src={request.user.avatar}
-                              alt={request.user.name}
-                              className="h-10 w-10 rounded-full object-cover"
-                            />
                             <div className="ml-4">
                               <div className="font-medium text-gray-900">
-                                {request.user.name}
+                                {request.username}
                               </div>
                               <div className="text-sm text-gray-500">
-                                {request.user.email}
+                                {request.email}
                               </div>
                             </div>
                           </div>
                         </td>
                         <td className="px-6 py-4">
-                          <div className="text-sm">
-                            <div className="font-medium text-gray-900">
-                              {request.credentials.title}
-                            </div>
-                            <div className="text-gray-500">
-                              {request.credentials.description.substring(0, 50)}...
-                            </div>
-                          </div>
+                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                            ${request.role === 'Chef' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>
+                            {request.role}
+                          </span>
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-500">
-                          {request.recipeCount} recipes
+                        <td className="px-6 py-4">
+                          <div className="flex flex-wrap gap-2">
+                            {request.verificationDocuments?.map((doc, index) => (
+                              <a
+                                key={index}
+                                href={doc}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-primary-600 hover:text-primary-700 text-sm"
+                              >
+                                Document {index + 1}
+                              </a>
+                            ))}
+                          </div>
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-500">
                           {new Date(request.createdAt).toLocaleDateString()}
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex justify-end space-x-3">
-                            <button className="text-gray-400 hover:text-primary-600 
-                              transition-colors">
-                              <EyeIcon className="w-5 h-5" />
-                            </button>
                             <button
-                              onClick={() => handleVerify(request.user._id)}
+                              onClick={() => handleApprove(request._id)}
                               className="text-gray-400 hover:text-green-600 
                                 transition-colors"
                             >
                               <CheckCircleIcon className="w-5 h-5" />
                             </button>
                             <button
-                              onClick={() => handleRejectClick(request.user)}
+                              onClick={() => handleRejectClick(request)}
                               className="text-gray-400 hover:text-red-600 
                                 transition-colors"
                             >
@@ -242,7 +240,7 @@ const ChefVerification = () => {
                 Reject Verification Request
               </h3>
               <p className="text-gray-600 mb-4">
-                Please provide a reason for rejecting {chefToReject?.name}'s 
+                Please provide a reason for rejecting {authorToReject?.username}'s 
                 verification request.
               </p>
               <textarea

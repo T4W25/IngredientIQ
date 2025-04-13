@@ -295,4 +295,39 @@ export const deleteMealPlan = async (token, mealPlanId) => {
   });
 };
 
+// MODERATOR MANAGEMENT
+export const getVerificationRequests = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/moderator/pending-verifications`);
+    return response.data.pendingAuthors;
+  } catch (error) {
+    throw error.response?.data || { message: 'Error fetching verification requests' };
+  }
+};
+
+// Approve verification
+export const approveVerification = async (authorId) => {
+  try {
+    const response = await axios.patch(
+      `${API_BASE_URL}/moderator/approve/${authorId}`
+    );
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Error approving verification' };
+  }
+};
+
+// Reject verification
+export const rejectVerification = async (authorId, reason) => {
+  try {
+    const response = await axios.patch(
+      `${API_BASE_URL}/moderator/reject/${authorId}`,
+      { reason }
+    );
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Error rejecting verification' };
+  }
+};
+
 export default API_BASE_URL;
