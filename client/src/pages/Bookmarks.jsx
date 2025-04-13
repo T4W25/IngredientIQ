@@ -1,3 +1,4 @@
+// src/pages/Bookmarks.jsx
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -12,18 +13,16 @@ const Bookmarks = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch bookmarks when the component mounts
   useEffect(() => {
     fetchBookmarks();
   }, []);
 
-  // Fetch bookmarks from the API
   const fetchBookmarks = async () => {
     try {
       setLoading(true);
       setError(null);
       const token = localStorage.getItem("token");
-      
+
       if (!token) {
         setError("Please log in to view your bookmarks");
         setLoading(false);
@@ -41,19 +40,16 @@ const Bookmarks = () => {
     }
   };
 
-  // Handle removing a bookmark
   const handleRemoveBookmark = async (bookmarkId) => {
     try {
       const token = localStorage.getItem("token");
-      
+
       if (!token) {
         toast.error("Please log in to remove bookmarks");
         return;
       }
 
       await removeBookmark(token, bookmarkId);
-      
-      // Remove the bookmark from state after successful removal
       setBookmarks(bookmarks.filter(bookmark => bookmark._id !== bookmarkId));
       toast.success("Recipe removed from bookmarks");
     } catch (err) {
@@ -88,9 +84,9 @@ const Bookmarks = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-primary-50 py-12 px-4 sm:px-6 lg:px-8">
-      <Navbar /> {/* Ensure Navbar is used */}
+      <Navbar />
       <div className="max-w-7xl mx-auto">
-        <motion.h1 
+        <motion.h1
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-3xl font-bold text-gray-900 mb-8 flex items-center"
@@ -100,7 +96,7 @@ const Bookmarks = () => {
         </motion.h1>
 
         {bookmarks.length === 0 ? (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="bg-white rounded-2xl shadow-custom p-8 text-center"
@@ -119,7 +115,8 @@ const Bookmarks = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {bookmarks.map((bookmark, index) => {
               const recipe = bookmark.recipe;
-              
+              if (!recipe) return null; // Skip if no recipe found
+
               return (
                 <motion.div
                   key={bookmark._id}
@@ -131,22 +128,22 @@ const Bookmarks = () => {
                   <Link to={`/recipe/${recipe._id}`}>
                     <div className="relative h-48 overflow-hidden">
                       <img
-                        src={recipe.mainImage}
+                        src={recipe.mainImage || "/default-image.jpg"}
                         alt={recipe.title}
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                       />
                     </div>
                   </Link>
-                  
+
                   <div className="p-6">
                     <Link to={`/recipe/${recipe._id}`}>
                       <h3 className="text-xl font-bold text-gray-900 mb-2 hover:text-primary-600 transition-colors">
                         {recipe.title}
                       </h3>
                     </Link>
-                    
+
                     <p className="text-gray-600 mb-4 line-clamp-2">{recipe.description}</p>
-                    
+
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center text-sm text-gray-500">
                         <FaClock className="mr-1" />
@@ -161,9 +158,9 @@ const Bookmarks = () => {
                         <span>{recipe.servings} servings</span>
                       </div>
                     </div>
-                    
+
                     <button
-                      onClick={() => handleRemoveBookmark(bookmark._id)} // Pass the bookmark's _id for removal
+                      onClick={() => handleRemoveBookmark(bookmark._id)}
                       className="w-full py-2 border border-red-400 text-red-500 rounded-lg flex items-center justify-center hover:bg-red-50 transition-colors"
                     >
                       <FaTrash className="mr-2" />

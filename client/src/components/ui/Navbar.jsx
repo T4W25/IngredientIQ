@@ -1,19 +1,19 @@
-// src/components/navigation/Navbar.jsx
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { 
-  HomeIcon, MagnifyingGlassIcon, BookOpenIcon, 
+import {
+  HomeIcon, MagnifyingGlassIcon, BookOpenIcon,
   BookmarkIcon, CalendarIcon, UserCircleIcon,
   Bars3Icon, XMarkIcon
 } from '@heroicons/react/24/outline';
 import Logo from '/logo_ingredientiq.png';
 
 const NavLink = ({ to, icon: Icon, text, isActive }) => (
-  <Link to={to} className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200
-    ${isActive 
-      ? 'bg-green-600 text-white' 
-      : 'text-white hover:bg-green-600/50'}`}>
+  <Link
+    to={to}
+    className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-200
+      ${isActive ? 'bg-green-600 text-white' : 'text-white hover:bg-green-600/50'}`}
+  >
     <Icon className="w-5 h-5" />
     <span className="hidden md:block">{text}</span>
   </Link>
@@ -34,6 +34,9 @@ const Navbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("email");
+    localStorage.removeItem("role");
     window.location.href = "/auth";
   };
 
@@ -51,25 +54,17 @@ const Navbar = () => {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       className={`fixed w-full z-50 transition-all duration-300
-        ${isScrolled 
-          ? 'bg-green-700/95 backdrop-blur-sm shadow-lg' 
-          : 'bg-green-700'}`}
+        ${isScrolled ? 'bg-green-700/95 backdrop-blur-sm shadow-lg' : 'bg-green-700'}`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/home" className="flex items-center space-x-2">
-            <img 
-              src={Logo} 
-              alt="Logo" 
-              className="h-8 w-8"
-            />
-            <span className="text-white font-bold text-xl">
-              Ingredient IQ
-            </span>
+            <img src={Logo} alt="Logo" className="h-8 w-8" />
+            <span className="text-white font-bold text-xl">Ingredient IQ</span>
           </Link>
 
-          {/* Desktop Navigation */}
+          {/* Desktop Nav */}
           <nav className="hidden md:flex items-center space-x-4">
             {navLinks.map((link) => (
               <NavLink
@@ -87,20 +82,19 @@ const Navbar = () => {
             </button>
           </nav>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu Toggle */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="md:hidden p-2 rounded-lg text-white 
               hover:bg-green-600/50 transition-colors"
           >
-            {isMobileMenuOpen 
+            {isMobileMenuOpen
               ? <XMarkIcon className="h-6 w-6" />
-              : <Bars3Icon className="h-6 w-6" />
-            }
+              : <Bars3Icon className="h-6 w-6" />}
           </button>
         </div>
 
-        {/* Mobile Navigation */}
+        {/* Mobile Menu */}
         {isMobileMenuOpen && (
           <motion.nav
             initial={{ opacity: 0, y: -20 }}

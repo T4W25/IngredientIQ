@@ -1,4 +1,3 @@
-// components/FilterSection.jsx
 import React from 'react';
 
 const FilterSection = ({ filters, setFilters }) => {
@@ -15,14 +14,14 @@ const FilterSection = ({ filters, setFilters }) => {
           name="searchQuery"
           placeholder="Search recipes..."
           className="border rounded-md p-2 w-full"
-          value={filters.searchQuery}
+          value={filters.searchQuery || ''}
           onChange={handleFilterChange}
         />
         
         <select
           name="category"
           className="border rounded-md p-2 w-full"
-          value={filters.category}
+          value={filters.category || ''}
           onChange={handleFilterChange}
         >
           <option value="">All Categories</option>
@@ -37,7 +36,7 @@ const FilterSection = ({ filters, setFilters }) => {
         <select
           name="difficulty"
           className="border rounded-md p-2 w-full"
-          value={filters.difficulty}
+          value={filters.difficulty || ''}
           onChange={handleFilterChange}
         >
           <option value="">All Difficulty Levels</option>
@@ -49,7 +48,7 @@ const FilterSection = ({ filters, setFilters }) => {
         <select
           name="dietary"
           className="border rounded-md p-2 w-full"
-          value={filters.dietary}
+          value={filters.dietary || ''}
           onChange={handleFilterChange}
         >
           <option value="">All Dietary Types</option>
@@ -60,6 +59,21 @@ const FilterSection = ({ filters, setFilters }) => {
           <option value="isKeto">Keto</option>
           <option value="isPaleo">Paleo</option>
           <option value="isLowCarb">Low Carb</option>
+        </select>
+
+        {/* Cuisine filter added */}
+        <select
+          name="cuisine"
+          className="border rounded-md p-2 w-full"
+          value={filters.cuisine || ''}
+          onChange={handleFilterChange}
+        >
+          <option value="">All Cuisines</option>
+          <option value="Indian">Indian</option>
+          <option value="Italian">Italian</option>
+          <option value="Mexican">Mexican</option>
+          <option value="Chinese">Chinese</option>
+          <option value="American">American</option>
         </select>
       </div>
     </div>
