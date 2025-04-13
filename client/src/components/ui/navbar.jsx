@@ -50,7 +50,7 @@ const Navbar = () => {
     <motion.header
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      className={`fixed w-full z-50 transition-all duration-300
+      className={`fixed top-0 left-0 right-0 w-full z-50 transition-all duration-300
         ${isScrolled 
           ? 'bg-green-700/95 backdrop-blur-sm shadow-lg' 
           : 'bg-green-700'}`}
@@ -100,13 +100,17 @@ const Navbar = () => {
           </button>
         </div>
 
-        {/* Mobile Navigation */}
-        {isMobileMenuOpen && (
-          <motion.nav
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="md:hidden py-4 space-y-2"
-          >
+        {/* Mobile Menu */}
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ 
+            opacity: isMobileMenuOpen ? 1 : 0,
+            height: isMobileMenuOpen ? 'auto' : 0
+          }}
+          transition={{ duration: 0.2 }}
+          className="md:hidden overflow-hidden"
+        >
+          <div className="px-2 pt-2 pb-3 space-y-1">
             {navLinks.map((link) => (
               <NavLink
                 key={link.to}
@@ -116,13 +120,13 @@ const Navbar = () => {
             ))}
             <button
               onClick={handleLogout}
-              className="w-full mt-4 px-4 py-2 bg-red-500 text-white 
-                rounded-lg hover:bg-red-600 transition-colors duration-200"
+              className="w-full text-left px-4 py-2 text-white rounded-lg
+                hover:bg-red-500 transition-colors duration-200"
             >
               Logout
             </button>
-          </motion.nav>
-        )}
+          </div>
+        </motion.div>
       </div>
     </motion.header>
   );

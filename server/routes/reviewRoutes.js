@@ -25,13 +25,19 @@ const isReviewOwner = async (req, res, next) => {
   }
 };
 
-// Review management routes
-router.post('/recipe/:recipeId', auth, validateRecipeId, ReviewController.addReview);
-router.put('/recipe/:recipeId', auth, validateRecipeId, isReviewOwner, ReviewController.updateReview);
-router.delete('/recipe/:recipeId', auth, validateRecipeId, isReviewOwner, ReviewController.deleteReview);
-
-// Get reviews
+// Get all reviews for a recipe
 router.get('/recipe/:recipeId', validateRecipeId, ReviewController.getRecipeReviews);
+
+// Get all reviews for recipes by the logged-in author
 router.get('/author/reviews', auth, ReviewController.getAuthorRecipeReviews);
+
+// Add a review to a recipe
+router.post('/recipe/:recipeId', auth, validateRecipeId, ReviewController.addReview);
+
+// Update a review
+router.put('/:reviewId', auth, ReviewController.updateReview);
+
+// Delete a review
+router.delete('/:reviewId', auth, ReviewController.deleteReview);
 
 module.exports = router;

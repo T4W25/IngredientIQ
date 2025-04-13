@@ -54,7 +54,7 @@ export const updateAuthorProfile = async (token, profileData) => {
 
 // UPLOAD PROFILE IMAGE
 export const uploadUserProfileImage = async (file) => {
-  return axios.post(`${API_BASE_URL}/upload/user-profile-image`, file, {
+  return axios.post(`${API_BASE_URL}/profile/user/upload-image`, file, {
     headers: { "Content-Type": "multipart/form-data" },
   });
 };
@@ -186,17 +186,17 @@ export const checkBookmarkStatus = async (token, recipeId) => {
     }
 
     const response = await axios.get(
-      `${API_BASE_URL}/bookmarks/check/${recipeId}`,
+      `${API_BASE_URL}/bookmarks/recipe/${recipeId}/bookmarked`,
       {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       }
     );
-    return response.data;
+    return response;
   } catch (error) {
     console.error('Error checking bookmark status:', error);
-    return { isBookmarked: false, bookmarkId: null };
+    return { data: { isBookmarked: false, bookmarkId: null } };
   }
 };
 

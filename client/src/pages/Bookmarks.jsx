@@ -87,8 +87,9 @@ const Bookmarks = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-primary-50 py-12 px-4 sm:px-6 lg:px-8">
-      <Navbar /> {/* Ensure Navbar is used */}
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-primary-50">
+      <Navbar />
+      <div className="pt-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <motion.h1 
           initial={{ opacity: 0, y: -20 }}
@@ -163,7 +164,7 @@ const Bookmarks = () => {
                     </div>
                     
                     <button
-                      onClick={() => handleRemoveBookmark(bookmark._id)} // Pass the bookmark's _id for removal
+                        onClick={() => handleRemoveBookmark(bookmark._id)}
                       className="w-full py-2 border border-red-400 text-red-500 rounded-lg flex items-center justify-center hover:bg-red-50 transition-colors"
                     >
                       <FaTrash className="mr-2" />
@@ -176,6 +177,7 @@ const Bookmarks = () => {
           </div>
         )}
       </div>
+    </div>
     </div>
   );
 };
