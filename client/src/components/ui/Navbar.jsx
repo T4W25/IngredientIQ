@@ -53,7 +53,6 @@ const Navbar = () => {
     <motion.header
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-
       className={`fixed top-0 left-0 right-0 w-full z-50 transition-all duration-300
         ${isScrolled 
           ? 'bg-green-700/95 backdrop-blur-sm shadow-lg' 
@@ -98,17 +97,12 @@ const Navbar = () => {
         </div>
 
         {/* Mobile Menu */}
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ 
-            opacity: isMobileMenuOpen ? 1 : 0,
-            height: isMobileMenuOpen ? 'auto' : 0
-          }}
-          transition={{ duration: 0.2 }}
-          className="md:hidden overflow-hidden"
-        >
-          <div className="px-2 pt-2 pb-3 space-y-1">
-        
+        {isMobileMenuOpen && (
+          <motion.nav
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="md:hidden py-4 space-y-2"
+          >
             {navLinks.map((link) => (
               <NavLink
                 key={link.to}
@@ -123,8 +117,8 @@ const Navbar = () => {
             >
               Logout
             </button>
-          </div>
-        </motion.div>
+          </motion.nav>
+        )}
       </div>
     </motion.header>
   );

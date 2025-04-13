@@ -233,28 +233,16 @@ export const checkBookmarkStatus = async (token, recipeId) => {
 };
 
 export const addBookmark = async (token, recipeId) => {
-  try {
-    const userId = localStorage.getItem('userId'); // Get userId from localStorage
-
-    const response = await axios.post(
-      `${API_BASE_URL}/bookmarks`,
-      { 
-        recipeId,
-        userId // Include userId in the request body
-      },
-      { 
-        headers: { 
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        } 
-      }
-    );
-    return response.data;
-  } catch (error) {
-    console.error('API Error:', error.response?.data || error.message);
-    throw new Error(error.response?.data?.error || 'Failed to add bookmark');
-  }
+  const userId = localStorage.getItem('userId');
+  const response = await axios.post(`${API_BASE_URL}/bookmarks`, {
+    userId,
+    recipeId
+  }, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
 };
+
 
 export const removeBookmark = async (token, bookmarkId) => {
   try {

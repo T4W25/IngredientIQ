@@ -16,21 +16,13 @@ const Bookmarks = () => {
   useEffect(() => {
     fetchBookmarks();
   }, []);
-
   const fetchBookmarks = async () => {
     try {
-      setLoading(true);
-      setError(null);
-      const token = localStorage.getItem("token");
-
-      if (!token) {
-        setError("Please log in to view your bookmarks");
-        setLoading(false);
-        return;
-      }
-
+      const token = localStorage.getItem('token');
+      if (!token) return;
+  
       const response = await getBookmarks(token);
-      setBookmarks(response.data);
+      setBookmarks(response.data); // ✅ correct structure
     } catch (err) {
       const errorMessage = err.response?.data?.error || "Failed to load bookmarks";
       setError(errorMessage);
@@ -38,7 +30,7 @@ const Bookmarks = () => {
     } finally {
       setLoading(false);
     }
-  };
+  };  
 
   const handleRemoveBookmark = async (bookmarkId) => {
     try {
@@ -115,8 +107,8 @@ const Bookmarks = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {bookmarks.map((bookmark, index) => {
-              const recipe = bookmark.recipe;
-              if (!recipe) return null; // Skip if no recipe found
+              const recipe = bookmark.recipeId;
+              if (!recipe) return null;
 
               return (
                 <motion.div
@@ -142,8 +134,6 @@ const Bookmarks = () => {
                         {recipe.title}
                       </h3>
                     </Link>
-
-                    <p className="text-gray-600 mb-4 line-clamp-2">{recipe.description}</p>
 
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center text-sm text-gray-500">
