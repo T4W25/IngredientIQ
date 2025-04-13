@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { toast } from "react-toastify";
 import { PlusIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
 import BasicInfoSection from "../../components/recipe/BasicInfoSection";
-import MediaSection from "../../Components/recipe/MediaSection";
+import MediaSection from "../../components/recipe/MediaSection";
 import IngredientsSection from "../../components/recipe/IngredientSection";
 import InstructionsSection from "../../components/recipe/InstructionSection";
 import DietaryRestrictionsForm from "../../components/recipe/DietaryRestrictionsForm";
