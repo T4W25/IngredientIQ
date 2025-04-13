@@ -46,28 +46,31 @@ const upload = multer({
 // Serve static files for uploads directory
 router.use('/uploads', express.static(uploadsDir));  // Make the 'uploads' directory publicly accessible
 
+// routes/auth.js
 // Image upload route
 router.post('/profile/user/upload-image', auth, upload.single('image'), async (req, res) => {
   try {
     if (!req.file) {
-      console.log('No file uploaded');
       return res.status(400).json({ message: 'No image uploaded' });
     }
 
-    // Log the uploaded file for debugging
-    console.log('Uploaded file:', req.file);
-    console.log('File path:', req.file.path);  // Check where the file is being stored
-
     // Create the URL for the image
     const imageUrl = `/uploads/${req.file.filename}`;
-    res.json({ url: imageUrl });  // Return the URL of the uploaded image
+    
+    // Log success
+    console.log('Image uploaded successfully:', imageUrl);
+    
+    res.json({ url: imageUrl });
   } catch (error) {
-    console.error('Upload error:', error);  // More detailed error logging
-    res.status(500).json({ error: error.message || 'Something went wrong during the upload process' });
+    console.error('Upload error:', error);
+    res.status(500).json({ 
+      message: 'Something went wrong during the upload process',
+      error: error.message 
+    });
   }
 });
 
-// 📎 New verification document upload route for authors
+// Document upload route
 router.post('/profile/author/upload-documents', auth, upload.array('documents', 5), async (req, res) => {
   try {
     if (!req.files || req.files.length === 0) {
@@ -75,10 +78,17 @@ router.post('/profile/author/upload-documents', auth, upload.array('documents', 
     }
 
     const documentUrls = req.files.map(file => `/uploads/${file.filename}`);
-    res.status(200).json({ documents: documentUrls });
+    
+    // Log success
+    console.log('Documents uploaded successfully:', documentUrls);
+    
+    res.json({ documents: documentUrls });
   } catch (error) {
     console.error('Upload documents error:', error);
-    res.status(500).json({ error: error.message || 'Something went wrong during document upload' });
+    res.status(500).json({ 
+      message: 'Something went wrong during document upload',
+      error: error.message 
+    });
   }
 });
 

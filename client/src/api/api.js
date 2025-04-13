@@ -53,9 +53,41 @@ export const updateAuthorProfile = async (token, profileData) => {
 };
 
 // UPLOAD PROFILE IMAGE
-export const uploadUserProfileImage = async (file) => {
-  return axios.post(`${API_BASE_URL}/profile/user/upload-image`, file, {
-    headers: { "Content-Type": "multipart/form-data" },
+// api.js
+export const uploadUserProfileImage = async (file, token) => {
+  const formData = new FormData();
+  formData.append('image', file);
+  
+  return axios.post(`${API_BASE_URL}/auth/profile/user/upload-image`, formData, {
+    headers: { 
+      "Content-Type": "multipart/form-data",  
+      Authorization: `Bearer ${token}` 
+    },
+  });
+};
+
+// api.js
+export const uploadAuthorProfileImage = async (file, token) => {
+  const formData = new FormData();
+  formData.append('image', file);
+
+  return axios.post(`${API_BASE_URL}/auth/profile/user/upload-image`, formData, {
+    headers: { 
+      Authorization: `Bearer ${token}` 
+      // Remove Content-Type header, axios will set it automatically with boundary
+    },
+  });
+};
+
+export const uploadAuthorDocuments = async (file, token) => {
+  const formData = new FormData();
+  formData.append('documents', file);
+
+  return axios.post(`${API_BASE_URL}/auth/profile/author/upload-documents`, formData, {
+    headers: { 
+      Authorization: `Bearer ${token}` 
+      // Remove Content-Type header, axios will set it automatically with boundary
+    },
   });
 };
 

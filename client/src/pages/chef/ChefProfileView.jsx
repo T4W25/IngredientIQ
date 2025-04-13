@@ -12,7 +12,7 @@ const ChefProfileView = ({ user, setIsEditing }) => {
           className="w-32 h-32 mx-auto mb-4"
         >
           <img
-            src={user.profilePicture || '/default-avatar.png'}
+            src={user.profilePicture || './default-avatar.png'}
             alt={user.username}
             className="w-full h-full rounded-full border-4 border-primary-100 object-cover"
           />

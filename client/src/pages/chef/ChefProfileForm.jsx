@@ -1,5 +1,4 @@
-// ChefProfileForm.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
   FaUser, 
@@ -11,83 +10,87 @@ import {
   FaFileUpload,
   FaTrash 
 } from 'react-icons/fa';
-import { updateAuthorProfile } from '../../api/api';
+import { updateAuthorProfile, uploadAuthorProfileImage, uploadAuthorDocuments } from '../../api/api';
 import { toast } from 'react-toastify';
 import Avatar from '../../assets/Avatar';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const ChefProfileForm = ({ user, setUser, setIsEditing, refreshProfile }) => {
-  // Initial form state
   const [formData, setFormData] = useState({
-    username: user.username || '',
-    email: user.email || '',
-    bio: user.bio || '',
-    profilePicture: user.profilePicture || '',
-    verificationDocuments: user.verificationDocuments || [],
-    specialties: user.specialties || [],
-    experience: user.experience || '',
+    username: user?.username || '',
+    email: user?.email || '',
+    bio: user?.bio || '',
+    profilePicture: user?.profilePicture || '',
+    verificationDocuments: user?.verificationDocuments || [],
+    specialties: user?.specialties || [],
+    experience: user?.experience || [],
     currentPassword: '',
     newPassword: '',
     confirmPassword: ''
   });
 
-  // UI state management
+  const [originalProfileData, setOriginalProfileData] = useState({});
   const [loading, setLoading] = useState(false);
   const [showPasswordFields, setShowPasswordFields] = useState(false);
   const navigate = useNavigate();
 
-  // Handle regular input changes
+  useEffect(() => {
+    if (user) {
+      const initialData = {
+        username: user.username || '',
+        email: user.email || '',
+        bio: user.bio || '',
+        profilePicture: user.profilePicture || '',
+        verificationDocuments: user.verificationDocuments || [],
+        specialties: user.specialties || [],
+        experience: user.experience || []
+      };
+      
+      setFormData(prev => ({
+        ...prev,
+        ...initialData
+      }));
+      setOriginalProfileData(initialData);
+    }
+  }, [user]);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handle profile picture upload
-  // Handle profile picture upload
-const handleImageChange = async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-
-  if (file.size > 5000000) { // Check if image size is under 5MB
-    toast.error('Image size should be less than 5MB');
-    return;
-  }
-
-  try {
-    const formDataImg = new FormData();
-    formDataImg.append('image', file);  // Append file to FormData
-
-    const token = localStorage.getItem('token');  // Get the auth token
-    console.log("File being uploaded:", file);  // Debug log
-    const response = await axios.post(
-      `${process.env.REACT_APP_API_URL}/auth/chef/upload-image`,  // Check your backend URL
-      formDataImg,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`
-        }
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+  
+    if (file.size > 5000000) {
+      toast.error('Image size should be less than 5MB');
+      return;
+    }
+  
+    try {
+      const token = localStorage.getItem('token');
+      const response = await uploadAuthorProfileImage(file, token); // Pass file directly
+  
+      if (response.data && response.data.url) {
+        setFormData(prev => ({
+          ...prev,
+          profilePicture: response.data.url
+        }));
+        toast.success('Profile picture updated successfully');
+      } else {
+        toast.error('Failed to upload image');
       }
-    );
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      toast.error(error.response?.data?.message || 'Failed to upload image');
+    }
+  };
 
-    setFormData(prev => ({
-      ...prev,
-      profilePicture: response.data.url // Handle the returned URL here
-    }));
-
-    toast.success('Profile picture updated successfully');
-  } catch (error) {
-    toast.error('Failed to upload image');
-    console.error("Error uploading image:", error);  // Debug log for errors
-  }
-};
-
-
-  // Handle verification document upload
   const handleDocumentUpload = async (e) => {
     const files = Array.from(e.target.files);
     if (files.length === 0) return;
-
+  
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
@@ -97,36 +100,26 @@ const handleImageChange = async (e) => {
           toast.error(`${file.name} is too large. Maximum size is 5MB`);
           continue;
         }
-
-        const formDataDoc = new FormData();
-        formDataDoc.append('document', file);
-
-        const response = await axios.post(
-          `${process.env.REACT_APP_API_URL}/auth/chef/upload-document`,
-          formDataDoc,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-              Authorization: `Bearer ${token}`
-            }
-          }
-        );
-
-        setFormData(prev => ({
-          ...prev,
-          verificationDocuments: [...prev.verificationDocuments, response.data.url]
-        }));
+  
+        const response = await uploadAuthorDocuments(file, token); // Pass file directly
+  
+        if (response.data && response.data.documents) {
+          setFormData(prev => ({
+            ...prev,
+            verificationDocuments: [...prev.verificationDocuments, ...response.data.documents]
+          }));
+        }
       }
       
       toast.success('Documents uploaded successfully');
     } catch (error) {
-      toast.error('Failed to upload documents');
+      console.error("Error uploading documents:", error);
+      toast.error(error.response?.data?.message || 'Failed to upload documents');
     } finally {
       setLoading(false);
     }
   };
 
-  // Remove a verification document
   const handleRemoveDocument = async (docUrl, index) => {
     try {
       const token = localStorage.getItem('token');
@@ -148,7 +141,6 @@ const handleImageChange = async (e) => {
     }
   };
 
-  // Form validation
   const validateForm = () => {
     if (!formData.username || !formData.email) {
       toast.error('Username and email are required');
@@ -172,7 +164,6 @@ const handleImageChange = async (e) => {
     return true;
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -180,25 +171,38 @@ const handleImageChange = async (e) => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const updateData = {
-        username: formData.username,
-        email: formData.email,
-        bio: formData.bio,
-        profilePicture: formData.profilePicture,
-        verificationDocuments: formData.verificationDocuments,
-        specialties: formData.specialties,
-        experience: formData.experience
-      };
+      const updateData = {};
 
+      // Compare and add only changed fields
+      Object.keys(formData).forEach(key => {
+        if (key === 'confirmPassword') return; // Skip confirmPassword
+        
+        // Handle arrays
+        if (Array.isArray(formData[key])) {
+          if (JSON.stringify(formData[key]) !== JSON.stringify(originalProfileData[key])) {
+            updateData[key] = formData[key];
+          }
+        } 
+        // Handle regular fields
+        else if (formData[key] !== originalProfileData[key]) {
+          updateData[key] = formData[key];
+        }
+      });
+
+      // Add password fields if they exist
       if (showPasswordFields && formData.currentPassword && formData.newPassword) {
         updateData.currentPassword = formData.currentPassword;
         updateData.newPassword = formData.newPassword;
       }
 
-      await updateAuthorProfile(token, updateData);
-      await refreshProfile();
-      setIsEditing(false);
-      toast.success('Chef profile updated successfully');
+      if (Object.keys(updateData).length > 0) {
+        await updateAuthorProfile(token, updateData);
+        await refreshProfile();
+        setIsEditing(false);
+        toast.success('Profile updated successfully');
+      } else {
+        toast.info('No changes to update');
+      }
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to update profile');
     } finally {
@@ -335,8 +339,53 @@ const handleImageChange = async (e) => {
 
         {showPasswordFields && (
           <div className="space-y-4">
-            {/* Password Fields */}
-            {/* (Keep your existing password fields here) */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Current Password
+              </label>
+              <div className="relative">
+                <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <input
+                  type="password"
+                  name="currentPassword"
+                  value={formData.currentPassword}
+                  onChange={handleChange}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                New Password
+              </label>
+              <div className="relative">
+                <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <input
+                  type="password"
+                  name="newPassword"
+                  value={formData.newPassword}
+                  onChange={handleChange}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Confirm New Password
+              </label>
+              <div className="relative">
+                <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
+                />
+              </div>
+            </div>
           </div>
         )}
 
@@ -350,7 +399,7 @@ const handleImageChange = async (e) => {
             className="flex-1 bg-primary-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-primary-700 disabled:opacity-50"
           >
             {loading ? (
-              <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
+              <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white mx-auto"></div>
             ) : (
               <>
                 <FaCheck className="inline w-4 h-4 mr-2" />
