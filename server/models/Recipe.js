@@ -73,24 +73,13 @@ const recipeSchema = new Schema({
   },
   mainImage: {
     type: String,
-    default: "",
-    validate: {
-      validator: function(value) {
-        return !value || /^(https?:\/\/)?([\w\d-]+\.){1,}[\w\d]{2,}(\/[\w\d\-_\.~:\/?#[\]@!$&'()*+,;=]*)?$/.test(value);
-      },
-      message: 'Invalid URL format for main image'
-    }
+    default: ''
   },
   
   gallery: [{
-    type: String,
-    validate: {
-      validator: function(value) {
-        return !value || /^(https?:\/\/)?([\w\d-]+\.){1,}[\w\d]{2,}(\/[\w\d\-_\.~:\/?#[\]@!$&'()*+,;=]*)?$/.test(value);
-      },
-      message: 'Invalid URL format for gallery image'
-    }
-  }],
+    type: String
+  }],  
+  
   
   ingredients: [{
     name: { 

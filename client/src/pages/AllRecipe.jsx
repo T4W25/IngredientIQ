@@ -10,6 +10,7 @@ import {
   CardContent,
   CardFooter
 } from '../components/ui/Card'; // Keep this import only once
+import API_BASE_URL from '../api/api';
 
 const AllRecipes = () => {
   const navigate = useNavigate(); // Add this
@@ -70,11 +71,15 @@ const AllRecipes = () => {
                   onClick={() => handleRecipeClick(recipe._id)}
                 >
                   <CardHeader>
-                    <img
-                      src={recipe.mainImage || 'https://via.placeholder.com/400x300'}
-                      alt={recipe.title}
-                      className="w-full h-48 object-cover rounded-t-lg"
-                    />
+                  <img
+  src={
+    recipe.mainImage
+      ? `${API_BASE_URL.replace('/api', '')}${recipe.mainImage}`
+      : 'https://via.placeholder.com/400x300'
+  }
+  alt={recipe.title}
+  className="w-full h-48 object-cover rounded-t-lg"
+/>
                     <CardTitle className="mt-4">{recipe.title}</CardTitle>
                     <CardDescription>{recipe.description}</CardDescription>
                   </CardHeader>

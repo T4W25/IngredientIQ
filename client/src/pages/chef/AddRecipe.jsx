@@ -10,6 +10,7 @@ import InstructionsSection from "../../components/recipe/InstructionSection";
 import DietaryRestrictionsForm from "../../components/recipe/DietaryRestrictionsForm";
 import NutritionalInfoForm from "../../components/recipe/NutritionalInfoForm";
 import { createRecipe as addRecipe } from "../../api/api";
+import { handleFileUpload } from "../../api/api";
 
 const INITIAL_FORM_STATE = {
   title: "",
@@ -90,19 +91,9 @@ const AddRecipe = () => {
       toast.error('Please fix the errors before submitting');
       return;
     }
-
+  
     setIsLoading(true);
-    const recipeFormData = new FormData();
-
-    // Append form data including the image
-    Object.entries(formData).forEach(([key, value]) => {
-      if (key === "mainImage" && value) {
-        recipeFormData.append(key, value); // Append image file
-      } else if (key !== "gallery") {
-        recipeFormData.append(key, value);
-      }
-    });
-
+    
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -110,10 +101,31 @@ const AddRecipe = () => {
         navigate('/auth');
         return;
       }
-
-      await addRecipe(token, recipeFormData); // Send form data with image
+  
+      // 1. Upload image
+      const imageForm = new FormData();
+      imageForm.append("image", formData.mainImage);
+      const imageUploadRes = await handleFileUpload(imageForm);
+  
+      // 2. Clean data and replace file with URL
+      const recipeToSubmit = {
+        ...formData,
+        mainImage: imageUploadRes.data.url,
+        ingredients: formData.ingredients.filter(ing =>
+          ing.name.trim() && ing.quantity && ing.unit
+        ),
+        instructions: formData.instructions
+          .filter(inst => inst.text.trim())
+          .map((inst, i) => ({
+            ...inst,
+            step: i + 1
+          }))
+      };
+  
+      await addRecipe(token, recipeToSubmit);
       toast.success('Recipe created successfully!');
       navigate("/chef-dashboard");
+  
     } catch (error) {
       console.error("Error submitting recipe:", error);
       toast.error(error.response?.data?.error || 'Failed to create recipe');
@@ -122,6 +134,7 @@ const AddRecipe = () => {
       setIsLoading(false);
     }
   };
+  
 
   return (
     <>

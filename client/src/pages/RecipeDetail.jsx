@@ -195,11 +195,11 @@ const RecipeHeader = ({ recipe, onBookmark, isBookmarked }) => {
   return (
     <div className="relative">
       <div className="h-96 w-full overflow-hidden">
-        <img
-          src={recipe.mainImage}
-          alt={recipe.title}
-          className="w-full h-full object-cover"
-        />
+      <img
+  src={`${API_BASE_URL.replace('/api', '')}${recipe.mainImage}`}
+  alt={recipe.title}
+  className="w-full h-full object-cover"
+/>
       </div>
       
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent">
