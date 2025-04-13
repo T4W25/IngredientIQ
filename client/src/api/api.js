@@ -285,7 +285,7 @@ export const handleFileUpload = async (file) => {
 
 // UPDATE RECIPE
 export const updateRecipe = async (token, recipeId, updatedData) => {
-  return axios.patch(`${API_BASE_URL}/recipes/${recipeId}`, updatedData, {
+  return axios.put(`${API_BASE_URL}/recipes/${recipeId}`, updatedData, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };

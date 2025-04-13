@@ -16,6 +16,8 @@ import ChefVerification from "../pages/moderator/ChefVerification";
 import Reports from "../pages/moderator/ReportsTEMP";
 import ChefProfile from "../pages/chef/ChefProfile";
 import RecipeDetail from "../pages/RecipeDetail";
+import EditRecipe from "../pages/chef/EditRecipe";
+
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("token");
@@ -70,6 +72,15 @@ const AppRoutes = () => (
         </ProtectedRoute>
       }
     />
+    <Route
+      path="/edit-recipe/:id"
+      element={
+        <ProtectedRoute>
+          <EditRecipe />
+        </ProtectedRoute>
+      }
+    />
+
     <Route
       path="/bookmarks"
       element={
