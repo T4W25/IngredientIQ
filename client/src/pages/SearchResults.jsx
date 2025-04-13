@@ -3,7 +3,7 @@
   import { useSearchParams, useNavigate } from 'react-router-dom';
 
   import { searchRecipes } from '../api/api';
-  import Button from '../components/ui/button';
+  import Button from '../components/ui/Button';
   import {
     Card,
     CardHeader,
@@ -11,7 +11,7 @@
     CardDescription,
     CardContent
   } from '../components/ui/Card';
-  import { useToast } from '../Components/ui/use-toast';
+  import { useToast } from '../components/ui/Use-toast';
   import Navbar from '../components/ui/Navbar';
 
   const SearchResults = () => {
