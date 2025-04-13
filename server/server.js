@@ -25,7 +25,7 @@ const port = process.env.PORT || 10000;
 const allowedOrigins = [
   "http://localhost:5173",            // local frontend (Vite)
   "http://localhost:3000",            // optional: React default port
-  "https://ingredient-iq.onrender.com" // deployed frontend
+  "https://ingredientiq-1-nzs2.onrender.com" // deployed frontend
 ];
 
 app.use(cors({
