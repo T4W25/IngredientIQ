@@ -53,15 +53,11 @@ const Navbar = () => {
     <motion.header
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-<<<<<<< HEAD
+
       className={`fixed top-0 left-0 right-0 w-full z-50 transition-all duration-300
         ${isScrolled 
           ? 'bg-green-700/95 backdrop-blur-sm shadow-lg' 
           : 'bg-green-700'}`}
-=======
-      className={`fixed w-full z-50 transition-all duration-300
-        ${isScrolled ? 'bg-green-700/95 backdrop-blur-sm shadow-lg' : 'bg-green-700'}`}
->>>>>>> 33bd2cb8f496de695cb959b98d53403d0ef05385
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
