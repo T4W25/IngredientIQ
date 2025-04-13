@@ -192,16 +192,18 @@ const deleteRecipe = async (req, res) => {
 // Publish recipe
 const publishRecipe = async (req, res) => {
   try {
-    const { id } = req.params;
-    
-    // Validate recipe ID
-    if (!id) {
+    const { recipeId } = req.params;
+
+    if (!recipeId) {
       return res.status(400).json({ error: 'Recipe ID is required' });
     }
 
-    // Find and update the recipe
+    if (!mongoose.Types.ObjectId.isValid(recipeId)) {
+      return res.status(400).json({ error: 'Invalid Recipe ID' });
+    }
+
     const recipe = await Recipe.findByIdAndUpdate(
-      id,
+      recipeId,
       { status: 'published' },
       { new: true, runValidators: true }
     );

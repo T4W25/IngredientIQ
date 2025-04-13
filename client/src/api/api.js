@@ -141,7 +141,9 @@ export const getDraftRecipes = async () => {
 
 export const publishRecipe = async (id) => {
   try {
-    const response = await axios.patch(`${API_BASE_URL}/recipes/${id}/publish`);
+    const token = localStorage.getItem("token");
+    const headers = { Authorization: `Bearer ${token}` };
+    const response = await axios.patch(`${API_BASE_URL}/recipes/${id}/publish`, {}, { headers });
     return response.data;
   } catch (error) {
     console.error('Publish recipe error:', error.response?.data || error.message);

@@ -35,8 +35,8 @@ router.get('/', RecipeController.getAllRecipes);
 // Recipe management routes (author-only routes)
 router.post('/add', auth, RecipeController.addRecipe);
 router.put('/:recipeId', auth, validateRecipeId, isAuthorOrModerator, RecipeController.updateRecipe);
-router.delete('/:recipeId', RecipeController.deleteRecipe);
-router.patch('/:id/publish', RecipeController.publishRecipe);
+router.delete('/:recipeId', auth, validateRecipeId, isAuthorOrModerator, RecipeController.deleteRecipe);
+router.patch('/:recipeId/publish', RecipeController.publishRecipe);
 
 // Author-specific routes
 router.get('/author/my-recipes', auth, RecipeController.getAuthorRecipes);
