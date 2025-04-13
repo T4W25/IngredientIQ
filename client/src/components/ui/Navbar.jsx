@@ -98,7 +98,6 @@ const Navbar = () => {
         </div>
 
         {/* Mobile Menu */}
-<<<<<<< HEAD
         <motion.div
           initial={{ opacity: 0, height: 0 }}
           animate={{ 
@@ -109,14 +108,7 @@ const Navbar = () => {
           className="md:hidden overflow-hidden"
         >
           <div className="px-2 pt-2 pb-3 space-y-1">
-=======
-        {isMobileMenuOpen && (
-          <motion.nav
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="md:hidden py-4 space-y-2"
-          >
->>>>>>> 33bd2cb8f496de695cb959b98d53403d0ef05385
+        
             {navLinks.map((link) => (
               <NavLink
                 key={link.to}
