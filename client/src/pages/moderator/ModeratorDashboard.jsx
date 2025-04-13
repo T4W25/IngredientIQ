@@ -98,6 +98,12 @@ const ModeratorDashboard = () => {
     }
   };
 
+  const getImageUrl = (url) => {
+    if (!url) return 'https://via.placeholder.com/150';
+    if (url.startsWith('http')) return url;
+    return `${process.env.REACT_APP_API_URL.replace('/api', '')}${url}`;
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -238,9 +244,12 @@ const ModeratorDashboard = () => {
                         <td className="px-6 py-4">
                           <div className="flex items-center">
                             <img
-                              src={item.mainImage || 'https://via.placeholder.com/150'} // Add fallback image
+                              src={getImageUrl(item.mainImage)}
                               alt={item.title}
                               className="h-12 w-12 rounded-lg object-cover"
+                              onError={(e) => {
+                                e.target.src = 'https://via.placeholder.com/150';
+                              }}
                             />
                             <div className="ml-4">
                               <div className="font-medium text-gray-900">

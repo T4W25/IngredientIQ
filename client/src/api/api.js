@@ -144,28 +144,28 @@ export const getRecipeById = async (id) => {
 // src/api/api.js
 
 // RECIPE MANAGEMENT
-export const createRecipe = async (token, recipeData) => {
-  // Prepare the data before sending it to the backend
-  const cleanedData = {
-    ...recipeData,
-    ingredients: recipeData.ingredients.filter(ing => 
-      ing.name.trim() && ing.quantity.trim() && ing.unit.trim()
-    ),
-    instructions: recipeData.instructions.filter(inst => 
-      inst.text.trim()
-    ).map((inst, index) => ({
-      ...inst,
-      step: index + 1
-    }))
-  };
+// export const createRecipe = async (token, recipeData) => {
+//   // Prepare the data before sending it to the backend
+//   const cleanedData = {
+//     ...recipeData,
+//     ingredients: recipeData.ingredients.filter(ing => 
+//       ing.name.trim() && ing.quantity.trim() && ing.unit.trim()
+//     ),
+//     instructions: recipeData.instructions.filter(inst => 
+//       inst.text.trim()
+//     ).map((inst, index) => ({
+//       ...inst,
+//       step: index + 1
+//     }))
+//   };
 
-  return axios.post(`${API_BASE_URL}/recipes/add`, cleanedData, {
-    headers: { 
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    }
-  });
-};
+//   return axios.post(`${API_BASE_URL}/recipes/add`, cleanedData, {
+//     headers: { 
+//       Authorization: `Bearer ${token}`,
+//       'Content-Type': 'application/json'
+//     }
+//   });
+// };
 
 
 // ADD RECIPE
@@ -193,9 +193,9 @@ export const addRecipe = async (token, recipeData) => {
 };
 
 // FILE UPLOAD
-export const handleFileUpload = async (file) => {
+export const handleFileUpload = async (file, token) => {
   return axios.post(`${API_BASE_URL}/upload/image`, file, {
-    headers: { "Content-Type": "multipart/form-data" },
+    headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" },
   });
 };
 

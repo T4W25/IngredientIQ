@@ -1,6 +1,7 @@
 import React from "react";
 import { toast } from "react-toastify";
 import { PhotoIcon } from '@heroicons/react/24/outline';
+import { handleFileUpload } from '../../api/api';
 
 const MediaSection = ({ formData, setFormData, errors }) => {
   const handleImageUpload = async (event) => {
@@ -21,11 +22,12 @@ const MediaSection = ({ formData, setFormData, errors }) => {
         return;
       }
 
+      const token = localStorage.getItem('token');
       const fileData = new FormData();
       fileData.append('image', file);
 
       // Upload the file to the backend
-      const response = await handleFileUpload(fileData); // Ensure this function is implemented
+      const response = await handleFileUpload(fileData, token); // Ensure this function is implemented
       if (response?.data?.url) {
         setFormData(prev => ({ ...prev, mainImage: response.data.url })); // Update the formData with the image URL
         toast.success('Image uploaded successfully');

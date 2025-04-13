@@ -3,15 +3,23 @@ import { motion } from "framer-motion";
 import { FaUser, FaEnvelope, FaPen, FaCalendar } from "react-icons/fa";
 
 const ProfileView = ({ user, setIsEditing }) => {
+  const getImageUrl = (url) => {
+    if (!url) return '/default-avatar.png';
+    if (url.startsWith('http')) return url;
+    return `${process.env.REACT_APP_API_URL.replace('/api', '')}${url}`;
+  };
+
   return (
     <div className="p-8">
       <div className="relative">
         <motion.div whileHover={{ scale: 1.05 }} className="relative w-32 h-32 mx-auto mb-6">
-          {/* Use full image URL if available, else use default avatar */}
           <img
-            src={user.profilePicture ? `http://localhost:5000${user.profilePicture}` : '/default-avatar.png'}
+            src={getImageUrl(user.profilePicture)}
             alt={user.username}
             className="rounded-full w-full h-full object-cover border-4 border-primary-100"
+            onError={(e) => {
+              e.target.src = '/default-avatar.png';
+            }}
           />
         </motion.div>
 

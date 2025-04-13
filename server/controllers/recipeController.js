@@ -1,5 +1,13 @@
 const Recipe = require('../models/Recipe');
 const mongoose = require('mongoose');
+const path = require('path');
+
+// Helper function to transform image URLs
+const transformImageUrl = (url) => {
+  if (!url) return '';
+  if (url.startsWith('http')) return url;
+  return url.startsWith('/uploads/') ? url : `/uploads/${url}`;
+};
 
 // Helper function to validate Base64 images
 const isValidBase64Image = (base64String) => {
@@ -19,6 +27,14 @@ const getRecipeById = async (req, res) => {
     if (!recipe) {
       return res.status(404).json({ message: 'Recipe not found' });
     }
+
+    // Transform image URLs
+    recipe.mainImage = transformImageUrl(recipe.mainImage);
+    recipe.gallery = recipe.gallery.map(img => transformImageUrl(img));
+    recipe.instructions = recipe.instructions.map(inst => ({
+      ...inst,
+      image: transformImageUrl(inst.image)
+    }));
 
     res.json(recipe);
   } catch (error) {
@@ -58,7 +74,18 @@ const getRecipes = async (req, res) => {
       .skip(skip)
       .limit(Number(limit));
 
-    res.json(recipes);
+    // Transform image URLs for all recipes
+    const transformedRecipes = recipes.map(recipe => ({
+      ...recipe.toObject(),
+      mainImage: transformImageUrl(recipe.mainImage),
+      gallery: recipe.gallery.map(img => transformImageUrl(img)),
+      instructions: recipe.instructions.map(inst => ({
+        ...inst,
+        image: transformImageUrl(inst.image)
+      }))
+    }));
+
+    res.json(transformedRecipes);
   } catch (error) {
     console.error('Error fetching recipes:', error);
     res.status(500).json({ message: 'Error fetching recipes', error: error.message });
