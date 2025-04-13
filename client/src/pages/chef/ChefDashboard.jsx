@@ -9,7 +9,7 @@ import {
   EyeIcon,
   ChartBarIcon
 } from '@heroicons/react/24/outline';
-import { getAuthorProfile, getRecipes, deleteRecipe } from "../../api/api";
+import { getAuthorProfile, getMyRecipes, deleteRecipe } from "../../api/api";
 
 const DeleteModal = ({ recipe, onConfirm, onCancel }) => (
   <div className="fixed inset-0 z-50 overflow-y-auto">
@@ -57,11 +57,9 @@ const ChefDashboard = () => {
         const profileRes = await getAuthorProfile(token);
         setProfile(profileRes.data);
 
-        const recipesRes = await getRecipes();
-        const myRecipes = recipesRes.data.filter(
-          (r) => r.authorId === profileRes.data._id
-        );
-        setRecipes(myRecipes);
+        const recipesRes = await getMyRecipes(token);
+        setRecipes(recipesRes.data);
+
       } catch (err) {
         console.error("Error fetching dashboard data:", err);
       } finally {
@@ -198,9 +196,12 @@ const ChefDashboard = () => {
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex justify-end space-x-3">
-                          <button className="text-gray-600 hover:text-primary-600">
-                            <EyeIcon className="w-5 h-5" />
-                          </button>
+                        <Link 
+                        to={`/recipe/${recipe._id}`} 
+                        className="text-gray-600 hover:text-primary-600"
+                        >
+                        <EyeIcon className="w-5 h-5" />
+                        </Link>
                           <button className="text-gray-600 hover:text-primary-600">
                             <ChartBarIcon className="w-5 h-5" />
                           </button>

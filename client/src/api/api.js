@@ -155,6 +155,11 @@ export const getRecipeById = async (id) => {
   return axios.get(`${API_BASE_URL}/recipes/${id}`);
 };
 
+export const getMyRecipes = async (token) => {
+  return axios.get(`${API_BASE_URL}/recipes/author/my-recipes`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
 // src/api/api.js
 
 // RECIPE MANAGEMENT
@@ -285,9 +290,13 @@ export const updateRecipe = async (token, recipeId, updatedData) => {
   });
 };
 
-export const deleteRecipe = async (recipeId) => {
+export const deleteRecipe = async (token, recipeId) => {
   try {
-    const response = await axios.delete(`${API_BASE_URL}/recipes/${recipeId}`);
+    const response = await axios.delete(`${API_BASE_URL}/recipes/${recipeId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
     return response.data;
   } catch (error) {
     console.error('Delete recipe error:', error.response?.data || error.message);

@@ -118,6 +118,7 @@ const AppRoutes = () => (
         </ProtectedRoute>
       }
     />
+    
   </Routes>
 );
 
