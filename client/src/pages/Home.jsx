@@ -1,29 +1,45 @@
 // src/pages/home/Home.jsx
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import RecipeCard from "../components/recipe/RecipeCard";
-import sampleRecipes from "../api/sampleRecipes";
-import { 
-  ChevronRightIcon, 
+import { getRecipes } from "../api/api";
+import {
+  ChevronRightIcon,
   SparklesIcon,
   MagnifyingGlassIcon,
-} from '@heroicons/react/24/outline';
+} from "@heroicons/react/24/outline";
 import Navbar from "../components/ui/Navbar";
 
 const Home = () => {
+  const [featuredRecipes, setFeaturedRecipes] = useState([]);
+
+  useEffect(() => {
+    const fetchRecipes = async () => {
+      try {
+        const response = await getRecipes();
+        const all = response.data;
+        setFeaturedRecipes(all.slice(0, 4)); // Get top 4
+      } catch (error) {
+        console.error("Error fetching recipes:", error);
+      }
+    };
+
+    fetchRecipes();
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
 
       {/* Hero Section */}
-      <motion.section 
+      <motion.section
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className="pt-60 pb-16 px-4 bg-gradient-to-br from-green-50 to-white"
       >
         <div className="max-w-7xl mx-auto text-center">
-          <motion.h1 
+          <motion.h1
             initial={{ y: 20 }}
             animate={{ y: 0 }}
             className="text-4xl md:text-5xl lg:text-6xl font-bold text-green-800 mb-6"
@@ -34,8 +50,8 @@ const Home = () => {
             <br />
             Get Inspired.
           </motion.h1>
-          
-          <motion.p 
+
+          <motion.p
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.2 }}
@@ -45,26 +61,20 @@ const Home = () => {
             Transform your cooking experience with smart recommendations.
           </motion.p>
 
-          <motion.div 
+          <motion.div
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.4 }}
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
             <Link to="/recipes">
-              <button className="px-8 py-4 bg-green-600 text-white rounded-xl
-                font-semibold text-lg hover:bg-green-700 transition-colors
-                duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl
-                transform hover:-translate-y-1">
+              <button className="px-8 py-4 bg-green-600 text-white rounded-xl font-semibold text-lg hover:bg-green-700 transition-colors duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
                 Explore Recipes
                 <ChevronRightIcon className="w-5 h-5" />
               </button>
             </Link>
             <Link to="/search">
-              <button className="px-8 py-4 bg-white text-green-600 rounded-xl
-                font-semibold text-lg hover:bg-green-50 transition-colors
-                duration-300 border-2 border-green-600 flex items-center gap-2
-                shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+              <button className="px-8 py-4 bg-white text-green-600 rounded-xl font-semibold text-lg hover:bg-green-50 transition-colors duration-300 border-2 border-green-600 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
                 Start Searching
                 <MagnifyingGlassIcon className="w-5 h-5" />
               </button>
@@ -81,20 +91,19 @@ const Home = () => {
               <SparklesIcon className="w-8 h-8 text-yellow-400" />
               Featured Recipes
             </h2>
-            <Link to="/recipes" 
-              className="text-green-600 hover:text-green-700 
-                font-semibold flex items-center gap-1"
+            <Link
+              to="/recipes"
+              className="text-green-600 hover:text-green-700 font-semibold flex items-center gap-1"
             >
               View All
               <ChevronRightIcon className="w-4 h-4" />
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 
-            xl:grid-cols-4 gap-6">
-            {sampleRecipes.map((recipe) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {featuredRecipes.map((recipe) => (
               <motion.div
-                key={recipe.id}
+                key={recipe._id}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -109,13 +118,11 @@ const Home = () => {
 
       {/* Footer */}
       <footer className="bg-gray-800 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 
-          md:grid-cols-3 gap-8">
+        <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
             <h3 className="text-xl font-bold mb-4">Ingredient IQ</h3>
             <p className="text-gray-400">
-              Your smart cooking companion for discovering recipes 
-              and planning meals.
+              Your smart cooking companion for discovering recipes and planning meals.
             </p>
           </div>
           <div>
@@ -140,15 +147,11 @@ const Home = () => {
           </div>
           <div>
             <h4 className="text-lg font-semibold mb-4">Connect With Us</h4>
-            <div className="flex space-x-4">
-              {/* Add your social media icons/links here */}
-            </div>
+            <div className="flex space-x-4">{/* Social icons */}</div>
           </div>
         </div>
-        <div className="max-w-7xl mx-auto px-4 mt-8 pt-8 border-t 
-          border-gray-700 text-center text-gray-400">
-          <p>&copy; {new Date().getFullYear()} Ingredient IQ. 
-            All rights reserved.</p>
+        <div className="max-w-7xl mx-auto px-4 mt-8 pt-8 border-t border-gray-700 text-center text-gray-400">
+          <p>&copy; {new Date().getFullYear()} Ingredient IQ. All rights reserved.</p>
         </div>
       </footer>
     </div>

@@ -75,18 +75,22 @@ const Auth = () => {
             localStorage.setItem("email", response.data.user.email);
           }
 
-        setTimeout(() => {
-          switch (formData.role) {
-            case "author":
-              navigate("/chef-dashboard");
-              break;
-            case "user":
-              navigate("/home");
-              break;
-            default:
-              navigate("/home");
-          }
-        }, 100); // 100ms delay        
+          if (isRegistering) {
+            // Show login screen after successful registration
+            setIsRegistering(false);
+            setFormData((prev) => ({ ...prev, password: "" }));
+          } else {
+            switch (formData.role) {
+              case "author":
+                navigate("/chef-dashboard");
+                break;
+              case "user":
+                navigate("/home");
+                break;
+              default:
+                navigate("/home");
+            }
+          }            
       }    
        else {
         setError("Unexpected response from the server");
