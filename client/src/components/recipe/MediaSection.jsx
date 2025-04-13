@@ -67,10 +67,16 @@ const MediaSection = ({ formData, setFormData, errors }) => {
               PNG, JPG up to 5MB
             </p>
             {formData.mainImage && (
-              <p className="text-sm text-green-600">
-                Image uploaded successfully ✓
-              </p>
-            )}
+  <div className="mt-4">
+    <p className="text-sm text-green-600 mb-2">Image uploaded successfully ✓</p>
+    <img
+      src={formData.mainImage}
+      alt="Uploaded preview"
+      className="rounded-lg shadow w-full max-w-sm mx-auto"
+    />
+  </div>
+)}
+
           </div>
         </div>
         {errors.mainImage && (

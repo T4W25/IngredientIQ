@@ -10,13 +10,6 @@ const transformImageUrl = (url) => {
 };
 
 // Helper function to validate Base64 images
-const isValidBase64Image = (base64String) => {
-  try {
-    return base64String.startsWith('data:image/') && base64String.includes(';base64,');
-  } catch {
-    return false;
-  }
-};
 
 // Get a single recipe by ID
 const getRecipeById = async (req, res) => {
@@ -128,10 +121,6 @@ const addRecipe = async (req, res) => {
 
     if (!Array.isArray(recipeData.instructions) || recipeData.instructions.length === 0) {
       return res.status(400).json({ error: 'At least one instruction is required' });
-    }
-
-    if (recipeData.mainImage && !isValidBase64Image(recipeData.mainImage)) {
-      return res.status(400).json({ error: 'Invalid image format for main image' });
     }
 
     const newRecipe = new Recipe(recipeData);

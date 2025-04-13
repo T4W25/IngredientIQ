@@ -193,11 +193,21 @@ export const addRecipe = async (token, recipeData) => {
 };
 
 // FILE UPLOAD
-export const handleFileUpload = async (file, token) => {
+export const handleFileUpload = async (file) => {
+  const token = localStorage.getItem('token');
+  
+  if (!token) {
+    throw new Error('No token found for upload');
+  }
+
   return axios.post(`${API_BASE_URL}/upload/image`, file, {
-    headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" },
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'multipart/form-data'
+    },
   });
 };
+
 
 // UPDATE RECIPE
 export const updateRecipe = async (token, recipeId, updatedData) => {

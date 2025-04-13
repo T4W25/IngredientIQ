@@ -1,17 +1,18 @@
 // components/RecipeCard.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
+import API_BASE_URL from '../../api/api';
 
 const RecipeCard = ({ recipe }) => {
   return (
     <Link to={`/recipe/${recipe._id}`}>
       <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
         <div className="relative h-48">
-          <img
-            src={recipe.mainImage}
-            alt={recipe.title}
-            className="w-full h-full object-cover"
-          />
+        <img
+  src={`${API_BASE_URL.replace('/api', '')}${recipe.mainImage}`}
+  alt={recipe.title}
+  className="w-full h-full object-cover"
+/>
           <div className="absolute top-2 right-2 px-2 py-1 bg-white rounded-full text-sm">
             {recipe.totalTime} min
           </div>
