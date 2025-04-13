@@ -14,6 +14,7 @@ import API_BASE_URL from '../api/api';
 // import ReviewSection from './ReviewSection';
 import { toast } from 'react-toastify';
 import Navbar from '../components/ui/Navbar';
+import { useCallback } from 'react';
 
 const RecipeDetail = () => {
   const { id } = useParams();
@@ -81,33 +82,32 @@ const RecipeDetail = () => {
 
   // src/components/Recipe/RecipeDetail.jsx
 
-const handleBookmark = async () => {
-  try {
-    const token = localStorage.getItem('token');
-    const userId = localStorage.getItem('userId');
-
-    if (!token || !userId) {
-      toast.error('Please login to bookmark recipes');
-      return;
+  const handleBookmark = useCallback(async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const userId = localStorage.getItem('userId');
+  
+      if (!token || !userId) {
+        toast.error('Please login to bookmark recipes');
+        return;
+      }
+  
+      if (isBookmarked && bookmarkId) {
+        await removeBookmark(token, bookmarkId);
+        setIsBookmarked(false);
+        setBookmarkId(null);
+        toast.success('Recipe removed from bookmarks');
+      } else {
+        const response = await addBookmark(token, id);
+        setIsBookmarked(true);
+        setBookmarkId(response.bookmarkId);
+        toast.success('Recipe added to bookmarks');
+      }
+    } catch (error) {
+      console.error('Bookmark error:', error);
+      toast.error(error.response?.data?.error || 'Failed to update bookmark');
     }
-
-    if (isBookmarked && bookmarkId) {
-      console.log('Removing bookmark:', bookmarkId); // Debug log
-      await removeBookmark(token, bookmarkId);
-      setIsBookmarked(false);
-      setBookmarkId(null);
-      toast.success('Recipe removed from bookmarks');
-    } else {
-      const response = await addBookmark(token, id);
-      setIsBookmarked(true);
-      setBookmarkId(response.bookmarkId);
-      toast.success('Recipe added to bookmarks');
-    }
-  } catch (error) {
-    console.error('Bookmark error:', error);
-    toast.error(error.response?.data?.error || 'Failed to update bookmark');
-  }
-};
+  }, [isBookmarked, bookmarkId, id]);
 
   if (loading) {
     return (
@@ -126,7 +126,13 @@ const handleBookmark = async () => {
       className="min-h-screen bg-gray-50"
     >
       {/* Recipe Header */}
-      <RecipeHeader recipe={recipe} onBookmark={handleBookmark} isBookmarked={isBookmarked} />
+      <RecipeHeader 
+  recipe={recipe} 
+  onBookmark={handleBookmark} 
+  isBookmarked={isBookmarked} 
+  key={isBookmarked ? 'bookmarked' : 'not-bookmarked'} 
+/>
+
 
       {/* Navigation Tabs */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -223,14 +229,16 @@ const RecipeHeader = ({ recipe, onBookmark, isBookmarked }) => {
             </div>
 
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={onBookmark}
-              className="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-full flex items-center"
-            >
-              {isBookmarked ? <FaBookmark className="mr-2" /> : <FaRegBookmark className="mr-2" />}
-              {isBookmarked ? 'Bookmarked' : 'Bookmark Recipe'}
-            </motion.button>
+  key={isBookmarked ? 'bookmarked-btn' : 'bookmark-btn'}
+  whileHover={{ scale: 1.05 }}
+  whileTap={{ scale: 0.95 }}
+  onClick={onBookmark}
+  className="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-full flex items-center"
+>
+  {isBookmarked ? <FaBookmark className="mr-2" /> : <FaRegBookmark className="mr-2" />}
+  {isBookmarked ? 'Bookmarked' : 'Bookmark Recipe'}
+</motion.button>
+
           </div>
         </div>
       </div>
