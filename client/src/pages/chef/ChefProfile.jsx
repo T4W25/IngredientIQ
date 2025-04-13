@@ -1,7 +1,7 @@
 // pages/chef/ChefProfile.jsx
 import React, { useState, useEffect } from 'react';
-import ChefProfileView from './chefProfileView';
-import ChefProfileForm from './chefProfileForm';
+import ChefProfileView from './ChefProfileView';
+import ChefProfileForm from './ChefProfileForm';
 import { toast } from 'react-toastify';
 import { getAuthorProfile } from '../../api/api';
 
