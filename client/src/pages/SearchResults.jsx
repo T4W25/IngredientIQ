@@ -3,16 +3,16 @@
   import { useSearchParams, useNavigate } from 'react-router-dom';
 
   import { searchRecipes } from '../api/api';
-  import Button from '../components/ui/button';
+  import Button from '../components/ui/Button';
   import {
     Card,
     CardHeader,
     CardTitle,
     CardDescription,
     CardContent
-  } from '../Components/ui/card';
-  import { useToast } from '../Components/ui/use-toast';
-  import Navbar from '../components/ui/navbar';
+  } from '../components/ui/Card';
+  import { useToast } from '../components/ui/Use-toast';
+  import Navbar from '../components/ui/Navbar';
 
   const SearchResults = () => {
     const navigate = useNavigate();

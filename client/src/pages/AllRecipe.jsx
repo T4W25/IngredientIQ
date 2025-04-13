@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom'; // Add this import
 import { getRecipes } from '../api/api';
-import Navbar from '../components/ui/navbar';
+import Navbar from '../components/ui/Navbar';
 import {
   Card,
   CardHeader,
@@ -9,7 +9,7 @@ import {
   CardDescription,
   CardContent,
   CardFooter
-} from '../Components/ui/card'; // Keep this import only once
+} from '../components/ui/Card'; // Keep this import only once
 
 const AllRecipes = () => {
   const navigate = useNavigate(); // Add this

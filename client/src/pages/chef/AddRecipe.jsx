@@ -3,12 +3,12 @@ import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
 import { PlusIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
-import BasicInfoSection from "../../Components/recipe/BasicInfoSection";
-import MediaSection from "../../Components/recipe/mediaSection";  
-import IngredientsSection from "../../Components/recipe/IngredientSection";
-import InstructionsSection from "../../Components/recipe/InstructionSection";
-import DietaryRestrictionsForm from "../../Components/recipe/DietaryRestrictionsForm";
-import NutritionalInfoForm from "../../Components/recipe/NutritionalInfoForm";
+import BasicInfoSection from "../../components/recipe/BasicInfoSection";
+import MediaSection from "../../components/recipe/MediaSection";  
+import IngredientsSection from "../../components/recipe/IngredientSection";
+import InstructionsSection from "../../components/recipe/InstructionSection";
+import DietaryRestrictionsForm from "../../components/recipe/DietaryRestrictionsForm";
+import NutritionalInfoForm from "../../components/recipe/NutritionalInfoForm";
 import { createRecipe as addRecipe } from "../../api/api";
 
 const INITIAL_FORM_STATE = {

@@ -7,7 +7,7 @@ import {
   createMealPlan,
   getMealPlans
 } from "../../api/api";
-import Navbar from "../../components/ui/navbar";
+import Navbar from "../../components/ui/Navbar";
 import { toast } from "react-toastify";
 
 const defaultPlan = {

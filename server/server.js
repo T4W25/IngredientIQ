@@ -25,14 +25,23 @@ const port = process.env.PORT || 10000;
 const allowedOrigins = [
   "http://localhost:5173",            // local frontend (Vite)
   "http://localhost:3000",            // optional: React default port
-  "https://ingredient-iq.onrender.com" // deployed frontend
+  "https://ingredientiq-1-nzs2.onrender.com" // deployed frontend
 ];
 
 app.use(cors({
-  origin: allowedOrigins,
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   methods: "GET,POST,PATCH,DELETE",
-  allowedHeaders: "Content-Type,Authorization"
+  allowedHeaders: "Content-Type,Authorization",
+  credentials: true // ✅ IMPORTANT for cookies/auth headers
 }));
+
+app.options("*", cors());
 
 // Middleware to parse JSON
 app.use(express.json());

@@ -9,7 +9,7 @@ import {
   SparklesIcon,
   MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline';
-import Navbar from "../components/ui/navbar";
+import Navbar from "../components/ui/Navbar";
 
 const Home = () => {
   return (
