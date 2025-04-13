@@ -19,6 +19,7 @@ const DIETARY_OPTIONS = [
 
 const Search = () => {
   const [query, setQuery] = useState("");
+  const [ingredients, setIngredients] = useState("");
   const [filters, setFilters] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -33,7 +34,8 @@ const Search = () => {
     setIsLoading(true);
 
     const searchParams = {
-      query: query.trim(),
+      search: query.trim(),
+      ingredients: ingredients.trim(),
       dietary: Object.entries(filters)
         .filter(([_, value]) => value)
         .map(([key]) => key)
@@ -83,6 +85,26 @@ const Search = () => {
               <button
                 type="button"
                 onClick={() => setQuery("")}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2"
+              >
+                <XMarkIcon className="w-5 h-5 text-gray-400 hover:text-gray-600" />
+              </button>
+            )}
+          </div>
+
+          {/* Ingredient Search Input */}
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search by ingredients (e.g., chicken, rice, tomatoes...)"
+              value={ingredients}
+              onChange={(e) => setIngredients(e.target.value)}
+              className="input-primary"
+            />
+            {ingredients && (
+              <button
+                type="button"
+                onClick={() => setIngredients("")}
                 className="absolute right-3 top-1/2 transform -translate-y-1/2"
               >
                 <XMarkIcon className="w-5 h-5 text-gray-400 hover:text-gray-600" />

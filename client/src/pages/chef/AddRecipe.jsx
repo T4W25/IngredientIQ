@@ -9,7 +9,7 @@ import IngredientsSection from "../../components/recipe/IngredientSection";
 import InstructionsSection from "../../components/recipe/InstructionSection";
 import DietaryRestrictionsForm from "../../components/recipe/DietaryRestrictionsForm";
 import NutritionalInfoForm from "../../components/recipe/NutritionalInfoForm";
-import { createRecipe as addRecipe } from "../../api/api";
+import { addRecipe } from "../../api/api";
 import { handleFileUpload } from "../../api/api";
 
 const INITIAL_FORM_STATE = {
