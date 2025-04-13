@@ -130,11 +130,23 @@ export const getRecipes = async (filters = {}) => {
 };
 
 export const getDraftRecipes = async () => {
-  return axios.get(`${API_BASE_URL}/recipes/moderation-queue`);
+  try {
+    const response = await axios.get(`${API_BASE_URL}/recipes/moderation-queue`);
+    return response.data;
+  } catch (error) {
+    console.error('Get draft recipes error:', error.response?.data || error.message);
+    throw new Error(error.response?.data?.error || 'Failed to fetch draft recipes');
+  }
 };
 
 export const publishRecipe = async (id) => {
-  return axios.patch(`${API_BASE_URL}/recipes/${id}/publish`);
+  try {
+    const response = await axios.patch(`${API_BASE_URL}/recipes/${id}/publish`);
+    return response.data;
+  } catch (error) {
+    console.error('Publish recipe error:', error.response?.data || error.message);
+    throw new Error(error.response?.data?.error || 'Failed to publish recipe');
+  }
 };
 
 export const getRecipeById = async (id) => {
@@ -170,26 +182,38 @@ export const getRecipeById = async (id) => {
 
 // ADD RECIPE
 export const addRecipe = async (token, recipeData) => {
-  // Clean up the data before sending
-  const cleanedData = {
-    ...recipeData,
-    ingredients: recipeData.ingredients.filter(ing =>
-      ing.name.trim() && ing.quantity.trim() && ing.unit.trim()
-    ),
-    instructions: recipeData.instructions.filter(inst =>
-      inst.text.trim()
-    ).map((inst, index) => ({
-      ...inst,
-      step: index + 1
-    }))
-  };
+  try {
+    // Clean up the data before sending
+    const cleanedData = {
+      ...recipeData,
+      // Ensure mainImage is a relative path starting with /uploads/
+      mainImage: recipeData.mainImage.startsWith('http') 
+        ? recipeData.mainImage.replace(/^.*\/uploads\//, '/uploads/')
+        : recipeData.mainImage,
+      ingredients: recipeData.ingredients.filter(ing =>
+        ing.name.trim() && ing.quantity && ing.unit
+      ),
+      instructions: recipeData.instructions
+        .filter(inst => inst.text.trim())
+        .map((inst, index) => ({
+          ...inst,
+          step: index + 1
+        }))
+    };
 
-  return axios.post(`${API_BASE_URL}/recipes/add`, cleanedData, {
-    headers: { 
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    }
-  });
+    console.log('Sending recipe data:', cleanedData); // Debug log
+
+    const response = await axios.post(`${API_BASE_URL}/recipes/add`, cleanedData, {
+      headers: { 
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    return response;
+  } catch (error) {
+    console.error('Error adding recipe:', error.response?.data || error.message);
+    throw error;
+  }
 };
 
 // FILE UPLOAD
@@ -200,12 +224,55 @@ export const handleFileUpload = async (file) => {
     throw new Error('No token found for upload');
   }
 
-  return axios.post(`${API_BASE_URL}/upload/image`, file, {
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'multipart/form-data'
-    },
-  });
+  try {
+    // Validate the file
+    if (!file || !file.get("image")) {
+      throw new Error('No file provided for upload');
+    }
+
+    const imageFile = file.get("image");
+    console.log('Uploading file:', {
+      name: imageFile.name,
+      type: imageFile.type,
+      size: imageFile.size
+    });
+
+    const response = await axios.post(`${API_BASE_URL}/upload/image`, file, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data'
+      },
+    });
+    
+    // Ensure the URL points to the backend server
+    let imageUrl = response.data.url;
+    if (imageUrl.startsWith('http')) {
+      const url = new URL(imageUrl);
+      imageUrl = url.pathname;
+    }
+    if (!imageUrl.startsWith('/uploads/')) {
+      imageUrl = '/uploads/' + imageUrl.replace(/^\/+/, '');
+    }
+    
+    // Prepend the backend server URL if it's not already a full URL
+    if (!imageUrl.startsWith('http')) {
+      imageUrl = `${API_BASE_URL.replace('/api', '')}${imageUrl}`;
+    }
+    
+    console.log('Upload successful:', { 
+      originalUrl: response.data.url,
+      processedUrl: imageUrl 
+    });
+    
+    return { ...response, data: { ...response.data, url: imageUrl } };
+  } catch (error) {
+    console.error('Upload error:', {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status
+    });
+    throw error;
+  }
 };
 
 
@@ -217,7 +284,13 @@ export const updateRecipe = async (token, recipeId, updatedData) => {
 };
 
 export const deleteRecipe = async (recipeId) => {
-  return axios.delete(`${API_BASE_URL}/recipes/${recipeId}`);
+  try {
+    const response = await axios.delete(`${API_BASE_URL}/recipes/${recipeId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Delete recipe error:', error.response?.data || error.message);
+    throw new Error(error.response?.data?.error || 'Failed to delete recipe');
+  }
 };
 
 // BOOKMARKING RECIPES

@@ -45,12 +45,14 @@ exports.searchRecipes = async (req, res) => {
     if (cuisine) searchCriteria.cuisine = cuisine;
     if (category) searchCriteria.category = category;
 
-    // ✅ Dietary restrictions
-    if (dietary) {
-      const dietaryArray = dietary.split(',');
-      dietaryArray.forEach(restriction => {
-        searchCriteria[`dietaryRestrictions.${restriction.trim()}`] = true;
-      });
+    // ✅ Dietary restrictions - only apply if filters are provided
+    if (dietary && dietary.trim() !== '') {
+      const dietaryArray = dietary.split(',').filter(d => d.trim() !== '');
+      if (dietaryArray.length > 0) {
+        dietaryArray.forEach(restriction => {
+          searchCriteria[`dietaryRestrictions.${restriction.trim()}`] = true;
+        });
+      }
     }
 
     const recipes = await Recipe.find(searchCriteria)

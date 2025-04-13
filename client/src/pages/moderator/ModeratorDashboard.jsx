@@ -49,11 +49,11 @@ const ModeratorDashboard = () => {
       setLoading(true);
       setError(null);
       const response = await getDraftRecipes();
-      setQueue(response.data);
+      setQueue(response || []);
     } catch (error) {
       console.error('Error fetching draft recipes:', error);
       setError(error.response?.data?.message || 'Failed to fetch draft recipes');
-      toast.error('Failed to fetch draft recipes');
+      setQueue([]);
     } finally {
       setLoading(false);
     }
@@ -101,7 +101,7 @@ const ModeratorDashboard = () => {
   const getImageUrl = (url) => {
     if (!url) return 'https://via.placeholder.com/150';
     if (url.startsWith('http')) return url;
-    return `${process.env.REACT_APP_API_URL.replace('/api', '')}${url}`;
+    return `${import.meta.env.VITE_API_BASE_URL.replace('/api', '')}${url}`;
   };
 
   if (loading) {
@@ -186,7 +186,7 @@ const ModeratorDashboard = () => {
                 <div>
                   <p className="text-gray-600">Pending Review</p>
                   <h3 className="text-2xl font-bold text-primary-600">
-                    {queue.length}
+                    {loading ? '-' : (Array.isArray(queue) ? queue.length : 0)}
                   </h3>
                 </div>
                 <BellIcon className="w-8 h-8 text-primary-500" />

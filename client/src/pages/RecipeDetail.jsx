@@ -557,10 +557,14 @@ const ReviewSection = ({ recipeId }) => {
 
   const fetchReviews = async () => {
     try {
-      const response = await axios.get(`/api/reviews/recipe/${recipeId}`);
+      console.log('Fetching reviews for recipe:', recipeId); // Debug log
+      const response = await axios.get(`${API_BASE_URL}/reviews/recipe/${recipeId}`);
+      console.log('Reviews response:', response.data); // Debug log
       setReviews(response.data.reviews);
     } catch (error) {
-      toast.error('Failed to load reviews');
+      console.error('Error fetching reviews:', error);
+      console.error('Error response:', error.response); // Debug log
+      toast.error(error.response?.data?.error || 'Failed to load reviews');
     } finally {
       setLoading(false);
     }
@@ -576,24 +580,35 @@ const ReviewSection = ({ recipeId }) => {
     setIsSubmitting(true);
     try {
       const token = localStorage.getItem('token');
+      console.log('Token:', token); // Debug log
+      
       if (!token) {
         toast.error('Please login to submit a review');
         return;
       }
 
-      await axios.post(
-        `/api/reviews/recipe/${recipeId}`,
+      console.log('Submitting review:', { recipeId, newReview }); // Debug log
+      
+      const response = await axios.post(
+        `${API_BASE_URL}/reviews/recipe/${recipeId}`,
         newReview,
         {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { 
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
         }
       );
 
+      console.log('Review submission response:', response.data); // Debug log
+      
       await fetchReviews();
       setNewReview({ rating: 0, comment: '' });
       toast.success('Review submitted successfully');
     } catch (error) {
-      toast.error('Failed to submit review');
+      console.error('Error submitting review:', error);
+      console.error('Error response:', error.response); // Debug log
+      toast.error(error.response?.data?.error || 'Failed to submit review');
     } finally {
       setIsSubmitting(false);
     }

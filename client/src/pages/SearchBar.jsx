@@ -36,11 +36,16 @@ const Search = () => {
     const searchParams = {
       search: query.trim(),
       ingredients: ingredients.trim(),
-      dietary: Object.entries(filters)
-        .filter(([_, value]) => value)
-        .map(([key]) => key)
-        .join(',')
     };
+
+    // Only add dietary filters if any are selected
+    const activeDietaryFilters = Object.entries(filters)
+      .filter(([_, value]) => value)
+      .map(([key]) => key);
+    
+    if (activeDietaryFilters.length > 0) {
+      searchParams.dietary = activeDietaryFilters.join(',');
+    }
 
     try {
       await navigate(`/searchresults?${new URLSearchParams(searchParams).toString()}`);

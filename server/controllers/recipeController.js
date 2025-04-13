@@ -123,6 +123,19 @@ const addRecipe = async (req, res) => {
       return res.status(400).json({ error: 'At least one instruction is required' });
     }
 
+    // Handle mainImage URL
+    if (recipeData.mainImage) {
+      // If it's a full URL, extract just the path
+      if (recipeData.mainImage.startsWith('http')) {
+        const url = new URL(recipeData.mainImage);
+        recipeData.mainImage = url.pathname;
+      }
+      // Ensure it starts with /uploads/
+      if (!recipeData.mainImage.startsWith('/uploads/')) {
+        recipeData.mainImage = '/uploads/' + recipeData.mainImage.replace(/^\/+/, '');
+      }
+    }
+
     const newRecipe = new Recipe(recipeData);
 
     const validationError = newRecipe.validateSync();
@@ -179,14 +192,31 @@ const deleteRecipe = async (req, res) => {
 // Publish recipe
 const publishRecipe = async (req, res) => {
   try {
+    const { id } = req.params;
+    
+    // Validate recipe ID
+    if (!id) {
+      return res.status(400).json({ error: 'Recipe ID is required' });
+    }
+
+    // Find and update the recipe
     const recipe = await Recipe.findByIdAndUpdate(
-      req.params.id,
+      id,
       { status: 'published' },
-      { new: true }
+      { new: true, runValidators: true }
     );
-    res.json({ message: 'Recipe published', recipe });
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to publish recipe' });
+
+    if (!recipe) {
+      return res.status(404).json({ error: 'Recipe not found' });
+    }
+
+    res.json({ message: 'Recipe published successfully', recipe });
+  } catch (error) {
+    console.error('Publish recipe error:', error);
+    res.status(500).json({ 
+      error: 'Failed to publish recipe',
+      details: error.message 
+    });
   }
 };
 

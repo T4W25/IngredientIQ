@@ -102,15 +102,19 @@ const AddRecipe = () => {
         return;
       }
   
-      // 1. Upload image
-      const imageForm = new FormData();
-      imageForm.append("image", formData.mainImage);
-      const imageUploadRes = await handleFileUpload(imageForm);
+      // 1. Upload image if it's a File object
+      let mainImageUrl = formData.mainImage;
+      if (formData.mainImage instanceof File) {
+        const imageForm = new FormData();
+        imageForm.append("image", formData.mainImage);
+        const imageUploadRes = await handleFileUpload(imageForm);
+        mainImageUrl = imageUploadRes.data.url;
+      }
   
       // 2. Clean data and replace file with URL
       const recipeToSubmit = {
         ...formData,
-        mainImage: imageUploadRes.data.url,
+        mainImage: mainImageUrl,
         ingredients: formData.ingredients.filter(ing =>
           ing.name.trim() && ing.quantity && ing.unit
         ),

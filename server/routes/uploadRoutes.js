@@ -40,14 +40,26 @@ const upload = multer({
 // Upload Handler
 const handleFileUpload = async (req, res) => {
   try {
-    const file = req.file;
-    if (!file) return res.status(400).json({ error: 'No file uploaded' });
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
 
+    const file = req.file;
     const relativePath = file.path.replace(/\\/g, '/'); // for Windows path support
+    
+    // Verify the file was actually saved
+    if (!fs.existsSync(file.path)) {
+      return res.status(500).json({ error: 'File was not saved successfully' });
+    }
+
     res.status(200).json({ url: `/${relativePath}` });
   } catch (error) {
     console.error('Upload error:', error);
-    res.status(500).json({ error: 'Failed to upload image' });
+    res.status(500).json({ 
+      error: 'Failed to upload image',
+      details: error.message,
+      code: error.code
+    });
   }
 };
 

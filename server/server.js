@@ -96,7 +96,14 @@ const upload = multer({
 });
 
 // Serve static files (for image uploads)
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
+  setHeaders: (res, path) => {
+    // Set proper headers for images
+    if (path.endsWith('.jpg') || path.endsWith('.jpeg') || path.endsWith('.png')) {
+      res.setHeader('Content-Type', 'image/jpeg');
+    }
+  }
+}));
 
 // Routes
 app.use('/api/auth', authRoutes);
