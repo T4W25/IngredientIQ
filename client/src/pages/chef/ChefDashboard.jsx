@@ -173,11 +173,6 @@ const ChefDashboard = () => {
                     <tr key={recipe._id} className="hover:bg-gray-50">
                       <td className="px-6 py-4">
                         <div className="flex items-center">
-                          <img
-                            src={recipe.imageUrl}
-                            alt={recipe.title}
-                            className="h-12 w-12 rounded-lg object-cover"
-                          />
                           <div className="ml-4">
                             <div className="font-medium text-gray-900">{recipe.title}</div>
                             <div className="text-sm text-gray-500">
