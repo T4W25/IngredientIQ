@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
@@ -13,6 +13,8 @@ import {
 } from '../components/ui/Card';
 import Navbar from '../components/ui/Navbar';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+
 const SearchResults = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -25,7 +27,7 @@ const SearchResults = () => {
     calories: 'all',
   });
   const [sortBy, setSortBy] = useState('relevance');
-  
+
   const handleRecipeClick = (recipeId) => {
     navigate(`/recipe/${recipeId}`);
   };
@@ -35,28 +37,20 @@ const SearchResults = () => {
       try {
         setLoading(true);
         
-        // Construct API parameters
         const apiParams = {
           search: searchParams.get('search'),
           ingredients: searchParams.get('ingredients'),
           dietary: searchParams.get('dietary'),
         };
   
-        // Add filter parameters if they're not set to 'all'
-        if (filters.difficulty !== 'all') {
-          apiParams.difficulty = filters.difficulty.toLowerCase();
-        }
-        if (filters.prepTime !== 'all') {
-          apiParams.prepTime = parseInt(filters.prepTime);
-        }
-        if (filters.cookTime !== 'all') {
-          apiParams.cookTime = parseInt(filters.cookTime);
-        }
+        if (filters.difficulty !== 'all') apiParams.difficulty = filters.difficulty.toLowerCase();
+        if (filters.prepTime !== 'all') apiParams.prepTime = parseInt(filters.prepTime);
+        if (filters.cookTime !== 'all') apiParams.cookTime = parseInt(filters.cookTime);
   
         const data = await searchRecipes(apiParams);
         setRecipes(data);
       } catch (error) {
-        toast.error("Failed to fetch search results");
+        toast.error('Failed to fetch search results');
       } finally {
         setLoading(false);
       }
@@ -64,7 +58,6 @@ const SearchResults = () => {
   
     fetchSearchResults();
   }, [searchParams, filters]);
-
 
   const getFilteredAndSortedRecipes = () => {
     let filteredRecipes = [...recipes];
@@ -104,8 +97,8 @@ const SearchResults = () => {
     });
   };
 
-
   const filteredAndSortedRecipes = getFilteredAndSortedRecipes();
+
   const handleFilterChange = (filterType, value) => {
     setFilters(prev => ({
       ...prev,
@@ -113,11 +106,9 @@ const SearchResults = () => {
     }));
   };
 
-  // 🌐 Pull query and filter from searchParams
   const query = (searchParams.get('search') || '').toLowerCase();
   const dietaryFilters = searchParams.get('dietary')?.split(',') || [];
 
-  // 🔍 Apply all filters including query
   const filteredRecipes = recipes.filter(recipe => {
     if (query && !recipe.title.toLowerCase().includes(query)) return false;
     if (filters.difficulty !== 'all' && recipe.difficulty !== filters.difficulty) return false;
@@ -149,7 +140,6 @@ const SearchResults = () => {
     }
   });
 
-
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -167,7 +157,6 @@ const SearchResults = () => {
             Search Results for "{searchParams.get('q') || 'all recipes'}"
           </h1>
 
-          {/* Filter Controls */}
           <div className="flex flex-wrap gap-4 mb-6">
             <select
               value={filters.difficulty}
@@ -217,84 +206,82 @@ const SearchResults = () => {
           </div>
         </div>
 
-        {/* Loading State */}
         {loading ? (
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
           </div>
         ) : (
-          <>
-            {/* Results Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {sortedRecipes.length === 0 ? (
-                <div className="col-span-full text-center text-gray-500 py-8">
-                  No recipes found.
-                </div>
-              ) : (
-                sortedRecipes.map((recipe) => (
-                  <Card 
-                    key={recipe._id} 
-                    className="hover:shadow-lg transition-shadow cursor-pointer"
-                    onClick={() => handleRecipeClick(recipe._id)} // Add onClick handler
-                  >
-                    <CardHeader>
-                      <img
-                        src={recipe.mainImage || 'https://via.placeholder.com/400x300'}
-                        alt={recipe.title}
-                        className="w-full h-48 object-cover rounded-t-lg"
-                      />
-                      <CardTitle className="mt-4">{recipe.title}</CardTitle>
-                      <CardDescription>{recipe.description}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center space-x-2">
-                          <span className="text-sm">{recipe.authorId?.username || 'Anonymous'}</span>
-                        </div>
-                        <span className="text-sm text-muted-foreground">
-                          Prep: {recipe.prepTime}m | Cook: {recipe.cookTime}m
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {sortedRecipes.length === 0 ? (
+              <div className="col-span-full text-center text-gray-500 py-8">
+                No recipes found.
+              </div>
+            ) : (
+              sortedRecipes.map((recipe) => (
+                <Card
+                  key={recipe._id}
+                  className="hover:shadow-lg transition-shadow cursor-pointer"
+                  onClick={() => handleRecipeClick(recipe._id)}
+                >
+                  <CardHeader>
+                    <img
+                      src={
+                        recipe.mainImage
+                          ? `${API_BASE_URL.replace('/api', '')}${recipe.mainImage}`
+                          : 'https://via.placeholder.com/400x300'
+                      }
+                      alt={recipe.title}
+                      className="w-full h-48 object-cover rounded-t-lg"
+                    />
+                    <CardTitle className="mt-4">{recipe.title}</CardTitle>
+                    <CardDescription>{recipe.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center space-x-2">
+                        <span className="text-sm">{recipe.authorId?.username || 'Anonymous'}</span>
+                      </div>
+                      <span className="text-sm text-muted-foreground">
+                        Prep: {recipe.prepTime}m | Cook: {recipe.cookTime}m
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium capitalize">{recipe.difficulty}</span>
+                      <span className="text-sm text-muted-foreground">
+                        {recipe.nutritionalInfo?.calories || 0} calories
+                      </span>
+                    </div>
+
+                    {recipe.dietaryRestrictions && (
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {Object.entries(recipe.dietaryRestrictions)
+                          .filter(([_, value]) => value === true)
+                          .map(([key]) => (
+                            <span
+                              key={key}
+                              className="px-2 py-1 bg-primary-50 text-primary-700 rounded-full text-xs"
+                            >
+                              {key.replace('is', '').replace(/([A-Z])/g, ' $1').trim()}
+                            </span>
+                          ))}
+                      </div>
+                    )}
+
+                    {recipe.averageRating > 0 && (
+                      <div className="mt-2 flex items-center gap-1">
+                        <span className="text-sm text-yellow-500">★</span>
+                        <span className="text-sm">{recipe.averageRating.toFixed(1)}</span>
+                        <span className="text-sm text-gray-500">
+                          ({recipe.totalRatings} {recipe.totalRatings === 1 ? 'review' : 'reviews'})
                         </span>
                       </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium capitalize">{recipe.difficulty}</span>
-                        <span className="text-sm text-muted-foreground">
-                          {recipe.nutritionalInfo?.calories || 0} calories
-                        </span>
-                      </div>
-
-                      {/* Dietary Restrictions Tags */}
-                      {recipe.dietaryRestrictions && (
-                        <div className="mt-3 flex flex-wrap gap-2">
-                          {Object.entries(recipe.dietaryRestrictions)
-                            .filter(([_, value]) => value === true)
-                            .map(([key]) => (
-                              <span
-                                key={key}
-                                className="px-2 py-1 bg-primary-50 text-primary-700 rounded-full text-xs"
-                              >
-                                {key.replace('is', '').replace(/([A-Z])/g, ' $1').trim()}
-                              </span>
-                            ))}
-                        </div>
-                      )}
-
-                      {/* Rating */}
-                      {recipe.averageRating > 0 && (
-                        <div className="mt-2 flex items-center gap-1">
-                          <span className="text-sm text-yellow-500">★</span>
-                          <span className="text-sm">{recipe.averageRating.toFixed(1)}</span>
-                          <span className="text-sm text-gray-500">
-                            ({recipe.totalRatings} {recipe.totalRatings === 1 ? 'review' : 'reviews'})
-                          </span>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                ))
-              )}
-            </div>
-          </>
+                    )}
+                  </CardContent>
+                </Card>
+              ))
+            )}
+          </div>
         )}
       </div>
     </>
