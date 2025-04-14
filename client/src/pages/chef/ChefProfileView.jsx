@@ -1,7 +1,7 @@
-// pages/chef/ChefProfileView.jsx
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FaPen, FaCheckCircle, FaClock, FaEnvelope, FaCalendar } from 'react-icons/fa';
+import Avatar from '../../assets/Avatar'; // Assuming Avatar is in a separate file
 
 const ChefProfileView = ({ user, setIsEditing }) => {
   return (
@@ -11,8 +11,8 @@ const ChefProfileView = ({ user, setIsEditing }) => {
           whileHover={{ scale: 1.05 }}
           className="w-32 h-32 mx-auto mb-4"
         >
-          <img
-            src={user.profilePicture || './default-avatar.png'}
+          <Avatar
+            src={user.profilePicture}  // Use the Avatar component to handle image URL
             alt={user.username}
             className="w-full h-full rounded-full border-4 border-primary-100 object-cover"
           />
@@ -38,11 +38,7 @@ const ChefProfileView = ({ user, setIsEditing }) => {
         <p className="text-sm mt-2 text-gray-600">
           Role: <span className="font-semibold capitalize">{user.role}</span>
         </p>
-        <p className={`mt-1 px-3 py-1 inline-block rounded-full text-sm ${
-          user.isVerified
-            ? 'bg-green-100 text-green-700'
-            : 'bg-yellow-100 text-yellow-700'
-        }`}>
+        <p className={`mt-1 px-3 py-1 inline-block rounded-full text-sm ${user.isVerified ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
           {user.isVerified ? 'Verified Chef' : 'Pending Verification'}
         </p>
       </div>

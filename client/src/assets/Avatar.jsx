@@ -1,16 +1,18 @@
-// src/components/common/Avatar.jsx
 import React from 'react';
 import defaultAvatar from './default-avatar.png';
 
 const Avatar = ({ src, alt, className }) => {
-  console.log('API Base URL:', import.meta.env.VITE_API_BASE_URL); // Check if the env variable is loaded correctly
+  console.log('API Base URL:', import.meta.env.VITE_API_BASE_URL); // Debug log for API Base URL
 
   const getImageUrl = (url) => {
     console.log("getImageUrl function called");
-    console.log("Received URL:", url);  // Log the input URL to check if it's passed correctly
-    if (!url) return defaultAvatar; // If no URL, return the default avatar
-    // Hardcode full backend URL for testing
-    return `http://localhost:5000/uploads${url}`;
+    console.log("Received URL:", url);  // Log the received URL for debugging
+    if (!url) return defaultAvatar; // Return default avatar if no URL is provided
+    
+    if (url.startsWith('http')) return url; // If it's already a full URL, return it directly
+    
+    // Hardcode full backend URL for testing (it should be based on the environment variable)
+    return `${import.meta.env.VITE_API_BASE_URL.replace('/api', '')}${url}`;
   };
 
   return (
