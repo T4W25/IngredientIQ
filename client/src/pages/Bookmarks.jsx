@@ -1,14 +1,14 @@
 // src/pages/Bookmarks.jsx
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { getBookmarks, removeBookmark } from '../api/api';
 import { FaBookmark, FaTrash, FaClock, FaUtensils, FaUserFriends } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import Navbar from '../components/ui/Navbar';
+import API_BASE_URL from "../api/api";
 
 const Bookmarks = () => {
-  const navigate = useNavigate();
   const [bookmarks, setBookmarks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -16,6 +16,7 @@ const Bookmarks = () => {
   useEffect(() => {
     fetchBookmarks();
   }, []);
+  
   const fetchBookmarks = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -78,93 +79,97 @@ const Bookmarks = () => {
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-primary-50">
       <Navbar />
       <div className="pt-20 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        <motion.h1
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-3xl font-bold text-gray-900 mb-8 flex items-center"
-        >
-          <FaBookmark className="text-primary-600 mr-3" />
-          Your Bookmarked Recipes
-        </motion.h1>
-
-        {bookmarks.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="bg-white rounded-2xl shadow-custom p-8 text-center"
+        <div className="max-w-7xl mx-auto">
+          <motion.h1
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-3xl font-bold text-gray-900 mb-8 flex items-center"
           >
-            <div className="text-6xl mb-4">📌</div>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-2">No Bookmarks Yet</h2>
-            <p className="text-gray-600 mb-6">You haven't bookmarked any recipes yet. Explore recipes and save your favorites!</p>
-            <Link
-              to="/search"
-              className="inline-block px-6 py-3 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors"
+            <FaBookmark className="text-primary-600 mr-3" />
+            Your Bookmarked Recipes
+          </motion.h1>
+
+          {bookmarks.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="bg-white rounded-2xl shadow-custom p-8 text-center"
             >
-              Discover Recipes
-            </Link>
-          </motion.div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {bookmarks.map((bookmark, index) => {
-              const recipe = bookmark.recipeId;
-              if (!recipe) return null;
+              <div className="text-6xl mb-4">📌</div>
+              <h2 className="text-2xl font-semibold text-gray-800 mb-2">No Bookmarks Yet</h2>
+              <p className="text-gray-600 mb-6">You haven't bookmarked any recipes yet. Explore recipes and save your favorites!</p>
+              <Link
+                to="/search"
+                className="inline-block px-6 py-3 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors"
+              >
+                Discover Recipes
+              </Link>
+            </motion.div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {bookmarks.map((bookmark, index) => {
+                const recipe = bookmark.recipeId;
+                if (!recipe) return null;
 
-              return (
-                <motion.div
-                  key={bookmark._id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="bg-white rounded-2xl shadow-custom overflow-hidden"
-                >
-                  <Link to={`/recipe/${recipe._id}`}>
-                    <div className="relative h-48 overflow-hidden">
-                      <img
-                        src={recipe.mainImage || "/default-image.jpg"}
-                        alt={recipe.title}
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
-                  </Link>
+                const imageUrl = recipe.mainImage
+                  ? `${API_BASE_URL.replace('/api', '')}${recipe.mainImage}`  // Constructed backend URL
+                  : '/default-image.jpg';  // Use a default image if mainImage is not available
 
-                  <div className="p-6">
+                return (
+                  <motion.div
+                    key={bookmark._id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="bg-white rounded-2xl shadow-custom overflow-hidden"
+                  >
                     <Link to={`/recipe/${recipe._id}`}>
-                      <h3 className="text-xl font-bold text-gray-900 mb-2 hover:text-primary-600 transition-colors">
-                        {recipe.title}
-                      </h3>
+                      <div className="relative h-48 overflow-hidden">
+                        <img
+                          src={imageUrl}  // Use the constructed URL for the image
+                          alt={recipe.title}
+                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
                     </Link>
 
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center text-sm text-gray-500">
-                        <FaClock className="mr-1" />
-                        <span>{recipe.totalTime} mins</span>
-                      </div>
-                      <div className="flex items-center text-sm text-gray-500">
-                        <FaUtensils className="mr-1" />
-                        <span className="capitalize">{recipe.difficulty}</span>
-                      </div>
-                      <div className="flex items-center text-sm text-gray-500">
-                        <FaUserFriends className="mr-1" />
-                        <span>{recipe.servings} servings</span>
-                      </div>
-                    </div>
+                    <div className="p-6">
+                      <Link to={`/recipe/${recipe._id}`}>
+                        <h3 className="text-xl font-bold text-gray-900 mb-2 hover:text-primary-600 transition-colors">
+                          {recipe.title}
+                        </h3>
+                      </Link>
 
-                    <button
-                      onClick={() => handleRemoveBookmark(bookmark._id)}
-                      className="w-full py-2 border border-red-400 text-red-500 rounded-lg flex items-center justify-center hover:bg-red-50 transition-colors"
-                    >
-                      <FaTrash className="mr-2" />
-                      Remove Bookmark
-                    </button>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-        )}
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center text-sm text-gray-500">
+                          <FaClock className="mr-1" />
+                          <span>{recipe.totalTime} mins</span>
+                        </div>
+                        <div className="flex items-center text-sm text-gray-500">
+                          <FaUtensils className="mr-1" />
+                          <span className="capitalize">{recipe.difficulty}</span>
+                        </div>
+                        <div className="flex items-center text-sm text-gray-500">
+                          <FaUserFriends className="mr-1" />
+                          <span>{recipe.servings} servings</span>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => handleRemoveBookmark(bookmark._id)}
+                        className="w-full py-2 border border-red-400 text-red-500 rounded-lg flex items-center justify-center hover:bg-red-50 transition-colors"
+                      >
+                        <FaTrash className="mr-2" />
+                        Remove Bookmark
+                      </button>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
     </div>
   );
 };
